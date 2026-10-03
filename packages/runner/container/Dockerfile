@@ -42,16 +42,13 @@ RUN apt-get update \
 RUN corepack enable \
  && corepack prepare "pnpm@${PNPM_VERSION}" --activate
 
-RUN mkdir -p /opt/dsh-runtime-facts \
- && npm install --global \
+RUN mkdir -p /opt/dsh-runtime-facts
+COPY runtime-facts.mjs /opt/dsh-runtime-facts/runtime-facts.mjs
+
+RUN npm install --global \
       --allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs \
       "@deepseek-ai/dsh@${DSH_VERSION}" > /opt/dsh-runtime-facts/npm-install.log 2>&1 \
- && node -e "
-      const fs = require('node:fs');
-      const log = fs.readFileSync('/opt/dsh-runtime-facts/npm-install.log', 'utf8');
-      const keep = log.split('\n').filter((l) => /install-scripts|added [0-9]+ packages|npm warn deprecated/i.test(l));
-      fs.writeFileSync('/opt/dsh-runtime-facts/install-scripts.txt', keep.join('\n') + '\n');
-    " \
+ && node /opt/dsh-runtime-facts/runtime-facts.mjs \
  && npm cache clean --force \
  && rm -rf /tmp/npm-cache
 
