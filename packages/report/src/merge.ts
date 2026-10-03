@@ -274,7 +274,6 @@ export function mergeExecution(
       evidenceRefs: l3Step ? ['e-l3-session'] : [],
       notes: [
         l3.detail,
-        'the model call was served by the official replay adapter from a fixture authored in this repository; no credential was present and no provider was contacted',
         `probe task, stated verbatim: ${JSON.stringify(l3.task)}`,
         ...(l3Step ? [] : missingStepNote('L3_run')),
       ],
@@ -357,6 +356,11 @@ export function mergeExecution(
     ...(l5 && l5.status !== 'inconclusive'
       ? []
       : ['L5 overhead sampling did not complete, so no cost claim is made']),
+    ...(l3 && l3.status === 'pass'
+      ? [
+          'L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model',
+        ]
+      : []),
     'the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase',
     ...execution.notes,
   ].filter((l: string, i: number, all: string[]) => all.indexOf(l) === i);

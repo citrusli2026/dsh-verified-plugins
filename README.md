@@ -5,16 +5,13 @@ Evidence-linked, reproducible, not another star list.
 
 [Method](docs/method.md) · [Report schema](docs/schema.md) · [Security](docs/security.md) · [Catalog](catalog/index.json)
 
-> **Status: V0–V3 in progress.** Six of the seven dimensions run end to end —
-> **L0, L1, L2, L4, L5, L6** — inside a one-off container, and every published
-> report is validated `dsh.plugin.report.v1`. **L3 is not running yet**: an
-> earlier "blocked upstream" conclusion was wrong — the official key-free replay
-> adapter does install on the current runtime, and it was the *default version
-> resolution* that could not. The path is open; a session fixture is still
-> required, and this project never injects a credential. Until L3 runs, every
-> verdict is capped at **`partial`** by the ladder. Read
-> [docs/security.md](docs/security.md) first, and
-> [docs/evidence/L3.md](docs/evidence/L3.md) for the correction.
+> **Status: V0–V3 done, L3 unblocked.** All seven dimensions run end to end,
+> and the catalogue contains its **first `verified` report**
+> (`catalog/npm/dsh-cost-meter.json`). Earlier the project recorded L3 as
+> blocked upstream; that was wrong — see
+> [docs/evidence/L3.md](docs/evidence/L3.md). Sessions run against a replayed
+> transcript, never a credential, and every report says so. Read
+> [docs/security.md](docs/security.md) first.
 
 ---
 
@@ -40,7 +37,7 @@ never omitted, never inferred.
 | **L0** qualification | Is this actually an installable bundle? | no |
 | **L1** install | Does it install into a clean `DSH_HOME`, and if not, why? | yes |
 | **L2** load | Do the Host and Client halves actually come up? | yes |
-| **L3** run | Does a minimal session complete **without a credential**? | yes, via the official replay adapter — not wired up yet |
+| **L3** run | Does a minimal session complete **without a credential**? | in the container, via the official replay adapter |
 | **L4** capability | What can it reach for: runtime patch, subprocess, port, secret env, hooks, out-of-workspace writes? | no |
 | **L5** overhead | What does it cost, measured differentially against a baseline? | yes — reports `no-significant-delta` when nothing clears the bar |
 | **L6** uninstall | After removal, is anything left? | yes |
@@ -67,7 +64,8 @@ lose `verified`. There is **no score and no ranking** — that is the whole poin
 catalog/
 ├── index.json                      # generated, never hand-edited; CI fails if stale
 └── npm/
-    ├── dsh-find-plugin.json        # partial         — L0 pass, L4: network egress
+    ├── dsh-cost-meter.json         # verified        — all seven dimensions
+    ├── dsh-find-plugin.json        # partial         — L1 refused: peer-incompatible
     ├── morlay__session-branch.json # not-installable — declares no dsh.bundle.patch
     └── dsh-pet.json                # partial         — 62 MB artifact, 98 s to fetch
 ```

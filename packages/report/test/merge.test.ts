@@ -164,7 +164,13 @@ test('merge: a completed keyless session is an L3 pass with its probe task publi
   assert.equal(l3.status, 'pass');
   assert.deepEqual(l3.evidenceRefs, ['e-l3-session']);
   assert.equal(l3.metrics?.probeTask, 'reply with any text');
-  assert.ok(l3.notes?.some((n) => /no credential was present/.test(n)));
+  // The detailed claim lives once, in the dimension notes...
+  assert.ok(l3.notes?.some((n) => /served by the replay adapter/.test(n)));
+  // ...and the report says plainly what a replayed session does not establish.
+  assert.ok(
+    (merged.limits as string[]).some((l) => /not against a provider/.test(l)),
+    'a replayed L3 must carry its own limitation',
+  );
   assert.deepEqual(validateReport(merged, SCHEMA), []);
 });
 
