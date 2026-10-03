@@ -170,6 +170,9 @@ jobs:
       - name: Static report (L0 + L4), on the runner
         env:
           VERIFY_SPEC: ${{ inputs.verify_spec }}
+          # Provenance: the report records the commit that produced it. Set here
+          # so a run on main cites a main commit rather than a pull-request head.
+          DSH_VERIFY_COMMIT: ${{ github.sha }}
         run: |
           set -euo pipefail
           node packages/cli/src/main.ts static "${VERIFY_SPEC:-dsh-cost-meter@1.8.8}" \
