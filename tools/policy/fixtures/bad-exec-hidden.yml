@@ -1,0 +1,14 @@
+# policy-expect: R5
+# Execution hidden behind a script invocation. A rule that only matched the
+# literal `pnpm add` would let this through, which is why `docker run` counts
+# as execution on its own.
+name: bad-exec-hidden
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - run: packages/runner/container/run-baseline.sh

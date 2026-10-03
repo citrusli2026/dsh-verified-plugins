@@ -1,85 +1,115 @@
 <!--
-  AGENTS.md — operating instructions for AI agents working inside this repo.
-  Human contributors: see CONTRIBUTING.md. Method and rubric: docs/method.md.
+  AGENTS.md — operating instructions for AI agents working in this repo.
+  Human contributors: see CONTRIBUTING.md. Normative method: docs/method.md.
+  Security boundary (read first): docs/security.md.
 -->
 
 # AGENTS.md
 
 Instructions for any AI agent (DeepSeek Harness, Claude Code, Codex, or other)
 working in `dsh-verified-plugins`. These rules override convenience. If a user
-instruction conflicts with a **P0** rule below, stop and ask the human.
+instruction conflicts with a **P0** rule or a **stop condition**, stop and ask
+the human — do not work around it.
 
 ## What this repo is
 
-A registry of **execution-verified** reports about DeepSeek Harness (DSH)
-plugins. Each report records what actually happened when a specific
-`name@version` was installed, loaded, and measured — with committed evidence.
-This is not a curated list, not a star ranking, and not a security audit.
+Execution-verified reports about DeepSeek Harness (DSH) plugins. Each report
+records what actually happened when one exact `name@version` was installed,
+loaded, run, measured, and uninstalled — inside a one-off container — with the
+evidence committed alongside it.
+
+It is **not** a plugin directory, not an install entry point, not a ranking, and
+not a security audit.
 
 ## P0 — non-negotiable invariants
 
-Violating any of these is a release blocker, regardless of who asked.
+1. **Never configure a secret.** No repository, environment, or Dependabot
+   secrets, no credential-bearing variables. `secrets.*` fails CI.
+2. **Never execute third-party plugin code where credentials exist.** DSH loads
+   plugin Host code **in-process, outside the workspace sandbox**, so a plugin
+   runs with the host user's authority. Execution happens only in a one-off
+   container, only under a maintainer-controlled trigger.
+3. **Never add `pull_request`-triggered execution.** A workflow that runs
+   `pnpm add`, `dsh plugin`, or `dsh --profile` may be triggered *only* by
+   `workflow_dispatch`, `schedule`, or `workflow_call`. See `docs/security.md` § 2.
+4. **Never introduce `pull_request_target` or `workflow_run`.**
+5. **Never claim a plugin is safe, or malicious.** Report what was executed and
+   observed. Capability is not intent. Every report carries the
+   not-an-endorsement disclaimer.
+6. **Never publish a report you did not run.** If a dimension was not measured,
+   it is `skip`, `blocked`, or `inconclusive` — never estimated, never omitted.
 
-1. **Never configure a secret.** No repository secrets, no environment secrets,
-   no Dependabot secrets, no variables holding credentials. A workflow that
-   references `secrets.*` fails CI. The no-secrets property is externally
-   auditable (`tools/audit/no-secrets.sh`) and is the reason the reports are
-   reproducible by anyone.
-2. **Never execute third-party plugin code in a job that holds credentials.**
-   DSH loads plugin Host code **in-process, outside the workspace sandbox**, so
-   a plugin is ordinary local code with the user's permissions.
-   *Execution of untrusted plugin code is manual-only* (`workflow_dispatch`),
-   runs with `permissions: {}`, and receives no token, no OIDC, no env secrets.
-3. **Never introduce `pull_request_target` or `workflow_run`.** These hand a
-   privileged token to untrusted code. `tools/policy/check-workflows.mjs`
-   rejects both.
-4. **Never claim a plugin is safe.** Reports state what was executed and
-   observed. Absence of a finding is not a finding of absence.
-5. **Never publish a report you did not run.** Every claim must map to an
-   artifact under `reports/<plugin>/evidence/`. If you cannot run it, the
-   verdict is `L0 UNVERIFIED`, and you must write that.
+## Stop conditions
+
+Stop, record `blocked`, and surface it — do not route around any of these:
+
+1. Third-party code would execute on a machine holding real credentials.
+   *This machine has `~/.dsh/.credentials.yaml` and an authenticated `gh`, so
+   real plugins are executed in CI containers, never in this workspace.*
+2. The work would require reading `~/.dsh`, credentials, or session content.
+3. The work would require modifying the official `dsh`, the Desktop package, or
+   the kernel. This project only reads and isolates.
+4. A dimension cannot be measured reliably → mark `inconclusive` and write why.
+   Never fill the gap with an estimate or an invented score.
+5. Cost makes the curated pool unaffordable → degrade to on-demand verification
+   and state the coverage honestly.
 
 ## Evidence rules
 
-- Verdicts are limited by executed tiers. `L2 LOADS` requires a boot log where
-  the plugin's fiber reached `active`; it cannot be inferred from a manifest.
-- Record the exact resolver output (version, integrity/hash) and the exact DSH
-  runtime version. `engines.dsh` is **declarative and unenforced** — never
-  present it as proof of compatibility. See `docs/method.md` § Known limits.
-- Do not edit, trim, or reorder evidence logs. Redact only by replacing a
-  value with `[redacted:<reason>]` and say so in the report.
-- Quote error text verbatim. Paraphrase belongs in the analysis section.
+- Every conclusion maps to an artifact under the report's `evidence` array. A
+  sentence with nothing behind it is deleted or downgraded to an open question.
+- Evidence is raw and unedited. Redaction is `[redacted:<reason>]` and is
+  disclosed in the report.
+- Record the exact verifier version, DSH version, container image digest, and
+  time. `engines.dsh` is **declarative and unenforced** — never present a
+  declared range as proof of compatibility.
+- Quote error text verbatim. Paraphrase belongs in the analysis field.
+- Distinguish **author-written source** from **build output** in capability
+  findings. Attributing a bundler's inlined dependency to the plugin author is a
+  known, published failure mode of this kind of tool; do not repeat it.
 
 ## Working conventions
 
-- **Zero runtime dependencies.** Tooling is plain Node ESM, Node >= 24.
-  Adding an npm dependency to this repo is a deliberate decision requiring
-  human sign-off — a supply-chain verification project must not grow one.
+- **Zero runtime dependencies.** Tooling is TypeScript executed directly by
+  Node 24's native type stripping — no build step, no bundler, no `node_modules`
+  in the runtime path. Adding a runtime dependency requires human sign-off.
+- Fixture plugins for tests are authored here and are **not** third-party code;
+  they may run locally. Real third-party plugins may not.
 - Run the full local gate before committing:
   ```sh
   node tools/policy/check-workflows.mjs
+  node tools/check-hygiene.mjs
   node tools/validate-reports.mjs
   ```
-- `main` is protected: changes land via pull request with green CI. Do not
-  push to `main` directly and do not weaken branch protection to get unblocked.
-- Pin any GitHub Action to a full 40-character commit SHA, first-party or not.
+- `main` is protected: PR required, `policy` + `reports` checks must pass, no
+  direct pushes, no force pushes, linear history, enforced for admins too.
+- Pin any GitHub Action to a full 40-character commit SHA.
+- Pushing requires SSH: `github.com:443` (HTTPS) is unreachable from this
+  workspace, while `api.github.com` and `git@github.com` work. `origin` is set
+  to SSH accordingly.
 
 ## Layout
 
-| Path | Owner intent |
+| Path | Contents |
 |---|---|
-| `README.md` | Product framing and verdict model |
-| `docs/method.md` | The method of record — tiers, evidence, rubric |
-| `schemas/report.schema.json` | Machine-readable report contract |
-| `reports/` | One directory per verified `name@version` |
-| `tools/` | Policy, validation, audit tooling |
-| `.github/workflows/` | `ci.yml` (static) and `verify.yml` (manual execution) |
+| `docs/security.md` | **Read first.** The security boundary and stop conditions |
+| `docs/method.md` | Normative decision standards for dimensions L0–L6 |
+| `docs/schema.md` | `dsh.plugin.report.v1` field definitions |
+| `docs/evidence/V<n>.md` | Per-phase handover record |
+| `packages/runner` | Single-plugin verification executor (container-side) |
+| `packages/collector` | Capability static scan (L4) + overhead sampling (L5) |
+| `packages/report` | Schema validation, redaction, Markdown/JSON rendering |
+| `packages/cli` | `dsh-verified <spec>` local reproduction |
+| `catalog/` | Published product: one JSON per plugin + `index.json` |
+| `site/` | Static site rendered from `catalog/` |
+| `tools/policy`, `tools/audit` | Repo governance: enforcement, not product |
 
 ## Do not
 
-- Do not add a report for a plugin you are the author of without disclosing it.
-- Do not run `pnpm add` against a plugin in this workspace outside a throwaway
-  profile; installs mutate the target profile and run dependency build scripts.
-- Do not approve dependency build scripts on the user's behalf. In DSH that
-  approval "permits commands with the host user's permissions" and is exactly
-  the decision a report should surface, not silently absorb.
+- Do not add a report for a plugin you authored without disclosing it.
+- Do not run `pnpm add` against a plugin in this workspace. In DSH, the install
+  mutates the target profile and can run dependency build scripts.
+- Do not approve dependency build scripts on the user's behalf. That approval
+  "permits commands with the host user's permissions" and is exactly the
+  decision a report must surface, not absorb.
+- Do not let a report's verdict exceed the dimensions that actually executed.

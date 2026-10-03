@@ -9,7 +9,9 @@
  *   R2  no `pull_request_target` / `workflow_run` trigger
  *   R3  no write permissions anywhere (`write-all`, `x: write`, `id-token: write`)
  *   R4  every action pinned to a full 40-hex commit SHA (local paths exempt)
- *   R5  plugin-executing commands only in a workflow_dispatch-only workflow
+ *   R5  plugin-executing commands only under maintainer-controlled triggers
+ *       (workflow_dispatch / schedule / workflow_call) — never under a trigger
+ *       an outside contributor can cause, such as pull_request
  *   R6  a plugin-executing workflow must declare `permissions: {}`
  *   R7  a plugin-executing workflow must not expose a token to the environment
  *   R8  every workflow must declare top-level `permissions:` explicitly
@@ -29,10 +31,25 @@ const FIXTURES_DIR = join(dirname(fileURLToPath(import.meta.url)), 'fixtures');
 
 const verbose = process.argv.includes('--verbose');
 
-/** Commands that install or execute third-party plugin code. */
-const EXEC_COMMAND_RE = /(?:^|[\s;&|()])(?:pnpm\s+(?:add|install|i)\b|npm\s+(?:install|i|exec)\b|yarn\s+add\b|dsh\s+plugin\b|dsh\s+--profile\b|npx\s+\S)/m;
+/**
+ * Commands that install or execute third-party plugin code.
+ *
+ * `docker run` is included deliberately: a container run that installs or boots
+ * a plugin IS execution, even when the actual `pnpm add` is hidden inside a
+ * script the workflow merely invokes. Matching only the literal command would
+ * leave a trivial bypass — call a script instead.
+ */
+const EXEC_COMMAND_RE =
+  /pnpm\s+(?:add|install|i)\b|npm\s+(?:install|i|exec)\b|yarn\s+add\b|npx\s+\S|dsh\s+plugin\b|dsh\s+--profile\b|docker\s+(?:run|build)\b|packages\/runner\/|run-baseline\.sh|dsh-verified/m;
 
 const FORBIDDEN_TRIGGERS = ['pull_request_target', 'workflow_run'];
+
+/**
+ * Triggers a maintainer controls. An executor workflow may use only these,
+ * because the risk is not execution per se — it is *who can cause* execution.
+ * A pull request from any fork must never be able to run third-party code.
+ */
+const SAFE_EXEC_TRIGGERS = new Set(['workflow_dispatch', 'schedule', 'workflow_call']);
 
 /**
  * R7 detects *exposure* of a CI token, not any mention of one. Scrubbing a
@@ -161,13 +178,15 @@ function scan(label, text) {
     }
   }
 
-  // R5 / R6 / R7 / R9 — the execution tier must be manual, credential-free.
+  // R5 / R6 / R7 / R9 — the execution tier must be maintainer-triggered and
+  // credential-free.
   if (executesPluginCode) {
-    const onlyDispatch = triggers.size === 1 && triggers.has('workflow_dispatch');
-    if (!onlyDispatch) {
+    const unsafeTriggers = [...triggers].filter((t) => !SAFE_EXEC_TRIGGERS.has(t));
+    if (triggers.size === 0 || unsafeTriggers.length > 0) {
       errors.push(
         `R5 executes third-party plugin code but triggers on {${[...triggers].join(', ')}}; ` +
-          'execution must be workflow_dispatch-only',
+          'execution must be limited to workflow_dispatch / schedule / workflow_call, ' +
+          'never a trigger an outside contributor can cause',
       );
     }
     if (!perms.present || !perms.empty) {

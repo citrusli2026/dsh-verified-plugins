@@ -5,9 +5,14 @@ Evidence-linked, reproducible, not another star list.
 
 [Method](docs/method.md) · [Reports](#reports) · [Submit a plugin](#submit-a-plugin) · [Security policy](#p0--security-policy) · [Contributing](CONTRIBUTING.md)
 
-> **Status: bootstrap.** The method, report schema and CI gate are in place.
-> **0 reports published.** Everything below describes the contract a report must
-> satisfy; see [Submit a plugin](#submit-a-plugin) to produce the first one.
+> **Status: V0 complete, 0 reports published.**
+> The security boundary and the verification container are in place and measured
+> in CI — see [docs/evidence/V0.md](docs/evidence/V0.md). The report contract
+> described below is being replaced by `dsh.plugin.report.v1`
+> ([docs/schema.md](docs/schema.md)) in V1; until then, treat the
+> `reports/` layout in this README as the interim shape and
+> [docs/method.md](docs/method.md) as the method of record.
+> Read [docs/security.md](docs/security.md) first.
 
 ---
 
