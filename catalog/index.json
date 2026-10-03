@@ -1,10 +1,10 @@
 {
   "schema": "dsh.plugin.catalog.v1",
-  "generatedAt": "2026-10-03T14:59:18.883Z",
+  "generatedAt": "2026-10-03T15:21:52.443Z",
   "counts": {
-    "total": 3,
+    "total": 4,
     "byVerdict": {
-      "partial": 2,
+      "partial": 3,
       "not-installable": 1
     }
   },
@@ -35,19 +35,45 @@
       "repoPath": "morlay__session-branch"
     },
     {
+      "reportId": "npm:dsh-cost-meter@1.8.8",
+      "name": "dsh-cost-meter",
+      "version": "1.8.8",
+      "verdict": "partial",
+      "path": "catalog/npm/dsh-cost-meter.json",
+      "generatedAt": "2026-10-03T15:17:51.090Z",
+      "integrity": "sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "blocked",
+        "L4_capability": "pass",
+        "L5_overhead": "skip",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "hooks_api_gate",
+        "network_egress",
+        "spawns_process",
+        "writes_outside_workspace"
+      ],
+      "repoPath": "dsh-cost-meter"
+    },
+    {
       "reportId": "npm:dsh-find-plugin@0.4.0",
       "name": "dsh-find-plugin",
       "version": "0.4.0",
       "verdict": "partial",
       "path": "catalog/npm/dsh-find-plugin.json",
-      "generatedAt": "2026-10-03T14:58:35.427Z",
+      "generatedAt": "2026-10-03T15:20:23.829Z",
       "integrity": "sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==",
-      "dshVersion": "not-executed",
+      "dshVersion": "0.2.0-rc.2",
       "dimensions": {
         "L0_qualification": "pass",
-        "L1_install": "skip",
+        "L1_install": "fail",
         "L2_load": "skip",
-        "L3_run": "skip",
+        "L3_run": "blocked",
         "L4_capability": "pass",
         "L5_overhead": "skip",
         "L6_uninstall": "skip"

@@ -38,7 +38,14 @@ is no separate plugin format and no registry of its own.
 | `dsh.manifestVersion` | Manifest format identifier; the declared format is `1`. |
 | `dsh.bundle.patch` | One patch path, or an ordered list, each relative to the package root. Applied in order as **one bundle layer**. |
 | `dsh.client.platform` | Declares a client (UI) half, e.g. `web`. |
-| `engines.dsh` | Author-declared compatible versions as a SemVer range. **Declarative only.** |
+| `engines.dsh` | Author-declared compatible versions as a SemVer range. **Declarative only — not enforced.** |
+| `peerDependencies` on `@deepseek-ai/dsh*` | **Enforced.** DSH checks every declared range against the runtime version and *refuses the install* when one does not match. |
+
+`engines.dsh` and `peerDependencies` are different mechanisms with opposite
+force, and conflating them is a mistake this document made once. A plugin can
+declare an `engines.dsh` range freely; a `peerDependencies` range on a
+`@deepseek-ai/dsh*` package is checked and an incompatible one is refused
+outright, before anything is downloaded.
 
 A plugin becomes active by *selecting its bundle* in a profile: the profile's
 `package.json` carries an ordered `dsh.profile.bundles` list, and the bundle's
@@ -83,6 +90,20 @@ declared peers checked), refusing with a compatibility error before anything is
 downloaded. Git and tarball specs cannot be pre-checked this way and are judged
 after installation.
 
+**Observed in the container**, and the most decision-relevant fact a static scan
+cannot produce:
+
+```
+dsh: installation rejected: Plugin dsh-find-plugin@0.4.0 is incompatible with
+dsh 0.2.0-rc.2: peerDependencies {"@deepseek-ai/dsh-tools":"^0.1.0-rc.6 || ..."}.
+dsh: nothing was installed.
+```
+
+A subject that qualifies as a bundle and inspects cleanly (L0 pass, L4 pass) can
+still be **uninstallable on the pinned runtime** for this reason alone. L1 is
+where that surfaces. Granting the exact-version exemption DSH offers would
+bypass the check; it is a user decision and the verifier never takes it.
+
 ### L2 — Load
 
 **Question:** do the Host and Client halves actually come up?
@@ -95,8 +116,23 @@ an exit status and a log, with no model call.
 
 `pluginInventory/list` gives the phase (`pending`, `loading`, `active`,
 `failed`, `unloading`, `null`). It is a point-in-time projection with **no
-history**, so an absent row is not evidence of a clean load. The boot log is
-the evidence; the inventory may accompany it.
+history**, so an absent row is not evidence of a clean load.
+
+**How the current implementation observes it, and its limits.** The executor
+boots the profile under a wall-clock bound and classifies the outcome from
+failure-shaped diagnostics — DSH's own *failed to load*, skipped-bundle and
+entry-failure reports, `ERR_` codes, stack frames:
+
+- no failure diagnostics while the process stays alive to the bound → pass;
+- a failure diagnostic, or a non-zero exit → fail.
+
+Two traps this had to learn from real runs, both of which produced **false
+failures** before they were fixed: DSH installs a SIGTERM handler that shuts
+down gracefully with exit **0**, so hitting the bound is not an early exit; and
+plugins log on success (`[dsh-cost-meter] 已加载…`), so the presence of output
+is not an error. The fiber phase is therefore **not read directly**, and every
+report says so in `limits[]`. Reading it directly needs the plugin-inventory
+projection or a host-side loader probe, and remains open.
 
 ### L3 — Run
 
@@ -202,11 +238,14 @@ best, because nothing was installed, loaded, or run.
 Stated plainly, because the credibility of these reports depends on not
 overclaiming.
 
-**F1 — `engines.dsh` is not enforced.** The manifest package's own
-documentation says compatibility "is declarative" and that installers and
-loaders "do not enforce `dsh.manifestVersion` or `engines.dsh`". A plugin can
-claim any range. Reports record the *observed* runtime and never treat a
-declared range as evidence of compatibility.
+**F1 — `engines.dsh` is not enforced; `peerDependencies` are.** The manifest
+package's own documentation says compatibility "is declarative" and that
+installers and loaders "do not enforce `dsh.manifestVersion` or `engines.dsh`".
+A plugin can claim any `engines.dsh` range. But a `peerDependencies` range on a
+`@deepseek-ai/dsh*` package **is** checked and an incompatible install is
+refused. Reports record the *observed* runtime, never treat a declared
+`engines.dsh` range as evidence of compatibility, and report the peer verdict
+separately because it is enforced.
 
 **F2 — the official keyless replay plugin is not installable as published.**
 `@deepseek-ai/dsh-llm-replay@0.0.1-rc.1` declares

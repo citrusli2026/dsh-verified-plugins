@@ -24,6 +24,7 @@ import { fileURLToPath } from 'node:url';
 import { buildStaticReport } from '../../collector/src/static-report.ts';
 import { loadSchema, validateReport } from '../../report/src/validate.ts';
 import { buildCatalogIndex, INDEX_SCHEMA, summariseReport } from '../../report/src/catalog.ts';
+import { mergeExecution, type ExecutionResult } from '../../report/src/merge.ts';
 import { RegistryError } from '../../collector/src/registry.ts';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -39,10 +40,12 @@ function usage(): void {
       '  dsh-verified static <spec> [--out <file>] [--registry <url>]',
       '  dsh-verified validate <report.json> [...]',
       '  dsh-verified catalog [catalog-dir]',
+      '  dsh-verified merge <static.json> <execution.json> [--out <file>]',
       '',
       '  static    L0 qualification + L4 capability scan. Runs no plugin code.',
       '  validate  Check report(s) against the schema and the verdict rules.',
       '  catalog   Rebuild and validate catalog/index.json from the reports on disk.',
+      '  merge     Combine a static report (L0+L4) with execution results (L1+L2+L6).',
       '',
       'Specs are exact: name@1.2.3 or a bare name (resolves to latest).',
       '',
@@ -149,6 +152,60 @@ function commandValidate(args: ParsedArgs): number {
 }
 
 /**
+ * Combines the static report with the container execution results. The verdict
+ * is recomputed from the merged dimensions rather than carried over, so a
+ * static-only `partial` cannot survive execution that established less.
+ */
+function commandMerge(args: ParsedArgs): number {
+  const [staticPath, executionPath] = args.positional;
+  if (!staticPath || !executionPath) {
+    process.stderr.write('error: merge requires <static.json> <execution.json>\n');
+    return 2;
+  }
+
+  let staticReport: Record<string, any>;
+  let execution: ExecutionResult;
+  try {
+    staticReport = JSON.parse(readFileSync(staticPath, 'utf8')) as Record<string, any>;
+    execution = JSON.parse(readFileSync(executionPath, 'utf8')) as ExecutionResult;
+  } catch (error) {
+    process.stderr.write(`error: could not read inputs: ${String(error)}\n`);
+    return 2;
+  }
+
+  if (execution.schema !== 'dsh.verifier.execution.v1') {
+    process.stderr.write(`error: unexpected execution schema "${execution.schema}"\n`);
+    return 2;
+  }
+
+  const merged = mergeExecution(staticReport, execution);
+  const issues = validateReport(merged, loadSchema(SCHEMA_PATH));
+  if (issues.length > 0) {
+    process.stderr.write(`error: merged report fails its own schema (${issues.length} issue(s)):\n`);
+    for (const issue of issues) process.stderr.write(`  ${issue.path}: ${issue.message}\n`);
+    return 1;
+  }
+
+  const out = args.flags.get('out');
+  const text = `${JSON.stringify(merged, null, 2)}\n`;
+  if (out) {
+    mkdirSync(dirname(out), { recursive: true });
+    writeFileSync(out, text);
+    process.stderr.write(`wrote ${out}\n`);
+  } else {
+    process.stdout.write(text);
+  }
+
+  const dims = merged.dimensions as Record<string, { status: string }>;
+  process.stderr.write(
+    `\n${merged.reportId}  verdict=${merged.verdict}  ` +
+      Object.entries(dims).map(([k, v]) => `${k.slice(0, 2)}=${v.status}`).join(' ') +
+      '\n',
+  );
+  return 0;
+}
+
+/**
  * Rebuilds catalog/index.json from the reports on disk, validating every one
  * on the way through. The index is derived, never hand-edited: a stale index
  * misstates coverage, which is the one thing this project cannot afford.
@@ -245,6 +302,9 @@ async function main(): Promise<void> {
         break;
       case 'catalog':
         code = commandCatalog(args);
+        break;
+      case 'merge':
+        code = commandMerge(args);
         break;
       default:
         process.stderr.write(`error: unknown command "${args.command}"\n\n`);
