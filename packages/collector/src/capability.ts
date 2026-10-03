@@ -110,8 +110,14 @@ export const DETECTORS: Detector[] = [
   {
     id: 'writes_outside_workspace',
     confidence: 'low',
-    re: /\bos\.homedir\s*\(|['"`](?:\/etc\/|\/usr\/|~\/\.)|process\.env\.HOME\b/,
-    note: 'writes or resolves paths that can fall outside the workspace; heuristic, expect false positives',
+    re: /\bos\.homedir\s*\(|['"`](?:\/etc\/|\/usr\/|~\/\.)|process\.env\.HOME\b|process\.env\.DSH_HOME\b/,
+    // Precise wording matters. The detector matches path *resolution* outside
+    // the workspace, which a regex cannot distinguish from a write. Resolving
+    // `~/.dsh` is normal and expected in a DSH plugin, so the finding must not
+    // read as an accusation of writing somewhere it should not.
+    note:
+      'resolves a path outside the workspace (e.g. os.homedir(), DSH_HOME), which is normal for DSH profile handling; ' +
+      'static analysis cannot determine whether it also writes there',
   },
 ];
 
@@ -119,7 +125,13 @@ const BUNDLE_MARKERS =
   /__webpack_require__|\besbuild\b|\brollup\b|browserify|parcelRequire|System\.register|__d\(function|\bwebpackChunk/;
 
 const SOURCE_DIR = /(^|\/)(src|source)\//;
-const BUILD_DIR = /(^|\/)(dist|build|out|lib|bundled|esm|cjs)\//;
+/**
+ * Conventional *output* directories. `lib/` is deliberately excluded: it holds
+ * compiled output in some packages and hand-written JavaScript in others, so
+ * calling it build output would misattribute real author code. Ambiguity is
+ * reported as `unknown` rather than guessed at.
+ */
+const BUILD_DIR = /(^|\/)(dist|build|out|bundled|esm|cjs)\//;
 const DEP_DIR = /(^|\/)node_modules\//;
 const SCANNABLE = /\.(?:[cm]?js|ts|mts|cts|jsx|tsx|mjs|cjs)$/;
 
@@ -139,7 +151,7 @@ export function classifyAttribution(path: string, content: string): { attributio
 
   if (isBundle || isMinified) return { attribution: 'build-output', isMinified, isBundle };
   if (SOURCE_DIR.test(path)) return { attribution: 'author-source', isMinified, isBundle };
-  if (BUILD_DIR.test(path)) return { attribution: 'unknown', isMinified, isBundle };
+  if (BUILD_DIR.test(path)) return { attribution: 'build-output', isMinified, isBundle };
   return { attribution: 'unknown', isMinified, isBundle };
 }
 

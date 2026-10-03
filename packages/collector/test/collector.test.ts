@@ -85,6 +85,18 @@ test('attribution: minified and bundled files are build output', () => {
   assert.equal(classifyAttribution('package/lib/a.js', 'const __webpack_require__ = 1;').attribution, 'build-output');
   assert.equal(classifyAttribution('package/node_modules/dep/index.js', 'x').attribution, 'dependency');
   assert.equal(classifyAttribution('package/src/a.ts', 'const a = 1;').attribution, 'author-source');
+});
+
+test('attribution: output directories are build output, even unminified', () => {
+  // Locks in a real inconsistency: this branch used to fall through to
+  // "unknown", which made the documented dist/build/out handling dead code.
+  assert.equal(classifyAttribution('package/dist/a.js', 'const a = 1;').attribution, 'build-output');
+  assert.equal(classifyAttribution('package/out/a.js', 'const a = 1;').attribution, 'build-output');
+});
+
+test('attribution: lib/ is ambiguous and reported as unknown, not guessed at', () => {
+  // `lib/` holds compiled output in some packages and hand-written JavaScript
+  // in others. Claiming either would misattribute real code.
   assert.equal(classifyAttribution('package/lib/a.js', 'const a = 1;').attribution, 'unknown');
 });
 
