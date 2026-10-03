@@ -48,23 +48,38 @@ function fdCount() {
 }
 
 /**
- * libuv's own view of the loop. `getReport()` builds a large object, so only
- * the summary numbers are kept — a report must not carry it whole.
+ * libuv's own view of the loop.
+ *
+ * The shape is an ARRAY of handle objects in the JSON report, not an object
+ * with `.handle.count`. Assuming the latter silently produced null for every
+ * run, which is how a metric can look "measured" while carrying no data; both
+ * shapes are handled so a Node change cannot quietly reintroduce that.
  */
 function libuv() {
   try {
     const report = process.report.getReport();
-    const section = report.libuv ?? {};
-    const handleTypes = section.handle?.types ?? {};
+    const section = report.libuv;
+
+    if (Array.isArray(section)) {
+      const handleTypes = {};
+      let activeHandles = 0;
+      for (const handle of section) {
+        const type = handle?.type ?? 'unknown';
+        handleTypes[type] = (handleTypes[type] ?? 0) + 1;
+        if (handle?.is_active) activeHandles += 1;
+      }
+      return { handles: section.length, activeHandles, handleTypes, requests: null };
+    }
+
+    const types = section?.handle?.types ?? {};
     return {
-      handles: section.handle?.count ?? null,
-      handleTypes: Object.fromEntries(
-        Object.entries(handleTypes).filter(([, count]) => count > 0),
-      ),
-      requests: section.request?.count ?? null,
+      handles: section?.handle?.count ?? null,
+      activeHandles: null,
+      handleTypes: Object.fromEntries(Object.entries(types).filter(([, count]) => count > 0)),
+      requests: section?.request?.count ?? null,
     };
   } catch {
-    return { handles: null, handleTypes: {}, requests: null };
+    return { handles: null, activeHandles: null, handleTypes: {}, requests: null };
   }
 }
 
@@ -105,6 +120,7 @@ function sample() {
     watchers: watcherCount(resources.kinds),
     timers: timerCount(resources.kinds),
     libuvHandles: loop.handles,
+    libuvActiveHandles: loop.activeHandles,
     libuvHandleTypes: loop.handleTypes,
     libuvRequests: loop.requests,
     fds: fdCount(),

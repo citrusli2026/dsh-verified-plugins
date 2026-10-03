@@ -53,6 +53,13 @@ export interface ExecutionResult {
     activated: Record<string, number>;
     delta: Record<string, number>;
     significant: Array<{ metric: string; baseline: number; activated: number; delta: number; ratio: number; reason: string }>;
+    runs?: Array<{
+      label: string;
+      run: number;
+      ok: boolean;
+      activeKinds?: Record<string, number>;
+      libuvHandleTypes?: Record<string, number>;
+    }>;
   };
   L6_uninstall: { status: string; reason: string; detail: string; residue: string[] };
   steps: ExecutionStep[];
@@ -307,6 +314,13 @@ export function mergeExecution(
   }
 
   if (l5 && l5.status !== 'inconclusive') {
+    // What the resources actually were, not just how many. A bare count of 11
+    // tells a reader nothing about what a plugin holds open.
+    const kindsFor = (label: string): Record<string, number> => {
+      const run = (l5.runs ?? []).filter((r) => r.label === label && r.ok).pop();
+      return { ...(run?.activeKinds ?? {}), ...(run?.libuvHandleTypes ?? {}) };
+    };
+
     report.overhead = {
       method: 'differential',
       status: l5.status,
@@ -315,6 +329,7 @@ export function mergeExecution(
       activated: l5.activated,
       delta: l5.delta,
       significant: l5.significant,
+      resourceKinds: { baseline: kindsFor('baseline'), activated: kindsFor('activated') },
     };
   }
 

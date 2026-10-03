@@ -329,6 +329,7 @@ const SAMPLED_METRICS = [
   'watchers',
   'timers',
   'libuvHandles',
+  'libuvActiveHandles',
   'libuvRequests',
   'fds',
 ] as const;
@@ -350,6 +351,9 @@ interface SampledRun {
   reason: string;
   file: string;
   perMetric: Partial<Record<SampledMetric, number>>;
+  /** What the active resources actually were — a bare count tells a reader little. */
+  activeKinds?: Record<string, number>;
+  libuvHandleTypes?: Record<string, number>;
 }
 
 /**
@@ -398,7 +402,18 @@ function sampleOnce(profile: string, label: string, run: number): SampledRun {
     const m = median(values);
     if (m !== null) perMetric[metric] = m;
   }
-  return { label, run, ok: true, reason: `${samples.length} samples`, file, perMetric };
+
+  const last = samples[samples.length - 1] as Record<string, any>;
+  return {
+    label,
+    run,
+    ok: true,
+    reason: `${samples.length} samples`,
+    file,
+    perMetric,
+    activeKinds: (last.activeKinds ?? {}) as Record<string, number>,
+    libuvHandleTypes: (last.libuvHandleTypes ?? {}) as Record<string, number>,
+  };
 }
 
 interface OverheadOutcome {
