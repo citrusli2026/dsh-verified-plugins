@@ -18,6 +18,15 @@ import { join } from 'node:path';
 import { renderBadge, BADGE_VOCABULARY, escapeXml } from './badge.ts';
 import type { CatalogIndex } from './catalog.ts';
 
+/** Freshness is read from its own artifact; a report itself is never rewritten. */
+export interface StalenessView {
+  entries: Array<{ reportId: string; status: 'current' | 'stale' | 'unknown'; reasons: string[]; currentVersion: string | null }>;
+}
+
+function staleFor(view: StalenessView | null | undefined, reportId: string) {
+  return view?.entries.find((entry) => entry.reportId === reportId) ?? null;
+}
+
 export function escapeHtml(value: unknown): string {
   return escapeXml(String(value ?? ''));
 }
@@ -68,16 +77,27 @@ function verdictBadge(verdict: string, subject: string, href: string): string {
   return `<a href="${escapeHtml(href)}" title="dsh-verified: ${escapeHtml(verdict)}">${svg}</a>`;
 }
 
-export function renderIndexPage(index: CatalogIndex): string {
+export function renderIndexPage(index: CatalogIndex, staleness?: StalenessView | null): string {
   const rows = index.entries
     .map((entry) => {
       const dims = Object.entries(entry.dimensions)
         .map(([key, status]) => `<span title="${escapeHtml(key)}" class="status status-${escapeHtml(status)}">${escapeHtml(key.slice(0, 2))}</span>`)
         .join(' ');
+      const freshness = staleFor(staleness, entry.reportId);
+      const freshnessCell =
+        freshness === null
+          ? '<span class="muted">—</span>'
+          : freshness.status === 'current'
+            ? '<span class="status status-pass">current</span>'
+            : freshness.status === 'stale'
+              ? `<span class="status status-inconclusive" title="${escapeHtml(freshness.reasons.join(' '))}">stale</span>`
+              : '<span class="muted" title="the registry could not be read">unknown</span>';
+
       return `<tr>
   <td><a href="./${escapeHtml(entry.repoPath)}.html">${escapeHtml(entry.reportId)}</a></td>
   <td>${verdictBadge(entry.verdict, entry.reportId, `./${escapeHtml(entry.repoPath)}.html`)}</td>
   <td class="muted">${escapeHtml(entry.dshVersion)}</td>
+  <td>${freshnessCell}</td>
   <td>${dims}</td>
 </tr>`;
     })
@@ -93,10 +113,11 @@ export function renderIndexPage(index: CatalogIndex): string {
 <p class="muted">Execution-verified reports for DeepSeek Harness plugins. Every conclusion links to the artifact it rests on.</p>
 <p><strong>${escapeHtml(String(index.counts.total))} reports</strong> — ${counts}</p>
 <p class="note">${escapeHtml(index.coverage.note)}</p>
+<p class="note">A <strong>stale</strong> report is not a wrong report: it describes a version that is no longer the latest, and its findings still hold for that version. See <a href="./staleness.json">staleness.json</a>.</p>
 
 <h2>Reports</h2>
 <table>
-<thead><tr><th>subject</th><th>verdict</th><th>DSH</th><th>L0 L1 L2 L3 L4 L5 L6</th></tr></thead>
+<thead><tr><th>subject</th><th>verdict</th><th>DSH</th><th>freshness</th><th>L0 L1 L2 L3 L4 L5 L6</th></tr></thead>
 <tbody>
 ${rows}
 </tbody>
@@ -112,7 +133,16 @@ ${rows}
   );
 }
 
-export function renderReportPage(report: Record<string, any>, slug: string): string {
+export function renderReportPage(
+  report: Record<string, any>,
+  slug: string,
+  staleness?: StalenessView | null,
+): string {
+  const freshness = staleFor(staleness, String(report.reportId ?? ''));
+  const freshnessBanner =
+    freshness && freshness.status !== 'current'
+      ? `<p><strong>${escapeHtml(freshness.status === 'stale' ? 'Stale' : 'Freshness unknown')}.</strong> ${escapeHtml(freshness.reasons.join(' '))}</p>`
+      : '';
   const dims = report.dimensions as Record<string, any>;
   const evidence = (report.evidence ?? []) as Array<Record<string, any>>;
 
@@ -191,6 +221,7 @@ ${capabilities
     `<p><a href="./index.html">← all reports</a></p>
 <h1>${escapeHtml(report.reportId)}</h1>
 <p>${verdictBadge(report.verdict, report.reportId, '#top')}</p>
+${freshnessBanner}
 <p class="muted">${escapeHtml(subject.integrity ?? '')}</p>
 
 <h2>Subject</h2>
@@ -293,6 +324,7 @@ ${rows}
 export interface SiteInput {
   index: CatalogIndex;
   reports: Array<{ slug: string; report: Record<string, any> }>;
+  staleness?: StalenessView | null;
 }
 
 export interface SiteBuild {
@@ -312,12 +344,15 @@ export function buildSite(input: SiteInput, options: SiteOptions): SiteBuild {
   const out = options.outDir;
   mkdirSync(join(out, 'badge'), { recursive: true });
 
-  writeFileSync(join(out, 'index.html'), renderIndexPage(input.index));
+  writeFileSync(join(out, 'index.html'), renderIndexPage(input.index, input.staleness));
+  if (input.staleness) {
+    writeFileSync(join(out, 'staleness.json'), `${JSON.stringify(input.staleness, null, 2)}\n`);
+  }
   writeFileSync(join(out, 'index.json'), `${JSON.stringify(input.index, null, 2)}\n`);
 
   let badges = 0;
   for (const { slug, report } of input.reports) {
-    writeFileSync(join(out, `${slug}.html`), renderReportPage(report, slug));
+    writeFileSync(join(out, `${slug}.html`), renderReportPage(report, slug, input.staleness));
     writeFileSync(join(out, `${slug}.json`), `${JSON.stringify(report, null, 2)}\n`);
     writeFileSync(
       join(out, 'badge', `${slug}.svg`),

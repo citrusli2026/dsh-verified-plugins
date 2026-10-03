@@ -28,6 +28,8 @@ import { mergeExecution, type ExecutionResult } from '../../report/src/merge.ts'
 import { searchPackageNames, survey } from '../../collector/src/survey.ts';
 import { buildSite, renderSurveyPage, slugFor } from '../../report/src/site.ts';
 import { renderBadge } from '../../report/src/badge.ts';
+import { assessStaleness, type StalenessInput } from '../../collector/src/staleness.ts';
+import { AmendmentError, amendReport, describeDiff } from '../../report/src/amend.ts';
 import { RegistryError } from '../../collector/src/registry.ts';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -47,6 +49,8 @@ function usage(): void {
       '  dsh-verified survey (--query <text> | --list <a,b>) [--limit N] [--out <file>]',
       '  dsh-verified site [--out <dir>] [--survey <file>]',
       '  dsh-verified badge <report.json> [--out <file>]',
+      '  dsh-verified stale [--runtime <v>] [--out <file>]',
+      '  dsh-verified amend <report.json> --previous <report.json> --change <why> [--out <file>]',
       '',
       '  static    L0 qualification + L4 capability scan. Runs no plugin code.',
       '  validate  Check report(s) against the schema and the verdict rules.',
@@ -56,6 +60,8 @@ function usage(): void {
       '            plugins actually declare an installable bundle. Runs no plugin code.',
       '  site      Render catalog/ into static HTML, with badges and evidence links.',
       '  badge     Render one report as an SVG badge.',
+      '  stale     Check each published report against the registry for freshness.',
+      '  amend     Supersede a report with a re-run, recording the change additively.',
       '',
       'Specs are exact: name@1.2.3 or a bare name (resolves to latest).',
       '',
@@ -162,6 +168,107 @@ function commandValidate(args: ParsedArgs): number {
 }
 
 /**
+ * Freshness for the whole catalogue. Registry reads only, no container.
+ *
+ * Writes its own artefact rather than touching the reports: a report is the
+ * immutable record of what was run, and the index is derived offline.
+ */
+async function commandStale(args: ParsedArgs): Promise<number> {
+  const dir = join(REPO_ROOT, 'catalog');
+  const out = args.flags.get('out') ?? join(dir, 'staleness.json');
+  const runtime = args.flags.get('runtime') ?? null;
+
+  if (!existsSync(join(dir, 'index.json'))) {
+    process.stderr.write('error: catalog/index.json is missing; run `catalog` first\n');
+    return 2;
+  }
+
+  const index = JSON.parse(readFileSync(join(dir, 'index.json'), 'utf8')) as {
+    entries: Array<{ path: string }>;
+  };
+
+  const inputs: StalenessInput[] = [];
+  for (const entry of index.entries) {
+    const file = join(REPO_ROOT, entry.path);
+    if (!existsSync(file)) continue;
+    const report = JSON.parse(readFileSync(file, 'utf8')) as Record<string, any>;
+    inputs.push({
+      reportId: String(report.reportId),
+      name: String(report.subject?.name),
+      version: String(report.subject?.version),
+      runtimeVersion: String(report.runtime?.dshVersion ?? 'unknown'),
+    });
+  }
+
+  process.stderr.write(`checking ${inputs.length} report(s) against the registry\n`);
+  const report = await assessStaleness(inputs, { ...(runtime ? { runtimeVersion: runtime } : {}) });
+
+  mkdirSync(dirname(out), { recursive: true });
+  writeFileSync(out, `${JSON.stringify(report, null, 2)}\n`);
+
+  process.stderr.write(
+    `\ncurrent ${report.counts.current}  stale ${report.counts.stale}  unknown ${report.counts.unknown}\n`,
+  );
+  for (const entry of report.entries.filter((e) => e.status !== 'current').slice(0, 10)) {
+    process.stderr.write(`  ${entry.status.padEnd(8)} ${entry.reportId} — ${entry.reasons[0] ?? ''}\n`);
+  }
+  return 0;
+}
+
+/**
+ * Supersedes a published report with a re-run, additively.
+ *
+ * Refuses to drop evidence, and computes the diff rather than trusting a
+ * changelog to describe it. See docs/appeals.md.
+ */
+function commandAmend(args: ParsedArgs): number {
+  const nextPath = args.positional[0];
+  const previousPath = args.flags.get('previous');
+  const change = args.flags.get('change');
+
+  if (!nextPath || !previousPath || !change) {
+    process.stderr.write('error: amend requires <report.json> --previous <report.json> --change <why>\n');
+    return 2;
+  }
+
+  const next = JSON.parse(readFileSync(nextPath, 'utf8')) as Record<string, any>;
+  const previous = JSON.parse(readFileSync(previousPath, 'utf8')) as Record<string, any>;
+
+  let amended;
+  try {
+    amended = amendReport(previous, next, { change, ...(args.flags.get('date') ? { date: args.flags.get('date') as string } : {}) });
+  } catch (error) {
+    if (error instanceof AmendmentError) {
+      process.stderr.write(`refused (${error.reason}): ${error.message}\n`);
+      return 1;
+    }
+    throw error;
+  }
+
+  const issues = validateReport(amended.report, loadSchema(SCHEMA_PATH));
+  if (issues.length > 0) {
+    process.stderr.write(`error: the amended report fails its own schema (${issues.length} issue(s)):\n`);
+    for (const issue of issues) process.stderr.write(`  ${issue.path}: ${issue.message}\n`);
+    return 1;
+  }
+
+  const out = args.flags.get('out');
+  const text = `${JSON.stringify(amended.report, null, 2)}\n`;
+  if (out) {
+    mkdirSync(dirname(out), { recursive: true });
+    writeFileSync(out, text);
+    process.stderr.write(`wrote ${out}\n`);
+  } else {
+    process.stdout.write(text);
+  }
+
+  process.stderr.write(
+    `\n${amended.diff.supersedes} -> ${amended.diff.reportId}\n  ${describeDiff(amended.diff)}\n`,
+  );
+  return 0;
+}
+
+/**
  * Renders `catalog/` into static HTML. No framework, no client JavaScript, no
  * network: every conclusion on a report page links to the evidence entry it
  * rests on, which is the property the pages exist to demonstrate.
@@ -188,7 +295,12 @@ function commandSite(args: ParsedArgs): number {
     reports.push({ slug: slugFor(String(report.subject?.name ?? entry.repoPath)), report });
   }
 
-  const built = buildSite({ index: index as never, reports }, { outDir: out });
+  const stalenessPath = args.flags.get('staleness') ?? join(dir, 'staleness.json');
+  const staleness = existsSync(stalenessPath)
+    ? (JSON.parse(readFileSync(stalenessPath, 'utf8')) as { entries: never[] })
+    : null;
+
+  const built = buildSite({ index: index as never, reports, staleness }, { outDir: out });
 
   const surveyPath = args.flags.get('survey') ?? join(REPO_ROOT, 'docs', 'survey', 'npm-dsh-plugin-250.json');
   if (existsSync(surveyPath)) {
@@ -343,12 +455,36 @@ function commandCatalog(args: ParsedArgs): number {
   }
 
   const schema = loadSchema(SCHEMA_PATH);
-  const files = (readdirSync(dir, { recursive: true, encoding: 'utf8' }) as string[])
-    .filter((f) => f.endsWith('.json') && basename(f) !== 'index.json')
+  // Reports live in a registry subdirectory (`catalog/npm/<name>.json`).
+  // Sibling artefacts of the catalogue itself — staleness.json — share the
+  // directory and are not reports. A root-level file that nevertheless IS a
+  // report is a mistake worth failing on rather than silently skipping.
+  const all = (readdirSync(dir, { recursive: true, encoding: 'utf8' }) as string[])
+    .filter((f) => f.endsWith('.json') && basename(f) !== 'index.json' && basename(f) !== 'staleness.json')
     .sort();
+
+  const files: string[] = [];
+  const misplaced: string[] = [];
+  for (const relative of all) {
+    if (relative.includes('/')) {
+      files.push(relative);
+      continue;
+    }
+    try {
+      const parsed = JSON.parse(readFileSync(join(dir, relative), 'utf8')) as Record<string, unknown>;
+      if (parsed.schema === 'dsh.plugin.report.v1') misplaced.push(relative);
+    } catch {
+      // Not readable JSON at the catalogue root; nothing to do with reports.
+    }
+  }
 
   const summaries = [];
   let failed = 0;
+
+  for (const relative of misplaced) {
+    process.stderr.write(`FAIL ${relative}: a report must live in a registry subdirectory (catalog/<registry>/)\n`);
+    failed += 1;
+  }
 
   for (const relative of files) {
     const full = join(dir, relative);
@@ -439,6 +575,12 @@ async function main(): Promise<void> {
         break;
       case 'badge':
         code = commandBadge(args);
+        break;
+      case 'stale':
+        code = await commandStale(args);
+        break;
+      case 'amend':
+        code = commandAmend(args);
         break;
       default:
         process.stderr.write(`error: unknown command "${args.command}"\n\n`);

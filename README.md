@@ -3,13 +3,14 @@
 **Execution-verified plugin reports for DeepSeek Harness** — install it, load it, run it, measure it.
 Evidence-linked, reproducible, not another star list.
 
-[Method](docs/method.md) · [Report schema](docs/schema.md) · [Security](docs/security.md) · [Catalog](catalog/index.json)
+[Site](https://citrusli2026.github.io/dsh-verified-plugins/) · [Method](docs/method.md) · [Report schema](docs/schema.md) · [Security](docs/security.md) · [Appeals](docs/appeals.md) · [Catalog](catalog/index.json)
 
-> **Status: V0–V5 done.** All seven dimensions run end to end, batches are
-> supported, and the reports are published — **[browse the
-> site](https://citrusli2026.github.io/dsh-verified-plugins/)**. 24 reports:
-> 19 `verified`, 4 `partial`, 1 `not-installable`. Sessions run against a
-> replayed transcript, never a credential, and every report says so. Read
+> **Status: V0–V6 done.** All seven dimensions run end to end, batches are
+> supported, reports are published and freshness is tracked —
+> **[browse the site](https://citrusli2026.github.io/dsh-verified-plugins/)**.
+> 24 reports: 19 `verified`, 4 `partial`, 1 `not-installable`, 1 now **stale**.
+> Sessions run against a replayed transcript, never a credential. Dispute a
+> report via [docs/appeals.md](docs/appeals.md). Read
 > [docs/security.md](docs/security.md) first.
 
 ---
@@ -161,6 +162,21 @@ to be DSH plugins actually are. Of the first 250 packages under the npm
 `dsh-plugin` keyword, **240 declare an installable bundle but only 130 are
 peer-compatible with the pinned runtime** — so 110 would be refused at install.
 Registry metadata only; no container, no credential, 26 seconds.
+
+## Freshness and corrections
+
+A report is a snapshot. `catalog/staleness.json` records which subjects have
+been republished since, and the site marks them — a **stale** report is not a
+wrong report, it describes a version that is no longer the latest.
+
+Corrections are additive and mechanically guarded: `supersedes` plus a
+`changelog` entry whose description is **computed from both reports**, so a
+correction cannot misdescribe itself, and an amendment that drops evidence is
+refused. See [docs/appeals.md](docs/appeals.md).
+
+Every failure this verifier has actually had is listed by incident in
+[docs/method.md](docs/method.md) § 6 — eight false positives, four false
+negatives, and three false passes, two of them fixed.
 
 ## Known limitations
 
