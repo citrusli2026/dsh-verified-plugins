@@ -1,0 +1,18 @@
+# policy-expect: clean
+# A scheduled executor. `schedule` is maintainer-controlled — the repository's
+# own clock causes it, not an outside contributor — so it may run plugin code.
+# This is the shape nightly.yml takes.
+name: good-scheduled-exec
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+permissions: {}
+jobs:
+  rescan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - run: pnpm add some-dsh-plugin

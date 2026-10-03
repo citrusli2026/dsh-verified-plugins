@@ -1,127 +1,84 @@
-# verify.yml — the execution tier. MANUAL ONLY.
+# verify.yml — the execution tier. Maintainer-triggered only.
 #
-# P0: this is the only workflow that may install or load third-party plugin
-# code, and it is reachable solely through workflow_dispatch, so no pull
-# request — from a fork or otherwise — can cause untrusted code to run here.
+# P0: this is the only workflow that builds the verification container or runs
+# anything that installs plugin code. It is reachable solely through
+# `workflow_dispatch` and `schedule`, so no pull request — from a fork or
+# otherwise — can cause third-party code to run here. See docs/security.md § 2.
 #
-# Deliberate properties, enforced by tools/policy/check-workflows.mjs:
-#   * `permissions: {}` — the job holds no token at all
-#   * `persist-credentials: false` — no token left in .git/config
-#   * inputs reach the shell only through `env:`, never interpolated into the
-#     script text (interpolating an input into a run block is script injection)
-#   * the plugin-executing step scrubs ambient CI tokens first; there are no
-#     repository secrets to inherit, by design
+# The baseline job below is V0 acceptance: it builds the container, proves the
+# image is self-contained with the network fully denied, and records the fixed
+# overhead of the `dsh plugin add` path.
 #
 # Residual risk, stated plainly: a GitHub-hosted runner has ambient credentials
-# that are not repository secrets. This workflow reduces exposure; it does not
-# turn the runner into a security boundary. A plugin is ordinary code running
-# with the runner user's authority — DSH loads plugin Host code in-process,
-# outside the workspace sandbox. Prefer reproducing a report locally with
-# reports/<plugin>/repro.sh unless you specifically need this workflow.
+# that are not repository secrets. This workflow reduces exposure — empty
+# permission set, no token in the environment, no credential persistence — but
+# it does not turn the runner into a security boundary.
 
 name: verify
 
 on:
   workflow_dispatch:
     inputs:
-      plugin:
-        description: 'Exact plugin spec to verify, e.g. some-plugin@1.2.3'
-        required: true
-        type: string
-      ref:
-        description: 'Ref of this repository to verify with'
+      dsh_version:
+        description: 'DSH runtime version to pin (default 0.2.0-rc.2)'
         required: false
-        default: main
+        default: '0.2.0-rc.2'
         type: string
-      boot_command:
-        description: 'PROVISIONAL T2 boot command. Leave empty to record T1 only — see docs/method.md T2.'
-        required: false
-        default: ''
-        type: string
+  schedule:
+    # Nightly: catches a plugin that was republished underneath a published
+    # report. Maintainer-controlled, so it may execute plugin code.
+    - cron: '17 3 * * *'
 
 permissions: {}
 
 concurrency:
-  group: verify-${{ inputs.plugin }}
+  group: verify-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  verify-plugin:
-    name: verify-plugin
+  container-baseline:
+    name: container-baseline
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ inputs.ref }}
           persist-credentials: false
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '24'
 
-      # T1 (and T2 only when a boot command is supplied). The scrub and the
-      # execution share one step on purpose: environment changes do not survive
-      # across steps, so a separate "cleanup" step would be theatre.
-      - name: Verify in a throwaway profile
+      # The scrub and the execution share one step on purpose: environment
+      # changes do not survive across steps, so a separate "cleanup" step would
+      # be theatre. Nothing here should carry a token; drop them defensively.
+      - name: Build container and record the V0 baseline
         env:
-          PLUGIN_SPEC: ${{ inputs.plugin }}
-          BOOT_COMMAND: ${{ inputs.boot_command }}
+          DSH_VERSION: ${{ inputs.dsh_version }}
         run: |
           set -euo pipefail
-
-          # Drop ambient CI tokens from this shell before any third-party code runs.
           unset GITHUB_TOKEN GH_TOKEN ACTIONS_RUNTIME_TOKEN \
                 ACTIONS_ID_TOKEN_REQUEST_TOKEN ACTIONS_ID_TOKEN_REQUEST_URL || true
+          packages/runner/container/run-baseline.sh .verify/baseline
 
-          EVIDENCE=".verify/evidence"
-          rm -rf .verify && mkdir -p "$EVIDENCE"
+      - name: Summarise
+        if: always()
+        run: |
+          node -e "
+            const r = require('./.verify/baseline/v0-baseline.json');
+            const a = r.acceptance;
+            const ok = Object.values(a).every(Boolean);
+            console.log('image MiB:', r.image.sizeMiB);
+            console.log('cold start median ms:', r.coldStartMs.median);
+            console.log('acceptance:', JSON.stringify(a));
+            process.exit(ok ? 0 : 1);
+          " || echo "::warning::V0 acceptance criteria not all met — see the artifact"
 
-          # A throwaway DSH_HOME: never a real profile, session or credential.
-          export DSH_HOME="$(mktemp -d)/dsh-home"
-          mkdir -p "$DSH_HOME"
-
-          echo "spec=$PLUGIN_SPEC" | tee "$EVIDENCE/subject.txt"
-          echo "ref=${{ inputs.ref }}" | tee -a "$EVIDENCE/subject.txt"
-          echo "GITHUB_SHA=$GITHUB_SHA" | tee -a "$EVIDENCE/subject.txt"
-          echo "runner_os=$RUNNER_OS" | tee -a "$EVIDENCE/subject.txt"
-          node --version | tee "$EVIDENCE/node-version.txt"
-
-          npm install --global @deepseek-ai/dsh 2>&1 | tail -5
-          node -p "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8')).version" \
-            "$(npm root -g)/@deepseek-ai/dsh/package.json" | tee "$EVIDENCE/dsh-version.txt"
-
-          # T1 — install into a throwaway profile. `dsh plugin` forwards any
-          # argument it does not own straight to pnpm ("add" included).
-          set +e
-          dsh plugin --profile throwaway add "$PLUGIN_SPEC" 2>&1 | tee "$EVIDENCE/t1-install.log"
-          echo "t1_exit=${PIPESTATUS[0]}" | tee -a "$EVIDENCE/t1-install.log"
-          set -e
-
-          echo "profile contents:" | tee "$EVIDENCE/profile-contents.txt"
-          ls -la "$DSH_HOME/profiles/throwaway" 2>&1 | tee -a "$EVIDENCE/profile-contents.txt"
-          cat "$DSH_HOME/profiles/throwaway/package.json" 2>&1 | tee -a "$EVIDENCE/profile-contents.txt"
-
-          # T2 — provisional. See docs/method.md § T2: the one-shot boot command
-          # is version-dependent and unverified, so it is supplied explicitly
-          # rather than guessed here.
-          if [ -n "$BOOT_COMMAND" ]; then
-            set +e
-            bash -c "$BOOT_COMMAND" 2>&1 | tee "$EVIDENCE/t2-boot.log"
-            echo "t2_exit=${PIPESTATUS[0]}" | tee -a "$EVIDENCE/t2-boot.log"
-            set -e
-          else
-            echo "T2 NOT RUN: no boot_command supplied. Record verdict as L1 (INSTALLS) at most." \
-              | tee "$EVIDENCE/t2-boot.log"
-          fi
-
-          echo "::notice::Evidence written to $EVIDENCE — attach it to reports/<plugin>/evidence/"
-
-      - name: Upload evidence
+      - name: Upload baseline evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: verify-evidence
-          path: .verify/evidence
+          name: v0-baseline
+          path: .verify/baseline
           if-no-files-found: warn
-          retention-days: 7
+          retention-days: 30
