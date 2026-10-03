@@ -71,6 +71,12 @@ Stop, record `blocked`, and surface it — do not route around any of these:
 - Never let a verdict exceed the dimensions that executed. It is derived, and
   the validator rejects a mismatch — but do not rely on the validator to catch
   a claim you knew was unearned.
+- **Never resolve a plugin by bare name.** Read the full version list and the
+  dist-tags. `@deepseek-ai/dsh-llm-replay`'s `latest` tag points at a version
+  from an older runtime generation whose peers no current runtime can satisfy;
+  the matching version is on `next`. Resolving by bare name produced a wrong
+  "blocked" conclusion at three levels of this repo (see
+  `docs/evidence/L3.md`).
 
 ## Working conventions
 

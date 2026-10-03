@@ -247,7 +247,15 @@ refused. Reports record the *observed* runtime, never treat a declared
 `engines.dsh` range as evidence of compatibility, and report the peer verdict
 separately because it is enforced.
 
-**F2 — the official keyless replay plugin is not installable as published.**
+**F2 — CORRECTED: the official replay plugin is installable; the *default*
+resolution is not.** This was recorded as a capability limit and was wrong. See
+[docs/evidence/L3.md](evidence/L3.md). `@deepseek-ai/dsh-llm-replay` publishes 32
+versions and its `latest` tag points at `0.0.1-rc.1`, whose peers no current
+runtime satisfies; `0.2.0-rc.2`, which matches the pinned runtime exactly, is on
+the `next` tag and installs cleanly. The lesson generalises into a rule for this
+project: **never resolve a plugin by bare name** — read the full version list and
+the dist-tags. Retained below as the original (incorrect) reasoning.
+
 `@deepseek-ai/dsh-llm-replay@0.0.1-rc.1` declares
 `@deepseek-ai/dsh-compact@^0.0.1-rc.1`, and that package returns 404 on npm.
 Its other peers are `^0.0.1-rc.1`, and a caret range on `0.0.x` pins below
