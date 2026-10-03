@@ -1,0 +1,573 @@
+{
+  "schema": "dsh.plugin.report.v1",
+  "reportId": "npm:@michengai/dsh-archive-manager@1.0.11",
+  "generatedAt": "2026-10-03T16:10:38.935Z",
+  "verifier": {
+    "name": "dsh-verified",
+    "version": "0.1.0",
+    "commit": "ec8d77c8d74dce7dfc3070ef2ab081e28d154612"
+  },
+  "subject": {
+    "spec": "@michengai/dsh-archive-manager@1.0.11",
+    "name": "@michengai/dsh-archive-manager",
+    "version": "1.0.11",
+    "registry": "https://registry.npmjs.org",
+    "tarball": "https://registry.npmjs.org/@michengai/dsh-archive-manager/-/dsh-archive-manager-1.0.11.tgz",
+    "integrity": "sha512-fg6bs3GMxHjDHdqH9rQsLIC4DKeTxRygIrim/HP+ID8xjhoaF4RYJx6SuODiBPEes7oTLS2GUvljnOssdzuq/Q==",
+    "shasum": "43463a0ff059390672bad272949997fee43c09b6",
+    "repository": "git+https://github.com/MichengAI/dsh-archive-manager.git",
+    "license": "Apache-2.0",
+    "publishedAt": "2026-10-01T10:44:43.699Z",
+    "dshBundlePatch": "./cordis.patch.yml"
+  },
+  "runtime": {
+    "dshVersion": "0.2.0-rc.2",
+    "nodeVersion": "v24.21.0",
+    "os": "linux 6.17.0-1022-azure",
+    "arch": "x64"
+  },
+  "container": {
+    "image": "none",
+    "imageDigest": null,
+    "notes": "executed in a one-off container; the subject was installed, booted and removed there"
+  },
+  "verdict": "verified",
+  "dimensions": {
+    "L0_qualification": {
+      "id": "L0",
+      "status": "pass",
+      "summary": "declares dsh.bundle.patch and every declared patch path exists (24 files, 1662279 bytes unpacked)",
+      "metrics": {
+        "fileCount": 24,
+        "unpackedBytes": 1662279,
+        "patchPaths": [
+          "./cordis.patch.yml"
+        ],
+        "declaredEnginesDsh": null,
+        "shipsSource": false
+      },
+      "evidenceRefs": [
+        "e-resolve",
+        "e-tarball",
+        "e-l0"
+      ],
+      "notes": [
+        "dsh.manifestVersion is not declared; the reader does not infer a default",
+        "tarball ships no src/ paths, so capability findings are limited to build output"
+      ]
+    },
+    "L1_install": {
+      "id": "L1",
+      "status": "pass",
+      "summary": "installed",
+      "metrics": {
+        "durationMs": 2176,
+        "exitCode": 0,
+        "declaredPeers": null,
+        "bundlesAfterInstall": [
+          "@deepseek-ai/dsh-base",
+          "@michengai/dsh-archive-manager"
+        ],
+        "pendingBuildScripts": [],
+        "buildScriptsApproved": 0,
+        "diagnosticsLog": null
+      },
+      "evidenceRefs": [
+        "e-l1-install"
+      ],
+      "notes": [
+        "the CLI completed the install with exit code 0",
+        "no dependency build script was approved by the verifier; approval permits commands with the host user permissions"
+      ]
+    },
+    "L2_load": {
+      "id": "L2",
+      "status": "pass",
+      "summary": "booted, mounted and stayed alive",
+      "metrics": {
+        "bootBoundMs": 25000,
+        "durationMs": 25070,
+        "signal": null
+      },
+      "evidenceRefs": [
+        "e-l2-boot"
+      ],
+      "notes": [
+        "the process was still running when the wall-clock bound reached it and reported no failure diagnostics, so the bundle was neither skipped nor rejected",
+        "the fiber phase is not read directly: an early exit with diagnostics is the load-failure signal, and a boot that settles and waits is the success signal"
+      ]
+    },
+    "L3_run": {
+      "id": "L3",
+      "status": "pass",
+      "summary": "a session completed with no credential",
+      "metrics": {
+        "replayAdapter": "@deepseek-ai/dsh-llm-replay@0.2.0-rc.2",
+        "probeTask": "reply with any text",
+        "events": {
+          "session": "session-cfb1a1b2-09ca-418f-94f2-49e23a7de350",
+          "turnEndReason": {
+            "kind": "completed"
+          },
+          "finalText": "Replay fixture: no provider was called.",
+          "textEventCount": 1,
+          "error": null,
+          "exitCode": 0,
+          "durationMs": 1271,
+          "eventCount": 7
+        }
+      },
+      "evidenceRefs": [
+        "e-l3-session"
+      ],
+      "notes": [
+        "the model call was served by the official replay adapter from a fixture authored in this repository; no provider was contacted and no credential was present",
+        "probe task, stated verbatim: \"reply with any text\""
+      ]
+    },
+    "L4_capability": {
+      "id": "L4",
+      "status": "pass",
+      "summary": "2 capability signal(s) present across 11 scanned file(s)",
+      "metrics": {
+        "scannedFiles": 11,
+        "scannedBytes": 1086465,
+        "skippedFiles": 0
+      },
+      "evidenceRefs": [
+        "e-l4",
+        "e-patch"
+      ],
+      "notes": [
+        "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+        "static analysis cannot see dynamically constructed code or prove intent"
+      ]
+    },
+    "L5_overhead": {
+      "id": "L5",
+      "status": "pass",
+      "summary": "no significant delta across 6 sampled run(s)",
+      "metrics": {
+        "samples": 6,
+        "baseline": {
+          "atMs": 8040,
+          "rss": 199651328,
+          "heapUsed": 68538392,
+          "external": 5188103,
+          "activeTotal": 10,
+          "watchers": 7,
+          "timers": 0,
+          "libuvHandles": 22,
+          "libuvActiveHandles": 17,
+          "fds": 20
+        },
+        "activated": {
+          "atMs": 8039,
+          "rss": 200302592,
+          "heapUsed": 75331040,
+          "external": 5140271,
+          "activeTotal": 11,
+          "watchers": 8,
+          "timers": 0,
+          "libuvHandles": 23,
+          "libuvActiveHandles": 18,
+          "fds": 20
+        },
+        "delta": {
+          "atMs": -1,
+          "rss": 651264,
+          "heapUsed": 6792648,
+          "external": -47832,
+          "activeTotal": 1,
+          "watchers": 1,
+          "timers": 0,
+          "libuvHandles": 1,
+          "libuvActiveHandles": 1,
+          "fds": 0
+        }
+      },
+      "evidenceRefs": [
+        "e-l5-overhead"
+      ],
+      "notes": [
+        "no metric moved beyond the significance thresholds; that is the finding",
+        "differential attribution: baseline profile first, then the subject activated, same container and order",
+        "thresholds are coarse on purpose — order-of-magnitude watcher changes, RSS growth beyond 100 MiB, steady state more than 2 s later"
+      ]
+    },
+    "L6_uninstall": {
+      "id": "L6",
+      "status": "pass",
+      "summary": "removed without residue",
+      "metrics": {
+        "residue": [],
+        "durationMs": 262
+      },
+      "evidenceRefs": [
+        "e-l6-remove"
+      ],
+      "notes": [
+        "the profile retains no bundle selection, dependency entry or files for the subject"
+      ]
+    }
+  },
+  "capabilities": [
+    {
+      "id": "network_egress",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "can make outbound network requests",
+      "evidence": [
+        {
+          "file": "package/lib/plugin-updater.js",
+          "line": 123,
+          "snippet": "const response = await fetch(`https://registry.npmjs.org/${encodeURIComponent(packageName)}/latest`, { signal: AbortSignal.timeout(8e3) });"
+        },
+        {
+          "file": "package/lib/client.js",
+          "line": 306,
+          "snippet": "`;function X6(){if(document.getElementById(JO)!==null)return;let e=document.createElement(\"style\");e.id=JO,e.textContent=G6,(document.head??document.documentElement).append(e)}o(X6,\"ensureStyle\");func…"
+        }
+      ]
+    },
+    {
+      "id": "spawns_process",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "spawns or would spawn an operating-system process",
+      "evidence": [
+        {
+          "file": "package/lib/plugin-updater.js",
+          "line": 2,
+          "snippet": "import { spawn } from \"node:child_process\";"
+        },
+        {
+          "file": "package/lib/client.js",
+          "line": 306,
+          "snippet": "`;function X6(){if(document.getElementById(JO)!==null)return;let e=document.createElement(\"style\");e.id=JO,e.textContent=G6,(document.head??document.documentElement).append(e)}o(X6,\"ensureStyle\");func…"
+        }
+      ]
+    },
+    {
+      "id": "eval_or_dynamic_code",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "eval or synthesised code; common and often benign, and frequently bundler output",
+      "evidence": []
+    },
+    {
+      "id": "hooks_api_gate",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks the API/LLM path, so it can observe or alter provider traffic",
+      "evidence": []
+    },
+    {
+      "id": "hooks_system_prompt",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks system-prompt assembly, so it can influence what the model is told",
+      "evidence": []
+    },
+    {
+      "id": "listens_on_port",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "opens a listening socket",
+      "evidence": []
+    },
+    {
+      "id": "reads_secret_env",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "reads an environment variable whose name looks credential-shaped",
+      "evidence": []
+    },
+    {
+      "id": "runtime_patch",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "patches runtime objects rather than only registering its own services",
+      "evidence": []
+    },
+    {
+      "id": "watches_filesystem",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "watches the filesystem; a recursive workspace watch is the documented cause of host stalls",
+      "evidence": []
+    },
+    {
+      "id": "writes_outside_workspace",
+      "present": false,
+      "confidence": "low",
+      "attribution": "unknown",
+      "notes": "resolves a path outside the workspace (e.g. os.homedir(), DSH_HOME), which is normal for DSH profile handling; static analysis cannot determine whether it also writes there",
+      "evidence": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e-resolve",
+      "kind": "command",
+      "command": "resolve @michengai/dsh-archive-manager@1.0.11 -> @michengai/dsh-archive-manager@1.0.11",
+      "exitCode": 0,
+      "durationMs": 356,
+      "excerpt": "{\n  \"name\": \"@michengai/dsh-archive-manager\",\n  \"version\": \"1.0.11\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/@michengai/dsh-archive-manager/-/dsh-archive-manager-1.0.11.tgz\",\n  \"advertisedIntegrity\": \"sha512-fg6bs3GMxHjDHdqH9rQsLIC4DKeTxRygIrim/HP+ID8xjhoaF4RYJx6SuODiBPEes7oTLS2GUvljnOssdzuq/Q==\",\n  \"publishedAt\": \"2026-10-01T10:44:43.699Z\"\n}"
+    },
+    {
+      "id": "e-tarball",
+      "kind": "artifact",
+      "command": "fetch https://registry.npmjs.org/@michengai/dsh-archive-manager/-/dsh-archive-manager-1.0.11.tgz",
+      "exitCode": 0,
+      "durationMs": 199,
+      "excerpt": "{\n  \"bytes\": 841746,\n  \"resolvedIntegrity\": \"sha512-fg6bs3GMxHjDHdqH9rQsLIC4DKeTxRygIrim/HP+ID8xjhoaF4RYJx6SuODiBPEes7oTLS2GUvljnOssdzuq/Q==\",\n  \"advertisedIntegrity\": \"sha512-fg6bs3GMxHjDHdqH9rQsLIC4DKeTxRygIrim/HP+ID8xjhoaF4RYJx6SuODiBPEes7oTLS2GUvljnOssdzuq/Q==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"45dc0aec0a272db99db1119c206fd57f7c727153c8c1448f7d22cbed2c82b83a\"\n}",
+      "excerptBytes": 383,
+      "sha256": "45dc0aec0a272db99db1119c206fd57f7c727153c8c1448f7d22cbed2c82b83a"
+    },
+    {
+      "id": "e-l0",
+      "kind": "static",
+      "command": "read published package.json and verify declared dsh.bundle.patch paths exist",
+      "excerpt": "{\n  \"status\": \"pass\",\n  \"reasons\": [],\n  \"declared\": {\n    \"manifestVersion\": null,\n    \"bundlePatch\": [\n      \"./cordis.patch.yml\"\n    ],\n    \"clientPlatform\": \"web\",\n    \"enginesDsh\": null,\n    \"enginesNode\": \"^22.19.0 || >=24.0.0\"\n  },\n  \"missingPatchPaths\": [],\n  \"fileCount\": 24,\n  \"unpackedBytes\": 1662279,\n  \"shipsSource\": false\n}",
+      "excerptBytes": 337
+    },
+    {
+      "id": "e-patch",
+      "kind": "static",
+      "command": "read cordis.patch.yml",
+      "excerpt": "# 保留官方工作区 UI，仅替换归档需要的后端服务。\n# 自定义侧栏通过优先级覆盖插槽；发布后的安装命令：\n#   dsh plugin --profile web add @michengai/dsh-archive-manager\n#\n# workspace / session-projection-cache：宿主注册表与投影缓存，不是设置页。\n# 换成本插件子类，才能加批量归档、永久删除和安全缓存域。\n# ui-settings-unarchive-sessions：DSH 0.1.6+官方「已归档会话」设置页，只能单条恢复；\n# 禁用后只保留本插件的归档管理入口。旧宿主没有该 id 时补丁被忽略。\n- id: workspace\n  disabled: true\n- id: session-projection-cache\n  disabled: true\n- id: ui-settings-unarchive-sessions\n  disabled: true\n- id: ui-workspace\n  disabled: false\n- insert:\n    - id: workspace-archive-manager\n      name: '@michengai/dsh-archive-manager/workspace'\n    - id: session-projection-cache-archive-manager\n      name: '@michengai/dsh-archive-manager/projcache'\n      config:\n        writeEveryEvents: 200\n        writeIntervalMs: 5000\n    - id: ui-workspace-archive-manager\n      name: '@michengai/dsh-archive-manager'\n",
+      "excerptBytes": 1127,
+      "sha256": "78c8090e5853ae45e9da64225882d316c49329910a806adc293147036a34e680"
+    },
+    {
+      "id": "e-l4",
+      "kind": "static",
+      "command": "scan 11 shipped source file(s) for capability signatures",
+      "excerpt": "{\n  \"present\": [\n    {\n      \"id\": \"network_egress\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/lib/plugin-updater.js\",\n        \"line\": 123,\n        \"snippet\": \"const response = await fetch(`https://registry.npmjs.org/${encodeURIComponent(packageName)}/latest`, { signal: AbortSignal.timeout(8e3) });\"\n      }\n    },\n    {\n      \"id\": \"spawns_process\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/lib/plugin-updater.js\",\n        \"line\": 2,\n        \"snippet\": \"import { spawn } from \\\"node:child_process\\\";\"\n      }\n    }\n  ],\n  \"scannedFiles\": 11,\n  \"skippedFiles\": 0,\n  \"limits\": [\n    \"the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency\",\n    \"static analysis cannot see dynamically constructed code or prove intent\"\n  ]\n}",
+      "excerptBytes": 935
+    },
+    {
+      "id": "e-l1-install",
+      "kind": "command",
+      "command": "dsh plugin --profile verify add @michengai/dsh-archive-manager@1.0.11",
+      "exitCode": 0,
+      "durationMs": 2176,
+      "excerpt": "Progress: resolved 1, reused 0, downloaded 0, added 0\nPackages are hard linked from the content-addressable store to the virtual store.\n  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nPackages: +1\n+\nProgress: resolved 1, reused 0, downloaded 1, added 1, done\n[WARN] Issues with peer dependencies found. Run \"pnpm peers check\" to list them.\n\ndependencies:\n+ @michengai/dsh-archive-manager 1.0.11\n\nDone in 343ms using pnpm v12.8.1\ndsh: initialized profile verify at /work/dsh-home/profiles/verify\n",
+      "excerptBytes": 579,
+      "truncated": false,
+      "sha256": "4d67277cbc0554f7ad4166b2363022ede1aa78154b0c11af2fe710b4986c199f"
+    },
+    {
+      "id": "e-l2-boot",
+      "kind": "command",
+      "command": "dsh --profile verify",
+      "exitCode": 0,
+      "durationMs": 25070,
+      "excerpt": "dsh: warning: 1 entry did not activate\nui-workspace-archive-manager (@michengai/dsh-archive-manager): pending (waiting for service: webServer)\n",
+      "excerptBytes": 143,
+      "truncated": false,
+      "sha256": "86d073cf1e5b4516c3b1f39682596d49f71be2db391bb42a7092dd53041913f7"
+    },
+    {
+      "id": "e-l6-remove",
+      "kind": "command",
+      "command": "dsh plugin --profile verify remove @michengai/dsh-archive-manager",
+      "exitCode": 0,
+      "durationMs": 262,
+      "excerpt": "Packages: -1\n-\n\ndependencies:\n- @michengai/dsh-archive-manager 1.0.11\n\nDone in 11ms using pnpm v12.8.1\n",
+      "excerptBytes": 103,
+      "truncated": false,
+      "sha256": "51417f1ab5b04fde820158debc8d8728ea795b51b27ffaa89e2aca52166312c3"
+    },
+    {
+      "id": "e-l5-overhead",
+      "kind": "sample",
+      "command": "dsh --profile <baseline|activated> with the host sampler injected via NODE_OPTIONS=--import",
+      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8040,\n    \"rss\": 199651328,\n    \"heapUsed\": 68538392,\n    \"external\": 5188103,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8039,\n    \"rss\": 200302592,\n    \"heapUsed\": 75331040,\n    \"external\": 5140271,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 23,\n    \"libuvActiveHandles\": 18,\n    \"fds\": 20\n  },\n  \"delta\": {\n    \"atMs\": -1,\n    \"rss\": 651264,\n    \"heapUsed\": 6792648,\n    \"external\": -47832,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 1,\n    \"libuvActiveHandles\": 1,\n    \"fds\": 0\n  },\n  \"significant\": []\n}"
+    },
+    {
+      "id": "e-l3-session",
+      "kind": "command",
+      "command": "dsh --profile l3 --patch /work/fixtures/replay/l3-overlay.yml --json reply with any text",
+      "exitCode": 0,
+      "durationMs": 1271,
+      "excerpt": "{\"type\":\"session\",\"sessionId\":\"session-cfb1a1b2-09ca-418f-94f2-49e23a7de350\",\"cwd\":\"/work\"}\n{\"type\":\"status\",\"phase\":\"turn_start\",\"turn\":1}\n{\"type\":\"status\",\"phase\":\"step_start\",\"turn\":1,\"step\":1}\n{\"type\":\"text\",\"text\":\"Replay fixture: no provider was called.\"}\n{\"type\":\"status\",\"phase\":\"step_end\",\"turn\":1,\"step\":1}\n{\"type\":\"status\",\"phase\":\"turn_end\",\"turn\":1,\"reason\":{\"kind\":\"completed\"}}\n{\"type\":\"final\",\"text\":\"Replay fixture: no provider was called.\"}\ndsh: warning: 1 entry did not activate\nui-workspace-archive-manager (@michengai/dsh-archive-manager): pending (waiting for service: webServer)\n",
+      "excerptBytes": 602,
+      "truncated": false,
+      "sha256": "a806cac7abaa83fe2a898ff2b500f2623835723d29af2cb3042f350ff9e15eb4"
+    }
+  ],
+  "redactions": [],
+  "disclaimers": [
+    "Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence."
+  ],
+  "limits": [
+    "the artifact ships no source paths, so capability findings describe build output only; code-level attribution between the author and inlined dependencies is not resolvable from this artifact",
+    "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+    "static analysis cannot see dynamically constructed code or prove intent",
+    "L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model",
+    "the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase",
+    "no dependency build script was approved by this executor",
+    "overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta",
+    "sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test"
+  ],
+  "bundlePatch": {
+    "path": "cordis.patch.yml",
+    "present": true,
+    "bytes": 1127,
+    "entryCount": 8,
+    "disablesHostEntries": true,
+    "overridesConfig": true,
+    "usesJsExpressions": false,
+    "findings": [
+      {
+        "kind": "inserts-entry",
+        "line": 9,
+        "snippet": "- id: workspace"
+      },
+      {
+        "kind": "disables-entry",
+        "line": 10,
+        "snippet": "disabled: true"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 11,
+        "snippet": "- id: session-projection-cache"
+      },
+      {
+        "kind": "disables-entry",
+        "line": 12,
+        "snippet": "disabled: true"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 13,
+        "snippet": "- id: ui-settings-unarchive-sessions"
+      },
+      {
+        "kind": "disables-entry",
+        "line": 14,
+        "snippet": "disabled: true"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 15,
+        "snippet": "- id: ui-workspace"
+      },
+      {
+        "kind": "disables-entry",
+        "line": 16,
+        "snippet": "disabled: false"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 17,
+        "snippet": "- insert:"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 18,
+        "snippet": "- id: workspace-archive-manager"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 20,
+        "snippet": "- id: session-projection-cache-archive-manager"
+      },
+      {
+        "kind": "overrides-config",
+        "line": 22,
+        "snippet": "config:"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 25,
+        "snippet": "- id: ui-workspace-archive-manager"
+      }
+    ],
+    "notes": [
+      "textual analysis: a line number is provided for review, not a YAML object model"
+    ]
+  },
+  "overhead": {
+    "method": "differential",
+    "status": "no-significant-delta",
+    "samples": 6,
+    "baseline": {
+      "atMs": 8040,
+      "rss": 199651328,
+      "heapUsed": 68538392,
+      "external": 5188103,
+      "activeTotal": 10,
+      "watchers": 7,
+      "timers": 0,
+      "libuvHandles": 22,
+      "libuvActiveHandles": 17,
+      "fds": 20
+    },
+    "activated": {
+      "atMs": 8039,
+      "rss": 200302592,
+      "heapUsed": 75331040,
+      "external": 5140271,
+      "activeTotal": 11,
+      "watchers": 8,
+      "timers": 0,
+      "libuvHandles": 23,
+      "libuvActiveHandles": 18,
+      "fds": 20
+    },
+    "delta": {
+      "atMs": -1,
+      "rss": 651264,
+      "heapUsed": 6792648,
+      "external": -47832,
+      "activeTotal": 1,
+      "watchers": 1,
+      "timers": 0,
+      "libuvHandles": 1,
+      "libuvActiveHandles": 1,
+      "fds": 0
+    },
+    "significant": [],
+    "resourceKinds": {
+      "baseline": {
+        "PipeWrap": 3,
+        "FSEventWrap": 7,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 7,
+        "loop": 1
+      },
+      "activated": {
+        "PipeWrap": 3,
+        "FSEventWrap": 8,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 8,
+        "loop": 1
+      }
+    }
+  }
+}

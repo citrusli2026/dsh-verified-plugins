@@ -1,0 +1,545 @@
+{
+  "schema": "dsh.plugin.report.v1",
+  "reportId": "npm:@tt-a1i/archify-dsh@0.1.0",
+  "generatedAt": "2026-10-03T16:36:38.476Z",
+  "verifier": {
+    "name": "dsh-verified",
+    "version": "0.1.0",
+    "commit": "ec8d77c8d74dce7dfc3070ef2ab081e28d154612"
+  },
+  "subject": {
+    "spec": "@tt-a1i/archify-dsh@0.1.0",
+    "name": "@tt-a1i/archify-dsh",
+    "version": "0.1.0",
+    "registry": "https://registry.npmjs.org",
+    "tarball": "https://registry.npmjs.org/@tt-a1i/archify-dsh/-/archify-dsh-0.1.0.tgz",
+    "integrity": "sha512-D8fDqV6DV/vo80Gj/3rgidd+hwBbhTVncaVoD5Uhh+DbgYlEoQQOmBVbhU5HW33wE5OqJP/2HkTRPJ0hf7W0tA==",
+    "shasum": "1840447f80d0f06eef92bebbefa646bede5336a9",
+    "repository": "git+https://github.com/tt-a1i/archify.git",
+    "license": "MIT",
+    "publishedAt": "2026-08-14T09:12:28.700Z",
+    "dshBundlePatch": "./cordis.patch.yml"
+  },
+  "runtime": {
+    "dshVersion": "0.2.0-rc.2",
+    "nodeVersion": "v24.21.0",
+    "os": "linux 6.17.0-1022-azure",
+    "arch": "x64"
+  },
+  "container": {
+    "image": "none",
+    "imageDigest": null,
+    "notes": "executed in a one-off container; the subject was installed, booted and removed there"
+  },
+  "verdict": "verified",
+  "dimensions": {
+    "L0_qualification": {
+      "id": "L0",
+      "status": "pass",
+      "summary": "declares dsh.bundle.patch and every declared patch path exists (67 files, 4852827 bytes unpacked)",
+      "metrics": {
+        "fileCount": 67,
+        "unpackedBytes": 4852827,
+        "patchPaths": [
+          "./cordis.patch.yml"
+        ],
+        "declaredEnginesDsh": null,
+        "shipsSource": false
+      },
+      "evidenceRefs": [
+        "e-resolve",
+        "e-tarball",
+        "e-l0"
+      ],
+      "notes": [
+        "dsh.manifestVersion is not declared; the reader does not infer a default",
+        "tarball ships no src/ paths, so capability findings are limited to build output"
+      ]
+    },
+    "L1_install": {
+      "id": "L1",
+      "status": "pass",
+      "summary": "installed",
+      "metrics": {
+        "durationMs": 2269,
+        "exitCode": 0,
+        "declaredPeers": null,
+        "bundlesAfterInstall": [
+          "@deepseek-ai/dsh-base",
+          "@tt-a1i/archify-dsh"
+        ],
+        "pendingBuildScripts": [],
+        "buildScriptsApproved": 0,
+        "diagnosticsLog": null
+      },
+      "evidenceRefs": [
+        "e-l1-install"
+      ],
+      "notes": [
+        "the CLI completed the install with exit code 0",
+        "no dependency build script was approved by the verifier; approval permits commands with the host user permissions"
+      ]
+    },
+    "L2_load": {
+      "id": "L2",
+      "status": "pass",
+      "summary": "booted, mounted and stayed alive",
+      "metrics": {
+        "bootBoundMs": 25000,
+        "durationMs": 25045,
+        "signal": null
+      },
+      "evidenceRefs": [
+        "e-l2-boot"
+      ],
+      "notes": [
+        "the process was still running when the wall-clock bound reached it and reported no failure diagnostics, so the bundle was neither skipped nor rejected",
+        "the fiber phase is not read directly: an early exit with diagnostics is the load-failure signal, and a boot that settles and waits is the success signal"
+      ]
+    },
+    "L3_run": {
+      "id": "L3",
+      "status": "pass",
+      "summary": "a session completed with no credential",
+      "metrics": {
+        "replayAdapter": "@deepseek-ai/dsh-llm-replay@0.2.0-rc.2",
+        "probeTask": "reply with any text",
+        "events": {
+          "session": "session-33e425cf-898b-423d-8d5c-0f181feac4dd",
+          "turnEndReason": {
+            "kind": "completed"
+          },
+          "finalText": "Replay fixture: no provider was called.",
+          "textEventCount": 1,
+          "error": null,
+          "exitCode": 0,
+          "durationMs": 1249,
+          "eventCount": 7
+        }
+      },
+      "evidenceRefs": [
+        "e-l3-session"
+      ],
+      "notes": [
+        "the model call was served by the official replay adapter from a fixture authored in this repository; no provider was contacted and no credential was present",
+        "probe task, stated verbatim: \"reply with any text\""
+      ]
+    },
+    "L4_capability": {
+      "id": "L4",
+      "status": "pass",
+      "summary": "3 capability signal(s) present across 27 scanned file(s)",
+      "metrics": {
+        "scannedFiles": 27,
+        "scannedBytes": 860357,
+        "skippedFiles": 0
+      },
+      "evidenceRefs": [
+        "e-l4",
+        "e-patch"
+      ],
+      "notes": [
+        "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+        "static analysis cannot see dynamically constructed code or prove intent"
+      ]
+    },
+    "L5_overhead": {
+      "id": "L5",
+      "status": "pass",
+      "summary": "no significant delta across 6 sampled run(s)",
+      "metrics": {
+        "samples": 6,
+        "baseline": {
+          "atMs": 8039,
+          "rss": 198774784,
+          "heapUsed": 68554752,
+          "external": 5089698,
+          "activeTotal": 10,
+          "watchers": 7,
+          "timers": 0,
+          "libuvHandles": 22,
+          "libuvActiveHandles": 17,
+          "fds": 20
+        },
+        "activated": {
+          "atMs": 8039,
+          "rss": 199598080,
+          "heapUsed": 69515232,
+          "external": 5189831,
+          "activeTotal": 11,
+          "watchers": 8,
+          "timers": 0,
+          "libuvHandles": 23,
+          "libuvActiveHandles": 18,
+          "fds": 20
+        },
+        "delta": {
+          "atMs": 0,
+          "rss": 823296,
+          "heapUsed": 960480,
+          "external": 100133,
+          "activeTotal": 1,
+          "watchers": 1,
+          "timers": 0,
+          "libuvHandles": 1,
+          "libuvActiveHandles": 1,
+          "fds": 0
+        }
+      },
+      "evidenceRefs": [
+        "e-l5-overhead"
+      ],
+      "notes": [
+        "no metric moved beyond the significance thresholds; that is the finding",
+        "differential attribution: baseline profile first, then the subject activated, same container and order",
+        "thresholds are coarse on purpose — order-of-magnitude watcher changes, RSS growth beyond 100 MiB, steady state more than 2 s later"
+      ]
+    },
+    "L6_uninstall": {
+      "id": "L6",
+      "status": "pass",
+      "summary": "removed without residue",
+      "metrics": {
+        "residue": [],
+        "durationMs": 261
+      },
+      "evidenceRefs": [
+        "e-l6-remove"
+      ],
+      "notes": [
+        "the profile retains no bundle selection, dependency entry or files for the subject"
+      ]
+    }
+  },
+  "capabilities": [
+    {
+      "id": "listens_on_port",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "opens a listening socket",
+      "evidence": [
+        {
+          "file": "package/skills/archify/bin/preview.mjs",
+          "line": 251,
+          "snippet": "const server = http.createServer((req, res) => {"
+        }
+      ]
+    },
+    {
+      "id": "spawns_process",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "spawns or would spawn an operating-system process",
+      "evidence": [
+        {
+          "file": "package/skills/archify/bin/archify.mjs",
+          "line": 3,
+          "snippet": "import { spawnSync } from 'node:child_process';"
+        },
+        {
+          "file": "package/skills/archify/bin/open-artifact.mjs",
+          "line": 1,
+          "snippet": "import { spawnSync } from 'node:child_process';"
+        },
+        {
+          "file": "package/skills/archify/bin/preview.mjs",
+          "line": 1,
+          "snippet": "import { spawn } from 'node:child_process';"
+        },
+        {
+          "file": "package/skills/archify/scripts/render-examples.mjs",
+          "line": 4,
+          "snippet": "import { execFileSync } from 'node:child_process';"
+        },
+        {
+          "file": "package/skills/archify/renderers/shared/repository-evidence.mjs",
+          "line": 1,
+          "snippet": "import { spawnSync } from 'node:child_process';"
+        }
+      ]
+    },
+    {
+      "id": "watches_filesystem",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "watches the filesystem; a recursive workspace watch is the documented cause of host stalls",
+      "evidence": [
+        {
+          "file": "package/skills/archify/bin/preview.mjs",
+          "line": 591,
+          "snippet": "watcher = fs.watch(path.dirname(inputPath), (event, filename) => {"
+        }
+      ]
+    },
+    {
+      "id": "eval_or_dynamic_code",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "eval or synthesised code; common and often benign, and frequently bundler output",
+      "evidence": []
+    },
+    {
+      "id": "hooks_api_gate",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks the API/LLM path, so it can observe or alter provider traffic",
+      "evidence": []
+    },
+    {
+      "id": "hooks_system_prompt",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks system-prompt assembly, so it can influence what the model is told",
+      "evidence": []
+    },
+    {
+      "id": "network_egress",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "can make outbound network requests",
+      "evidence": []
+    },
+    {
+      "id": "reads_secret_env",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "reads an environment variable whose name looks credential-shaped",
+      "evidence": []
+    },
+    {
+      "id": "runtime_patch",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "patches runtime objects rather than only registering its own services",
+      "evidence": []
+    },
+    {
+      "id": "writes_outside_workspace",
+      "present": false,
+      "confidence": "low",
+      "attribution": "unknown",
+      "notes": "resolves a path outside the workspace (e.g. os.homedir(), DSH_HOME), which is normal for DSH profile handling; static analysis cannot determine whether it also writes there",
+      "evidence": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e-resolve",
+      "kind": "command",
+      "command": "resolve @tt-a1i/archify-dsh@0.1.0 -> @tt-a1i/archify-dsh@0.1.0",
+      "exitCode": 0,
+      "durationMs": 295,
+      "excerpt": "{\n  \"name\": \"@tt-a1i/archify-dsh\",\n  \"version\": \"0.1.0\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/@tt-a1i/archify-dsh/-/archify-dsh-0.1.0.tgz\",\n  \"advertisedIntegrity\": \"sha512-D8fDqV6DV/vo80Gj/3rgidd+hwBbhTVncaVoD5Uhh+DbgYlEoQQOmBVbhU5HW33wE5OqJP/2HkTRPJ0hf7W0tA==\",\n  \"publishedAt\": \"2026-08-14T09:12:28.700Z\"\n}"
+    },
+    {
+      "id": "e-tarball",
+      "kind": "artifact",
+      "command": "fetch https://registry.npmjs.org/@tt-a1i/archify-dsh/-/archify-dsh-0.1.0.tgz",
+      "exitCode": 0,
+      "durationMs": 135,
+      "excerpt": "{\n  \"bytes\": 875277,\n  \"resolvedIntegrity\": \"sha512-D8fDqV6DV/vo80Gj/3rgidd+hwBbhTVncaVoD5Uhh+DbgYlEoQQOmBVbhU5HW33wE5OqJP/2HkTRPJ0hf7W0tA==\",\n  \"advertisedIntegrity\": \"sha512-D8fDqV6DV/vo80Gj/3rgidd+hwBbhTVncaVoD5Uhh+DbgYlEoQQOmBVbhU5HW33wE5OqJP/2HkTRPJ0hf7W0tA==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"3192afe54949da6494acea3bd2bf5113a58ea78651113b1289bcc7212130df38\"\n}",
+      "excerptBytes": 383,
+      "sha256": "3192afe54949da6494acea3bd2bf5113a58ea78651113b1289bcc7212130df38"
+    },
+    {
+      "id": "e-l0",
+      "kind": "static",
+      "command": "read published package.json and verify declared dsh.bundle.patch paths exist",
+      "excerpt": "{\n  \"status\": \"pass\",\n  \"reasons\": [],\n  \"declared\": {\n    \"manifestVersion\": null,\n    \"bundlePatch\": [\n      \"./cordis.patch.yml\"\n    ],\n    \"clientPlatform\": null,\n    \"enginesDsh\": null,\n    \"enginesNode\": \"^22.19.0 || >=24.0.0\"\n  },\n  \"missingPatchPaths\": [],\n  \"fileCount\": 67,\n  \"unpackedBytes\": 4852827,\n  \"shipsSource\": false\n}",
+      "excerptBytes": 336
+    },
+    {
+      "id": "e-patch",
+      "kind": "static",
+      "command": "read cordis.patch.yml",
+      "excerpt": "# Opt-in Archify filesystem Skill provider for DeepSeek Harness.\n# Resolves the packaged Skill root from the installed npm identity anchored at\n# the DSH profile (Loader baseUrl), never as a path concatenated onto baseUrl.\n- insert:\n    - id: archify-skill-filesystem\n      name: '@deepseek-ai/dsh-skill-filesystem'\n      config:\n        providerName: archify-plugin\n        includeDefaultRoots: false\n        bundledSkillDir: !!js process.getBuiltinModule('node:path').join(process.getBuiltinModule('node:path').dirname(process.getBuiltinModule('node:module').createRequire(baseUrl).resolve('@tt-a1i/archify-dsh/package.json')), 'skills')\n",
+      "excerptBytes": 640,
+      "sha256": "9d9f68e3caf27847ff0837dca0d1df95e2cecc5c98de901b13e7b2b2746e07ba"
+    },
+    {
+      "id": "e-l4",
+      "kind": "static",
+      "command": "scan 27 shipped source file(s) for capability signatures",
+      "excerpt": "{\n  \"present\": [\n    {\n      \"id\": \"listens_on_port\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/skills/archify/bin/preview.mjs\",\n        \"line\": 251,\n        \"snippet\": \"const server = http.createServer((req, res) => {\"\n      }\n    },\n    {\n      \"id\": \"spawns_process\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/skills/archify/bin/archify.mjs\",\n        \"line\": 3,\n        \"snippet\": \"import { spawnSync } from 'node:child_process';\"\n      }\n    },\n    {\n      \"id\": \"watches_filesystem\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/skills/archify/bin/preview.mjs\",\n        \"line\": 591,\n        \"snippet\": \"watcher = fs.watch(path.dirname(inputPath), (event, filename) => {\"\n      }\n    }\n  ],\n  \"scannedFiles\": 27,\n  \"skippedFiles\": 0,\n  \"limits\": [\n    \"the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency\",\n    \"static analysis cannot see dynamically constructed code or prove intent\"\n  ]\n}",
+      "excerptBytes": 1174
+    },
+    {
+      "id": "e-l1-install",
+      "kind": "command",
+      "command": "dsh plugin --profile verify add @tt-a1i/archify-dsh@0.1.0",
+      "exitCode": 0,
+      "durationMs": 2269,
+      "excerpt": "Progress: resolved 1, reused 0, downloaded 0, added 0\nPackages are hard linked from the content-addressable store to the virtual store.\n  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nPackages: +1\n+\nProgress: resolved 1, reused 0, downloaded 1, added 1, done\n\ndependencies:\n+ @tt-a1i/archify-dsh 0.1.0\n\nDone in 360ms using pnpm v12.8.1\ndsh: initialized profile verify at /work/dsh-home/profiles/verify\n",
+      "excerptBytes": 486,
+      "truncated": false,
+      "sha256": "547209f7605170fbb0e878b2355fcc5c17b00a9202deb82dd9010f5cf68c8222"
+    },
+    {
+      "id": "e-l2-boot",
+      "kind": "command",
+      "command": "dsh --profile verify",
+      "exitCode": 0,
+      "durationMs": 25045,
+      "excerpt": "",
+      "excerptBytes": 0,
+      "truncated": false,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "e-l6-remove",
+      "kind": "command",
+      "command": "dsh plugin --profile verify remove @tt-a1i/archify-dsh",
+      "exitCode": 0,
+      "durationMs": 261,
+      "excerpt": "Packages: -1\n-\n\ndependencies:\n- @tt-a1i/archify-dsh 0.1.0\n\nDone in 11ms using pnpm v12.8.1\n",
+      "excerptBytes": 91,
+      "truncated": false,
+      "sha256": "30b139f062b3dc0b895507499a8ff2e9229defff9a038d882b733e457c24378e"
+    },
+    {
+      "id": "e-l5-overhead",
+      "kind": "sample",
+      "command": "dsh --profile <baseline|activated> with the host sampler injected via NODE_OPTIONS=--import",
+      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8039,\n    \"rss\": 198774784,\n    \"heapUsed\": 68554752,\n    \"external\": 5089698,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8039,\n    \"rss\": 199598080,\n    \"heapUsed\": 69515232,\n    \"external\": 5189831,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 23,\n    \"libuvActiveHandles\": 18,\n    \"fds\": 20\n  },\n  \"delta\": {\n    \"atMs\": 0,\n    \"rss\": 823296,\n    \"heapUsed\": 960480,\n    \"external\": 100133,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 1,\n    \"libuvActiveHandles\": 1,\n    \"fds\": 0\n  },\n  \"significant\": []\n}"
+    },
+    {
+      "id": "e-l3-session",
+      "kind": "command",
+      "command": "dsh --profile l3 --patch /work/fixtures/replay/l3-overlay.yml --json reply with any text",
+      "exitCode": 0,
+      "durationMs": 1249,
+      "excerpt": "{\"type\":\"session\",\"sessionId\":\"session-33e425cf-898b-423d-8d5c-0f181feac4dd\",\"cwd\":\"/work\"}\n{\"type\":\"status\",\"phase\":\"turn_start\",\"turn\":1}\n{\"type\":\"status\",\"phase\":\"step_start\",\"turn\":1,\"step\":1}\n{\"type\":\"text\",\"text\":\"Replay fixture: no provider was called.\"}\n{\"type\":\"status\",\"phase\":\"step_end\",\"turn\":1,\"step\":1}\n{\"type\":\"status\",\"phase\":\"turn_end\",\"turn\":1,\"reason\":{\"kind\":\"completed\"}}\n{\"type\":\"final\",\"text\":\"Replay fixture: no provider was called.\"}\n",
+      "excerptBytes": 459,
+      "truncated": false,
+      "sha256": "f17544ed0041f4ce4a1a77e30e5023f59a348b2495ee25f0728d9007c32f1c07"
+    }
+  ],
+  "redactions": [],
+  "disclaimers": [
+    "Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence."
+  ],
+  "limits": [
+    "the artifact ships no source paths, so capability findings describe build output only; code-level attribution between the author and inlined dependencies is not resolvable from this artifact",
+    "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+    "static analysis cannot see dynamically constructed code or prove intent",
+    "L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model",
+    "the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase",
+    "no dependency build script was approved by this executor",
+    "overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta",
+    "sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test"
+  ],
+  "bundlePatch": {
+    "path": "cordis.patch.yml",
+    "present": true,
+    "bytes": 640,
+    "entryCount": 2,
+    "disablesHostEntries": false,
+    "overridesConfig": true,
+    "usesJsExpressions": true,
+    "findings": [
+      {
+        "kind": "inserts-entry",
+        "line": 4,
+        "snippet": "- insert:"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 5,
+        "snippet": "- id: archify-skill-filesystem"
+      },
+      {
+        "kind": "overrides-config",
+        "line": 7,
+        "snippet": "config:"
+      },
+      {
+        "kind": "js-expression",
+        "line": 10,
+        "snippet": "bundledSkillDir: !!js process.getBuiltinModule('node:path').join(process.getBuiltinModule('node:path').dirname(process.getBuiltinModule('node:module').createRequire(baseUrl).resolve('@tt-a1i/archify-d…"
+      }
+    ],
+    "notes": [
+      "!!js expressions are code carried in a configuration file, evaluated when the patch is applied",
+      "textual analysis: a line number is provided for review, not a YAML object model"
+    ]
+  },
+  "overhead": {
+    "method": "differential",
+    "status": "no-significant-delta",
+    "samples": 6,
+    "baseline": {
+      "atMs": 8039,
+      "rss": 198774784,
+      "heapUsed": 68554752,
+      "external": 5089698,
+      "activeTotal": 10,
+      "watchers": 7,
+      "timers": 0,
+      "libuvHandles": 22,
+      "libuvActiveHandles": 17,
+      "fds": 20
+    },
+    "activated": {
+      "atMs": 8039,
+      "rss": 199598080,
+      "heapUsed": 69515232,
+      "external": 5189831,
+      "activeTotal": 11,
+      "watchers": 8,
+      "timers": 0,
+      "libuvHandles": 23,
+      "libuvActiveHandles": 18,
+      "fds": 20
+    },
+    "delta": {
+      "atMs": 0,
+      "rss": 823296,
+      "heapUsed": 960480,
+      "external": 100133,
+      "activeTotal": 1,
+      "watchers": 1,
+      "timers": 0,
+      "libuvHandles": 1,
+      "libuvActiveHandles": 1,
+      "fds": 0
+    },
+    "significant": [],
+    "resourceKinds": {
+      "baseline": {
+        "PipeWrap": 3,
+        "FSEventWrap": 7,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 7,
+        "loop": 1
+      },
+      "activated": {
+        "PipeWrap": 3,
+        "FSEventWrap": 8,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 8,
+        "loop": 1
+      }
+    }
+  }
+}

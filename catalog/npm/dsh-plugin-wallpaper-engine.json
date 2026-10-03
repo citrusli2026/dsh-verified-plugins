@@ -1,0 +1,561 @@
+{
+  "schema": "dsh.plugin.report.v1",
+  "reportId": "npm:dsh-plugin-wallpaper-engine@1.2.0",
+  "generatedAt": "2026-10-03T16:28:41.376Z",
+  "verifier": {
+    "name": "dsh-verified",
+    "version": "0.1.0",
+    "commit": "ec8d77c8d74dce7dfc3070ef2ab081e28d154612"
+  },
+  "subject": {
+    "spec": "dsh-plugin-wallpaper-engine@1.2.0",
+    "name": "dsh-plugin-wallpaper-engine",
+    "version": "1.2.0",
+    "registry": "https://registry.npmjs.org",
+    "tarball": "https://registry.npmjs.org/dsh-plugin-wallpaper-engine/-/dsh-plugin-wallpaper-engine-1.2.0.tgz",
+    "integrity": "sha512-WgY1pLh2zbGyLSPJP1aSKq42hntF8PnrAlSeQWqpZwPoLdMByL/9Abth9ELlhw+t0odXNs4Fbiyljju0MF0tfA==",
+    "shasum": "cdea1a4c9a4e38226c893edb47dcfb27ce8b3bac",
+    "repository": "git+https://github.com/elysia395/dsh-wallpaper-engine.git",
+    "license": "MIT",
+    "publishedAt": "2026-10-02T00:29:42.919Z",
+    "dshBundlePatch": "./cordis.patch.yml",
+    "declaredEnginesDsh": ">=0.2.0-rc.1"
+  },
+  "runtime": {
+    "dshVersion": "0.2.0-rc.2",
+    "nodeVersion": "v24.21.0",
+    "os": "linux 6.17.0-1022-azure",
+    "arch": "x64"
+  },
+  "container": {
+    "image": "none",
+    "imageDigest": null,
+    "notes": "executed in a one-off container; the subject was installed, booted and removed there"
+  },
+  "verdict": "verified",
+  "dimensions": {
+    "L0_qualification": {
+      "id": "L0",
+      "status": "pass",
+      "summary": "declares dsh.bundle.patch and every declared patch path exists (47 files, 3662488 bytes unpacked)",
+      "metrics": {
+        "fileCount": 47,
+        "unpackedBytes": 3662488,
+        "patchPaths": [
+          "./cordis.patch.yml"
+        ],
+        "declaredEnginesDsh": ">=0.2.0-rc.1",
+        "shipsSource": false
+      },
+      "evidenceRefs": [
+        "e-resolve",
+        "e-tarball",
+        "e-l0"
+      ],
+      "notes": [
+        "dsh.manifestVersion is not declared; the reader does not infer a default",
+        "tarball ships no src/ paths, so capability findings are limited to build output"
+      ]
+    },
+    "L1_install": {
+      "id": "L1",
+      "status": "pass",
+      "summary": "installed",
+      "metrics": {
+        "durationMs": 2036,
+        "exitCode": 0,
+        "declaredPeers": null,
+        "bundlesAfterInstall": [
+          "@deepseek-ai/dsh-base",
+          "dsh-plugin-wallpaper-engine"
+        ],
+        "pendingBuildScripts": [],
+        "buildScriptsApproved": 0,
+        "diagnosticsLog": null
+      },
+      "evidenceRefs": [
+        "e-l1-install"
+      ],
+      "notes": [
+        "the CLI completed the install with exit code 0",
+        "no dependency build script was approved by the verifier; approval permits commands with the host user permissions"
+      ]
+    },
+    "L2_load": {
+      "id": "L2",
+      "status": "pass",
+      "summary": "booted, mounted and stayed alive",
+      "metrics": {
+        "bootBoundMs": 25000,
+        "durationMs": 25065,
+        "signal": null
+      },
+      "evidenceRefs": [
+        "e-l2-boot"
+      ],
+      "notes": [
+        "the process was still running when the wall-clock bound reached it and reported no failure diagnostics, so the bundle was neither skipped nor rejected",
+        "the fiber phase is not read directly: an early exit with diagnostics is the load-failure signal, and a boot that settles and waits is the success signal"
+      ]
+    },
+    "L3_run": {
+      "id": "L3",
+      "status": "pass",
+      "summary": "a session completed with no credential",
+      "metrics": {
+        "replayAdapter": "@deepseek-ai/dsh-llm-replay@0.2.0-rc.2",
+        "probeTask": "reply with any text",
+        "events": {
+          "session": "session-98ade1c0-7be9-40e8-b816-e099bf909a10",
+          "turnEndReason": {
+            "kind": "completed"
+          },
+          "finalText": "Replay fixture: no provider was called.",
+          "textEventCount": 1,
+          "error": null,
+          "exitCode": 0,
+          "durationMs": 1253,
+          "eventCount": 7
+        }
+      },
+      "evidenceRefs": [
+        "e-l3-session"
+      ],
+      "notes": [
+        "the model call was served by the official replay adapter from a fixture authored in this repository; no provider was contacted and no credential was present",
+        "probe task, stated verbatim: \"reply with any text\""
+      ]
+    },
+    "L4_capability": {
+      "id": "L4",
+      "status": "pass",
+      "summary": "4 capability signal(s) present across 31 scanned file(s)",
+      "metrics": {
+        "scannedFiles": 31,
+        "scannedBytes": 3348335,
+        "skippedFiles": 0
+      },
+      "evidenceRefs": [
+        "e-l4",
+        "e-patch"
+      ],
+      "notes": [
+        "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+        "static analysis cannot see dynamically constructed code or prove intent"
+      ]
+    },
+    "L5_overhead": {
+      "id": "L5",
+      "status": "pass",
+      "summary": "no significant delta across 6 sampled run(s)",
+      "metrics": {
+        "samples": 6,
+        "baseline": {
+          "atMs": 8042,
+          "rss": 199413760,
+          "heapUsed": 68444568,
+          "external": 5188103,
+          "activeTotal": 10,
+          "watchers": 7,
+          "timers": 0,
+          "libuvHandles": 22,
+          "libuvActiveHandles": 17,
+          "fds": 20
+        },
+        "activated": {
+          "atMs": 8039,
+          "rss": 200183808,
+          "heapUsed": 71759872,
+          "external": 5271558,
+          "activeTotal": 11,
+          "watchers": 8,
+          "timers": 0,
+          "libuvHandles": 23,
+          "libuvActiveHandles": 18,
+          "fds": 20
+        },
+        "delta": {
+          "atMs": -3,
+          "rss": 770048,
+          "heapUsed": 3315304,
+          "external": 83455,
+          "activeTotal": 1,
+          "watchers": 1,
+          "timers": 0,
+          "libuvHandles": 1,
+          "libuvActiveHandles": 1,
+          "fds": 0
+        }
+      },
+      "evidenceRefs": [
+        "e-l5-overhead"
+      ],
+      "notes": [
+        "no metric moved beyond the significance thresholds; that is the finding",
+        "differential attribution: baseline profile first, then the subject activated, same container and order",
+        "thresholds are coarse on purpose — order-of-magnitude watcher changes, RSS growth beyond 100 MiB, steady state more than 2 s later"
+      ]
+    },
+    "L6_uninstall": {
+      "id": "L6",
+      "status": "pass",
+      "summary": "removed without residue",
+      "metrics": {
+        "residue": [],
+        "durationMs": 263
+      },
+      "evidenceRefs": [
+        "e-l6-remove"
+      ],
+      "notes": [
+        "the profile retains no bundle selection, dependency entry or files for the subject"
+      ]
+    }
+  },
+  "capabilities": [
+    {
+      "id": "eval_or_dynamic_code",
+      "present": true,
+      "confidence": "low",
+      "attribution": "build-output",
+      "notes": "eval or synthesised code; common and often benign, and frequently bundler output",
+      "evidence": [
+        {
+          "file": "package/lib/webwallgl/assets/renderer-DTLW1Gf0.js",
+          "line": 261,
+          "snippet": "`);for(const k of l)u.push(...o(k));let d=!1;if(e.limitrows&&e.maxrows>0&&u.length>e.maxrows&&(u=u.slice(0,e.maxrows),d=!0,e.limituseellipsis)){let k=u[e.maxrows-1];for(;k.length>0&&n(k+\"…\")>c;)k=k.sl…"
+        }
+      ]
+    },
+    {
+      "id": "listens_on_port",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "opens a listening socket",
+      "evidence": [
+        {
+          "file": "package/lib/index.js",
+          "line": 3417,
+          "snippet": "server = createServer((req, res) => {"
+        }
+      ]
+    },
+    {
+      "id": "network_egress",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "can make outbound network requests",
+      "evidence": [
+        {
+          "file": "package/lib/routes/github-stars.js",
+          "line": 41,
+          "snippet": "const res = await fetch(url, {"
+        },
+        {
+          "file": "package/lib/index.js",
+          "line": 1259,
+          "snippet": "const res = await fetch(url, { redirect: 'follow', signal: ctrl.signal, headers: { 'User-Agent': 'dsh-wallpaper-engine' } });"
+        },
+        {
+          "file": "package/lib/media/legacy.js",
+          "line": 344,
+          "snippet": "fetch(String(art), { signal: AbortSignal.timeout(5000) })"
+        },
+        {
+          "file": "package/lib/media/provision.js",
+          "line": 163,
+          "snippet": "const res = await fetch(url, {"
+        },
+        {
+          "file": "package/lib/webwallgl/assets/modulepreload-polyfill-B5Qt9EMX.js",
+          "line": 1,
+          "snippet": "(function(){const t=document.createElement(\"link\").relList;if(t&&t.supports&&t.supports(\"modulepreload\"))return;for(const e of document.querySelectorAll('link[rel=\"modulepreload\"]'))i(e);new MutationO…"
+        }
+      ]
+    },
+    {
+      "id": "spawns_process",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "spawns or would spawn an operating-system process",
+      "evidence": [
+        {
+          "file": "package/lib/index.js",
+          "line": 67,
+          "snippet": "import { execFile, execFileSync, spawn } from 'node:child_process';"
+        },
+        {
+          "file": "package/lib/media/legacy.js",
+          "line": 28,
+          "snippet": "import { spawn, execFile, spawnSync } from 'node:child_process';"
+        },
+        {
+          "file": "package/lib/media/provision.js",
+          "line": 25,
+          "snippet": "import { spawnSync } from 'node:child_process';"
+        },
+        {
+          "file": "package/lib/media/supervisor.js",
+          "line": 19,
+          "snippet": "import { spawn } from 'node:child_process';"
+        },
+        {
+          "file": "package/scripts/prepare.mjs",
+          "line": 14,
+          "snippet": "import { spawnSync } from 'node:child_process';"
+        }
+      ]
+    },
+    {
+      "id": "hooks_api_gate",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks the API/LLM path, so it can observe or alter provider traffic",
+      "evidence": []
+    },
+    {
+      "id": "hooks_system_prompt",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks system-prompt assembly, so it can influence what the model is told",
+      "evidence": []
+    },
+    {
+      "id": "reads_secret_env",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "reads an environment variable whose name looks credential-shaped",
+      "evidence": []
+    },
+    {
+      "id": "runtime_patch",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "patches runtime objects rather than only registering its own services",
+      "evidence": []
+    },
+    {
+      "id": "watches_filesystem",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "watches the filesystem; a recursive workspace watch is the documented cause of host stalls",
+      "evidence": []
+    },
+    {
+      "id": "writes_outside_workspace",
+      "present": false,
+      "confidence": "low",
+      "attribution": "unknown",
+      "notes": "resolves a path outside the workspace (e.g. os.homedir(), DSH_HOME), which is normal for DSH profile handling; static analysis cannot determine whether it also writes there",
+      "evidence": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e-resolve",
+      "kind": "command",
+      "command": "resolve dsh-plugin-wallpaper-engine@1.2.0 -> dsh-plugin-wallpaper-engine@1.2.0",
+      "exitCode": 0,
+      "durationMs": 177,
+      "excerpt": "{\n  \"name\": \"dsh-plugin-wallpaper-engine\",\n  \"version\": \"1.2.0\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/dsh-plugin-wallpaper-engine/-/dsh-plugin-wallpaper-engine-1.2.0.tgz\",\n  \"advertisedIntegrity\": \"sha512-WgY1pLh2zbGyLSPJP1aSKq42hntF8PnrAlSeQWqpZwPoLdMByL/9Abth9ELlhw+t0odXNs4Fbiyljju0MF0tfA==\",\n  \"publishedAt\": \"2026-10-02T00:29:42.919Z\"\n}"
+    },
+    {
+      "id": "e-tarball",
+      "kind": "artifact",
+      "command": "fetch https://registry.npmjs.org/dsh-plugin-wallpaper-engine/-/dsh-plugin-wallpaper-engine-1.2.0.tgz",
+      "exitCode": 0,
+      "durationMs": 66,
+      "excerpt": "{\n  \"bytes\": 1585336,\n  \"resolvedIntegrity\": \"sha512-WgY1pLh2zbGyLSPJP1aSKq42hntF8PnrAlSeQWqpZwPoLdMByL/9Abth9ELlhw+t0odXNs4Fbiyljju0MF0tfA==\",\n  \"advertisedIntegrity\": \"sha512-WgY1pLh2zbGyLSPJP1aSKq42hntF8PnrAlSeQWqpZwPoLdMByL/9Abth9ELlhw+t0odXNs4Fbiyljju0MF0tfA==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"5562b2f99702a0b54cd8c683b2a3996d99dcdbf2a0571a2c7e9bd3839ef2c49e\"\n}",
+      "excerptBytes": 384,
+      "sha256": "5562b2f99702a0b54cd8c683b2a3996d99dcdbf2a0571a2c7e9bd3839ef2c49e"
+    },
+    {
+      "id": "e-l0",
+      "kind": "static",
+      "command": "read published package.json and verify declared dsh.bundle.patch paths exist",
+      "excerpt": "{\n  \"status\": \"pass\",\n  \"reasons\": [],\n  \"declared\": {\n    \"manifestVersion\": null,\n    \"bundlePatch\": [\n      \"./cordis.patch.yml\"\n    ],\n    \"clientPlatform\": \"web\",\n    \"enginesDsh\": \">=0.2.0-rc.1\",\n    \"enginesNode\": \">=18\"\n  },\n  \"missingPatchPaths\": [],\n  \"fileCount\": 47,\n  \"unpackedBytes\": 3662488,\n  \"shipsSource\": false\n}",
+      "excerptBytes": 331
+    },
+    {
+      "id": "e-patch",
+      "kind": "static",
+      "command": "read cordis.patch.yml",
+      "excerpt": "# dsh-plugin-wallpaper-engine bundle patch.\r\n#\r\n# Applied over the dsh-web-app layer. This bundle contributes ONE host row\r\n# (the plugin that scans Wallpaper Engine and serves its media) and relies on\r\n# its `dsh.client` manifest (in package.json) to load the browser half that\r\n# draws the wallpaper behind the DSH GUI and adds the settings UI.\r\n#\r\n# A patch replaces the targeted row's whole `config`, so only additive\r\n# `insert` rows appear here (we never override an existing shipped row).\r\n\r\n- insert:\r\n    # Host half: discovers the local Wallpaper Engine install (Steam app 431960),\r\n    # enumerates Scene/Video/Web wallpapers from the Workshop + default projects\r\n    # (Application wallpapers are listed but never rendered),\r\n    # and serves their media + a JSON inventory over same-origin HTTP routes\r\n    # the browser half fetches directly (GET /wallpaper-engine/inventory, /media,\r\n    # /preview, …; docs/ROUTE-INDEX.md is the authoritative table — it is generated\r\n    # and machine-checked, so the route count is deliberately not repeated here).\r\n    - id: wallpaper-engine\r\n      name: 'dsh-plugin-wallpaper-engine'\r\n      # webServer is a hard dependency (`inject = ['webServer']` in lib/index.js):\r\n      # the Loader waits for the HTTP server to mount, so a headless/TUI profile\r\n      # without one does not load this bundle at all.\r\n",
+      "excerptBytes": 1363,
+      "sha256": "50e1f3e5fcdb9ae3b2ff637819a18330521cf8ad4a082f9168b832a7b4acb4e0"
+    },
+    {
+      "id": "e-l4",
+      "kind": "static",
+      "command": "scan 31 shipped source file(s) for capability signatures",
+      "excerpt": "{\n  \"present\": [\n    {\n      \"id\": \"eval_or_dynamic_code\",\n      \"confidence\": \"low\",\n      \"attribution\": \"build-output\",\n      \"firstEvidence\": {\n        \"file\": \"package/lib/webwallgl/assets/renderer-DTLW1Gf0.js\",\n        \"line\": 261,\n        \"snippet\": \"`);for(const k of l)u.push(...o(k));let d=!1;if(e.limitrows&&e.maxrows>0&&u.length>e.maxrows&&(u=u.slice(0,e.maxrows),d=!0,e.limituseellipsis)){let k=u[e.maxrows-1];for(;k.length>0&&n(k+\\\"…\\\")>c;)k=k.sl…\"\n      }\n    },\n    {\n      \"id\": \"listens_on_port\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/lib/index.js\",\n        \"line\": 3417,\n        \"snippet\": \"server = createServer((req, res) => {\"\n      }\n    },\n    {\n      \"id\": \"network_egress\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/lib/routes/github-stars.js\",\n        \"line\": 41,\n        \"snippet\": \"const res = await fetch(url, {\"\n      }\n    },\n    {\n      \"id\": \"spawns_process\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/lib/index.js\",\n        \"line\": 67,\n        \"snippet\": \"import { execFile, execFileSync, spawn } from 'node:child_process';\"\n      }\n    }\n  ],\n  \"scannedFiles\": 31,\n  \"skippedFiles\": 0,\n  \"limits\": [\n    \"the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency\",\n    \"static analysis cannot see dynamically constructed code or prove intent\"\n  ]\n}",
+      "excerptBytes": 1569
+    },
+    {
+      "id": "e-l1-install",
+      "kind": "command",
+      "command": "dsh plugin --profile verify add dsh-plugin-wallpaper-engine@1.2.0",
+      "exitCode": 0,
+      "durationMs": 2036,
+      "excerpt": "Progress: resolved 1, reused 0, downloaded 0, added 0\nPackages are hard linked from the content-addressable store to the virtual store.\n  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nPackages: +1\n+\nProgress: resolved 1, reused 0, downloaded 1, added 1, done\n[WARN] Issues with peer dependencies found. Run \"pnpm peers check\" to list them.\n\ndependencies:\n+ dsh-plugin-wallpaper-engine 1.2.0\n\nDone in 269ms using pnpm v12.8.1\ndsh: initialized profile verify at /work/dsh-home/profiles/verify\n",
+      "excerptBytes": 575,
+      "truncated": false,
+      "sha256": "ba8287b3a829f790782c2dee29d24081a24511f0e9a78eca4461345e96e3200c"
+    },
+    {
+      "id": "e-l2-boot",
+      "kind": "command",
+      "command": "dsh --profile verify",
+      "exitCode": 0,
+      "durationMs": 25065,
+      "excerpt": "dsh: warning: 1 entry did not activate\nwallpaper-engine (dsh-plugin-wallpaper-engine): pending (waiting for service: webServer)\n",
+      "excerptBytes": 128,
+      "truncated": false,
+      "sha256": "f742f7c6fc0018643daa06262a8ea2870f63bc348c7da7d81c4dfeaf04a0321c"
+    },
+    {
+      "id": "e-l6-remove",
+      "kind": "command",
+      "command": "dsh plugin --profile verify remove dsh-plugin-wallpaper-engine",
+      "exitCode": 0,
+      "durationMs": 263,
+      "excerpt": "Packages: -1\n-\n\ndependencies:\n- dsh-plugin-wallpaper-engine 1.2.0\n\nDone in 10ms using pnpm v12.8.1\n",
+      "excerptBytes": 99,
+      "truncated": false,
+      "sha256": "b05e505393b15b8888832ff69c02243cdd46ba21e78f15d2e24cda51cb5d47be"
+    },
+    {
+      "id": "e-l5-overhead",
+      "kind": "sample",
+      "command": "dsh --profile <baseline|activated> with the host sampler injected via NODE_OPTIONS=--import",
+      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8042,\n    \"rss\": 199413760,\n    \"heapUsed\": 68444568,\n    \"external\": 5188103,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8039,\n    \"rss\": 200183808,\n    \"heapUsed\": 71759872,\n    \"external\": 5271558,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 23,\n    \"libuvActiveHandles\": 18,\n    \"fds\": 20\n  },\n  \"delta\": {\n    \"atMs\": -3,\n    \"rss\": 770048,\n    \"heapUsed\": 3315304,\n    \"external\": 83455,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 1,\n    \"libuvActiveHandles\": 1,\n    \"fds\": 0\n  },\n  \"significant\": []\n}"
+    },
+    {
+      "id": "e-l3-session",
+      "kind": "command",
+      "command": "dsh --profile l3 --patch /work/fixtures/replay/l3-overlay.yml --json reply with any text",
+      "exitCode": 0,
+      "durationMs": 1253,
+      "excerpt": "{\"type\":\"session\",\"sessionId\":\"session-98ade1c0-7be9-40e8-b816-e099bf909a10\",\"cwd\":\"/work\"}\n{\"type\":\"status\",\"phase\":\"turn_start\",\"turn\":1}\n{\"type\":\"status\",\"phase\":\"step_start\",\"turn\":1,\"step\":1}\n{\"type\":\"text\",\"text\":\"Replay fixture: no provider was called.\"}\n{\"type\":\"status\",\"phase\":\"step_end\",\"turn\":1,\"step\":1}\n{\"type\":\"status\",\"phase\":\"turn_end\",\"turn\":1,\"reason\":{\"kind\":\"completed\"}}\n{\"type\":\"final\",\"text\":\"Replay fixture: no provider was called.\"}\ndsh: warning: 1 entry did not activate\nwallpaper-engine (dsh-plugin-wallpaper-engine): pending (waiting for service: webServer)\n",
+      "excerptBytes": 587,
+      "truncated": false,
+      "sha256": "c71a58eab4f81a79fdb9d0fc4bbcf4cb4695aa82a8784ccf4ba842ba9a126206"
+    }
+  ],
+  "redactions": [],
+  "disclaimers": [
+    "Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence."
+  ],
+  "limits": [
+    "the artifact ships no source paths, so capability findings describe build output only; code-level attribution between the author and inlined dependencies is not resolvable from this artifact",
+    "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+    "static analysis cannot see dynamically constructed code or prove intent",
+    "L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model",
+    "the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase",
+    "no dependency build script was approved by this executor",
+    "overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta",
+    "sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test"
+  ],
+  "bundlePatch": {
+    "path": "cordis.patch.yml",
+    "present": true,
+    "bytes": 1363,
+    "entryCount": 2,
+    "disablesHostEntries": false,
+    "overridesConfig": false,
+    "usesJsExpressions": false,
+    "findings": [
+      {
+        "kind": "inserts-entry",
+        "line": 11,
+        "snippet": "- insert:"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 19,
+        "snippet": "- id: wallpaper-engine"
+      }
+    ],
+    "notes": [
+      "textual analysis: a line number is provided for review, not a YAML object model"
+    ]
+  },
+  "overhead": {
+    "method": "differential",
+    "status": "no-significant-delta",
+    "samples": 6,
+    "baseline": {
+      "atMs": 8042,
+      "rss": 199413760,
+      "heapUsed": 68444568,
+      "external": 5188103,
+      "activeTotal": 10,
+      "watchers": 7,
+      "timers": 0,
+      "libuvHandles": 22,
+      "libuvActiveHandles": 17,
+      "fds": 20
+    },
+    "activated": {
+      "atMs": 8039,
+      "rss": 200183808,
+      "heapUsed": 71759872,
+      "external": 5271558,
+      "activeTotal": 11,
+      "watchers": 8,
+      "timers": 0,
+      "libuvHandles": 23,
+      "libuvActiveHandles": 18,
+      "fds": 20
+    },
+    "delta": {
+      "atMs": -3,
+      "rss": 770048,
+      "heapUsed": 3315304,
+      "external": 83455,
+      "activeTotal": 1,
+      "watchers": 1,
+      "timers": 0,
+      "libuvHandles": 1,
+      "libuvActiveHandles": 1,
+      "fds": 0
+    },
+    "significant": [],
+    "resourceKinds": {
+      "baseline": {
+        "PipeWrap": 3,
+        "FSEventWrap": 7,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 7,
+        "loop": 1
+      },
+      "activated": {
+        "PipeWrap": 3,
+        "FSEventWrap": 8,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 8,
+        "loop": 1
+      }
+    }
+  }
+}

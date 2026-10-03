@@ -1,0 +1,448 @@
+{
+  "schema": "dsh.plugin.report.v1",
+  "reportId": "npm:@roarpeng/graphflow@2.2.0",
+  "generatedAt": "2026-10-03T16:49:48.347Z",
+  "verifier": {
+    "name": "dsh-verified",
+    "version": "0.1.0",
+    "commit": "b737da1e4edd069bd6d914820d1fee86faf27e83"
+  },
+  "subject": {
+    "spec": "@roarpeng/graphflow@2.2.0",
+    "name": "@roarpeng/graphflow",
+    "version": "2.2.0",
+    "registry": "https://registry.npmjs.org",
+    "tarball": "https://registry.npmjs.org/@roarpeng/graphflow/-/graphflow-2.2.0.tgz",
+    "integrity": "sha512-IyY6QjSNuQLojcV92qR44ILiXwu0n/yeaQDd0zzOC18iMRqybt1wIiI7FCcPmUDInlvLd4rEnM49AYsW/AF4NA==",
+    "shasum": "e5bcba1a7b59ad425acc623fcf57f085ed994116",
+    "repository": "git+https://github.com/Roarpeng/GraphFlow.git",
+    "license": "Apache-2.0",
+    "publishedAt": "2026-10-02T12:48:41.890Z",
+    "dshBundlePatch": "./cordis.patch.yml"
+  },
+  "runtime": {
+    "dshVersion": "0.2.0-rc.2",
+    "nodeVersion": "v24.21.0",
+    "os": "linux 6.17.0-1022-azure",
+    "arch": "x64"
+  },
+  "container": {
+    "image": "none",
+    "imageDigest": null,
+    "notes": "executed in a one-off container; the subject was installed, booted and removed there"
+  },
+  "verdict": "partial",
+  "dimensions": {
+    "L0_qualification": {
+      "id": "L0",
+      "status": "pass",
+      "summary": "declares dsh.bundle.patch and every declared patch path exists (1204 files, 24261577 bytes unpacked)",
+      "metrics": {
+        "fileCount": 1204,
+        "unpackedBytes": 24261577,
+        "patchPaths": [
+          "./cordis.patch.yml"
+        ],
+        "declaredEnginesDsh": null,
+        "shipsSource": true
+      },
+      "evidenceRefs": [
+        "e-resolve",
+        "e-tarball",
+        "e-l0"
+      ],
+      "notes": [
+        "dsh.manifestVersion is not declared; the reader does not infer a default"
+      ]
+    },
+    "L1_install": {
+      "id": "L1",
+      "status": "fail",
+      "summary": "installation blocked pending dependency build-script approval",
+      "metrics": {
+        "durationMs": 4847,
+        "exitCode": 1,
+        "declaredPeers": null,
+        "bundlesAfterInstall": [
+          "@deepseek-ai/dsh-base"
+        ],
+        "pendingBuildScripts": [
+          "@roarpeng/graphflow@2.2.0",
+          "better-sqlite3@12.11.1",
+          "onnxruntime-node@1.30.0",
+          "protobufjs@7.6.6"
+        ],
+        "buildScriptsApproved": 0,
+        "diagnosticsLog": "/work/dsh-home/profiles/verify/.plugin-manager/logs/operation-1SeoeV/pnpm.log"
+      },
+      "evidenceRefs": [
+        "e-l1-install"
+      ],
+      "notes": [
+        "pnpm refused to run build scripts for 4 package(s) and the install did not complete. This verifier never approves them: approval permits commands with the host user's permissions, which is the user's decision and a finding rather than a chore. The requested scripts are listed in the metrics.",
+        "no dependency build script was approved by the verifier; approval permits commands with the host user permissions"
+      ]
+    },
+    "L2_load": {
+      "id": "L2",
+      "status": "skip",
+      "summary": "not run: the subject did not install",
+      "evidenceRefs": [],
+      "notes": [
+        "loading a plugin that is not present would measure nothing"
+      ]
+    },
+    "L3_run": {
+      "id": "L3",
+      "status": "skip",
+      "summary": "not run: the subject did not install",
+      "evidenceRefs": [],
+      "notes": [
+        "a session cannot be attributed to a subject that is not present"
+      ]
+    },
+    "L4_capability": {
+      "id": "L4",
+      "status": "pass",
+      "summary": "6 capability signal(s) present across 588 scanned file(s)",
+      "metrics": {
+        "scannedFiles": 588,
+        "scannedBytes": 3569614,
+        "skippedFiles": 0
+      },
+      "evidenceRefs": [
+        "e-l4",
+        "e-patch"
+      ],
+      "notes": [
+        "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+        "static analysis cannot see dynamically constructed code or prove intent"
+      ]
+    },
+    "L5_overhead": {
+      "id": "L5",
+      "status": "inconclusive",
+      "summary": "the subject did not install, so there was nothing to activate",
+      "metrics": {
+        "samples": 0
+      },
+      "evidenceRefs": [],
+      "notes": [
+        "no overhead claim is made when the differential could not be completed"
+      ]
+    },
+    "L6_uninstall": {
+      "id": "L6",
+      "status": "skip",
+      "summary": "not run: the subject did not install",
+      "evidenceRefs": [],
+      "notes": [
+        "removal was not attempted because nothing was installed"
+      ]
+    }
+  },
+  "capabilities": [
+    {
+      "id": "hooks_system_prompt",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks system-prompt assembly, so it can influence what the model is told",
+      "evidence": [
+        {
+          "file": "package/dsh/plugin.mjs",
+          "line": 320,
+          "snippet": "\"system-prompt\","
+        }
+      ]
+    },
+    {
+      "id": "listens_on_port",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "build-output",
+      "notes": "opens a listening socket",
+      "evidence": [
+        {
+          "file": "package/dist/surfaces/mcp/server.js",
+          "line": 588,
+          "snippet": "httpServer.listen(requestedPort, host, resolve);"
+        },
+        {
+          "file": "package/dist/surfaces/team/server.js",
+          "line": 373,
+          "snippet": "httpServer.listen(requestedPort, host, resolveListen);"
+        },
+        {
+          "file": "package/dist/surfaces/cli/settings-server.js",
+          "line": 1233,
+          "snippet": "const candidateServer = node_http_1.default.createServer(requestListener);"
+        }
+      ]
+    },
+    {
+      "id": "network_egress",
+      "present": true,
+      "confidence": "low",
+      "attribution": "build-output",
+      "notes": "can make outbound network requests",
+      "evidence": [
+        {
+          "file": "package/dist/routing/provider-adapters/anthropic.js",
+          "line": 21,
+          "snippet": "const response = await fetch(`${baseUrl}/v1/messages`, {"
+        },
+        {
+          "file": "package/dist/routing/provider-adapters/bailian.js",
+          "line": 21,
+          "snippet": "const response = await fetch(`${baseUrl}/chat/completions`, {"
+        },
+        {
+          "file": "package/dist/routing/provider-adapters/deepseek.js",
+          "line": 57,
+          "snippet": "const response = await fetch(`${baseUrl}/chat/completions`, {"
+        },
+        {
+          "file": "package/dist/routing/provider-adapters/doubao.js",
+          "line": 21,
+          "snippet": "const response = await fetch(`${baseUrl}/chat/completions`, {"
+        },
+        {
+          "file": "package/dist/learning/embeddings.js",
+          "line": 317,
+          "snippet": "const res = await fetch(`${base}/embeddings`, {"
+        }
+      ]
+    },
+    {
+      "id": "reads_secret_env",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "build-output",
+      "notes": "reads an environment variable whose name looks credential-shaped",
+      "evidence": [
+        {
+          "file": "package/dist/routing/provider-adapters/anthropic.js",
+          "line": 9,
+          "snippet": "const apiKey = process.env.ANTHROPIC_API_KEY;"
+        },
+        {
+          "file": "package/dist/routing/provider-adapters/bailian.js",
+          "line": 9,
+          "snippet": "const apiKey = process.env.BAILIAN_API_KEY;"
+        },
+        {
+          "file": "package/dist/routing/provider-adapters/deepseek.js",
+          "line": 45,
+          "snippet": "const apiKey = process.env.DEEPSEEK_API_KEY;"
+        },
+        {
+          "file": "package/dist/routing/provider-adapters/doubao.js",
+          "line": 9,
+          "snippet": "const apiKey = process.env.DOUBAO_API_KEY;"
+        },
+        {
+          "file": "package/dist/config/embedding-factory.js",
+          "line": 46,
+          "snippet": "process.env.OPENAI_API_KEY);"
+        }
+      ]
+    },
+    {
+      "id": "spawns_process",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "spawns or would spawn an operating-system process",
+      "evidence": [
+        {
+          "file": "package/scripts/safe-postinstall.cjs",
+          "line": 5,
+          "snippet": "const { spawnSync } = require(\"node:child_process\");"
+        },
+        {
+          "file": "package/scripts/cross-platform-check.mjs",
+          "line": 22,
+          "snippet": "import { spawnSync } from \"node:child_process\";"
+        },
+        {
+          "file": "package/dsh/plugin.mjs",
+          "line": 29,
+          "snippet": "import { spawn } from \"node:child_process\";"
+        },
+        {
+          "file": "package/opencode/plugin.mjs",
+          "line": 19,
+          "snippet": "import { spawn } from \"node:child_process\";"
+        },
+        {
+          "file": "package/dist/integrations/agent-mcp-installer.js",
+          "line": 36,
+          "snippet": "const node_child_process_1 = require(\"node:child_process\");"
+        }
+      ]
+    },
+    {
+      "id": "writes_outside_workspace",
+      "present": true,
+      "confidence": "low",
+      "attribution": "unknown",
+      "notes": "resolves a path outside the workspace (e.g. os.homedir(), DSH_HOME), which is normal for DSH profile handling; static analysis cannot determine whether it also writes there",
+      "evidence": [
+        {
+          "file": "package/dsh/plugin.mjs",
+          "line": 478,
+          "snippet": "export function resolveCliForCapture(packageRoot = PACKAGE_ROOT, home = process.env.HOME || process.env.USERPROFILE) {"
+        },
+        {
+          "file": "package/dist/integrations/agent-mcp-installer.js",
+          "line": 998,
+          "snippet": "candidates.push(\"/usr/local/bin/node\", \"/usr/bin/node\");"
+        },
+        {
+          "file": "package/dist/integrations/dsh-harness-installer.js",
+          "line": 63,
+          "snippet": "const explicit = override?.trim() || process.env[exports.DSH_HOME_ENV]?.trim() || process.env.DSH_HOME?.trim();"
+        }
+      ]
+    },
+    {
+      "id": "eval_or_dynamic_code",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "eval or synthesised code; common and often benign, and frequently bundler output",
+      "evidence": []
+    },
+    {
+      "id": "hooks_api_gate",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks the API/LLM path, so it can observe or alter provider traffic",
+      "evidence": []
+    },
+    {
+      "id": "runtime_patch",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "patches runtime objects rather than only registering its own services",
+      "evidence": []
+    },
+    {
+      "id": "watches_filesystem",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "watches the filesystem; a recursive workspace watch is the documented cause of host stalls",
+      "evidence": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e-resolve",
+      "kind": "command",
+      "command": "resolve @roarpeng/graphflow@2.2.0 -> @roarpeng/graphflow@2.2.0",
+      "exitCode": 0,
+      "durationMs": 409,
+      "excerpt": "{\n  \"name\": \"@roarpeng/graphflow\",\n  \"version\": \"2.2.0\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/@roarpeng/graphflow/-/graphflow-2.2.0.tgz\",\n  \"advertisedIntegrity\": \"sha512-IyY6QjSNuQLojcV92qR44ILiXwu0n/yeaQDd0zzOC18iMRqybt1wIiI7FCcPmUDInlvLd4rEnM49AYsW/AF4NA==\",\n  \"publishedAt\": \"2026-10-02T12:48:41.890Z\"\n}"
+    },
+    {
+      "id": "e-tarball",
+      "kind": "artifact",
+      "command": "fetch https://registry.npmjs.org/@roarpeng/graphflow/-/graphflow-2.2.0.tgz",
+      "exitCode": 0,
+      "durationMs": 109,
+      "excerpt": "{\n  \"bytes\": 3266668,\n  \"resolvedIntegrity\": \"sha512-IyY6QjSNuQLojcV92qR44ILiXwu0n/yeaQDd0zzOC18iMRqybt1wIiI7FCcPmUDInlvLd4rEnM49AYsW/AF4NA==\",\n  \"advertisedIntegrity\": \"sha512-IyY6QjSNuQLojcV92qR44ILiXwu0n/yeaQDd0zzOC18iMRqybt1wIiI7FCcPmUDInlvLd4rEnM49AYsW/AF4NA==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"c9fa6e2a74a0e367a4dbd37e997f31666ad825c334226e45ab60dfd6820ab168\"\n}",
+      "excerptBytes": 384,
+      "sha256": "c9fa6e2a74a0e367a4dbd37e997f31666ad825c334226e45ab60dfd6820ab168"
+    },
+    {
+      "id": "e-l0",
+      "kind": "static",
+      "command": "read published package.json and verify declared dsh.bundle.patch paths exist",
+      "excerpt": "{\n  \"status\": \"pass\",\n  \"reasons\": [],\n  \"declared\": {\n    \"manifestVersion\": null,\n    \"bundlePatch\": [\n      \"./cordis.patch.yml\"\n    ],\n    \"clientPlatform\": \"web\",\n    \"enginesDsh\": null,\n    \"enginesNode\": \">=20\"\n  },\n  \"missingPatchPaths\": [],\n  \"fileCount\": 1204,\n  \"unpackedBytes\": 24261577,\n  \"shipsSource\": true\n}",
+      "excerptBytes": 323
+    },
+    {
+      "id": "e-patch",
+      "kind": "static",
+      "command": "read cordis.patch.yml",
+      "excerpt": "# GraphFlow — DeepSeek Harness (dsh) 插件层\n#\n# 用法:\n#   dsh plugin --profile web add @roarpeng/graphflow\n#   npx @deepseek-ai/dsh web\n#   或已有 ~/.dsh 时: npx @roarpeng/graphflow install\n#\n# 能力:\n#   1) MCP 10 工具挂到 ctx.tools（cwd = 会话/工作区 process.cwd()）。\n#      模型侧名称: mcp__graphflow__graphflow_context / _plan / _run /\n#      _report_outcome / _insight / _index / _skill_insights /\n#      _diagnose / _artifact / _skill_guide\n#   2) ESM glue `@roarpeng/graphflow/dsh`：ctx.skills.register(graphflow)\n#      （dsh plugin add 即可用 skill，不必先 graphflow install）；\n#      agent/disposed 时不默认把 pending episode 标成成功（等同 Claude Code\n#      SessionEnd 空 $2 保持 pending）。显式 GRAPHFLOW_HOOK_SUCCESS=true|false\n#      才调用 graphflow outcome report。不监听 live session/flush。\n#   3) 首轮 agent/pre-step 注入一句短 hint：先调 graphflow_context（rootDir=cwd）。\n#\n# 调用约定: 先 context（传 rootDir），复杂任务再 plan；改完代码后 index；\n#   若走了 run，结束后必须 report_outcome。不要写死 GRAPHFLOW_WORKSPACE_ROOT。\n#\n# graphflow install（无 profile 包时）只写 MCP 行到 $DSH_HOME/cordis.patch.yml；\n# 已 `dsh plugin add` / profile 有包时会清空 home overlay，由 bundle 独占 MCP+glue\n# （避免 duplicate loader entry id / ERR_MODULE_NOT_FOUND）。\n# 完整安装请优先: dsh plugin --profile web add @roarpeng/graphflow\n\n- insert:\n    - id: mcp-graphflow\n      name: '@deepseek-ai/dsh-mcp-client'\n      config:\n        serverName: graphflow\n        transport: stdio\n        command: npx\n        args:\n          - '-y'\n          - '--package=@roarpeng/graphflow'\n          - graphflow-mcp\n        env:\n          GRAPHFLOW_MCP_STDIO: '1'\n          GRAPHFLOW_LOG_JSON: '1'\n        cwd: !!js process.cwd()\n        failOnStartupError: false\n    - id: graphflow-dsh\n      name: '@roarpeng/graphflow/dsh'\n",
+      "excerptBytes": 1973,
+      "sha256": "94ecc5a3ffe10bf0f9d61f230cdca69555ee941c3a013d0c9270c0f8dc924df7"
+    },
+    {
+      "id": "e-l4",
+      "kind": "static",
+      "command": "scan 588 shipped source file(s) for capability signatures",
+      "excerpt": "{\n  \"present\": [\n    {\n      \"id\": \"hooks_system_prompt\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/dsh/plugin.mjs\",\n        \"line\": 320,\n        \"snippet\": \"\\\"system-prompt\\\",\"\n      }\n    },\n    {\n      \"id\": \"listens_on_port\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"build-output\",\n      \"firstEvidence\": {\n        \"file\": \"package/dist/surfaces/mcp/server.js\",\n        \"line\": 588,\n        \"snippet\": \"httpServer.listen(requestedPort, host, resolve);\"\n      }\n    },\n    {\n      \"id\": \"network_egress\",\n      \"confidence\": \"low\",\n      \"attribution\": \"build-output\",\n      \"firstEvidence\": {\n        \"file\": \"package/dist/routing/provider-adapters/anthropic.js\",\n        \"line\": 21,\n        \"snippet\": \"const response = await fetch(`${baseUrl}/v1/messages`, {\"\n      }\n    },\n    {\n      \"id\": \"reads_secret_env\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"build-output\",\n      \"firstEvidence\": {\n        \"file\": \"package/dist/routing/provider-adapters/anthropic.js\",\n        \"line\": 9,\n        \"snippet\": \"const apiKey = process.env.ANTHROPIC_API_KEY;\"\n      }\n    },\n    {\n      \"id\": \"spawns_process\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/scripts/safe-postinstall.cjs\",\n        \"line\": 5,\n        \"snippet\": \"const { spawnSync } = require(\\\"node:child_process\\\");\"\n      }\n    },\n    {\n      \"id\": \"writes_outside_workspace\",\n      \"confidence\": \"low\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/dsh/plugin.mjs\",\n        \"line\": 478,\n        \"snippet\": \"export function resolveCliForCapture(packageRoot = PACKAGE_ROOT, home = process.env.HOME || process.env.USERPROFILE) {\"\n      }\n    }\n  ],\n  \"scannedFiles\": 588,\n  \"skippedFiles\": 0,\n  \"limits\": [\n    \"the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency\",\n    \"static analysis cannot see dynamically construct",
+      "excerptBytes": 2048
+    },
+    {
+      "id": "e-l1-install",
+      "kind": "command",
+      "command": "dsh plugin --profile verify add @roarpeng/graphflow@2.2.0",
+      "exitCode": 1,
+      "durationMs": 4847,
+      "excerpt": "Downloading gpt-tokenizer@3.4.0: 0.00 B/17.68 MB\nDownloading onnxruntime-web@1.31.0-dev.20260914-8d85527a0: 0.00 B/33.18 MB\nDownloading onnxruntime-node@1.30.0: 0.00 B/113.50 MB\nDownloading @img/sharp-libvips-linux-x64@1.3.4: 0.00 B/8.21 MB\n[WARN] 1 deprecated subdependencies found: prebuild-install@7.1.3\nDownloading onnxruntime-node@1.30.0: 93.02 MB/113.50 MB\nPackages are hard linked from the content-addressable store to the virtual store.\n  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nPackages: +186\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\nProgress: resolved 185, reused 0, downloaded 188, added 186, done\n\ndependencies:\n+ @roarpeng/graphflow 2.2.0\n\ndsh: initialized profile verify at /work/dsh-home/profiles/verify\nError: ERR_PNPM_IGNORED_BUILDS\n\n  × adding a new package\n  ╰─▶ Ignored build scripts: @roarpeng/graphflow@2.2.0, better-\n      sqlite3@12.11.1, onnxruntime-node@1.30.0, protobufjs@7.6.6\n  help: Run \"pnpm approve-builds\" to pick which dependencies should be allowed\n        to run scripts.\n\ndsh: plugin command failed; diagnostics: /work/dsh-home/profiles/verify/.plugin-manager/logs/operation-1SeoeV/pnpm.log\n",
+      "excerptBytes": 1265,
+      "truncated": false,
+      "sha256": "eb1691d042c876e58cbb7113869ed1cd6bf88abf037f7704fa5ea6a218b85468"
+    }
+  ],
+  "redactions": [],
+  "disclaimers": [
+    "Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence."
+  ],
+  "limits": [
+    "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+    "static analysis cannot see dynamically constructed code or prove intent",
+    "L5 overhead sampling did not complete, so no cost claim is made",
+    "the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase",
+    "no dependency build script was approved by this executor",
+    "overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta",
+    "sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test"
+  ],
+  "bundlePatch": {
+    "path": "cordis.patch.yml",
+    "present": true,
+    "bytes": 1973,
+    "entryCount": 6,
+    "disablesHostEntries": false,
+    "overridesConfig": true,
+    "usesJsExpressions": true,
+    "findings": [
+      {
+        "kind": "inserts-entry",
+        "line": 28,
+        "snippet": "- insert:"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 29,
+        "snippet": "- id: mcp-graphflow"
+      },
+      {
+        "kind": "overrides-config",
+        "line": 31,
+        "snippet": "config:"
+      },
+      {
+        "kind": "js-expression",
+        "line": 42,
+        "snippet": "cwd: !!js process.cwd()"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 44,
+        "snippet": "- id: graphflow-dsh"
+      }
+    ],
+    "notes": [
+      "!!js expressions are code carried in a configuration file, evaluated when the patch is applied",
+      "textual analysis: a line number is provided for review, not a YAML object model"
+    ]
+  }
+}

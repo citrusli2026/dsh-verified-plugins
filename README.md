@@ -5,11 +5,12 @@ Evidence-linked, reproducible, not another star list.
 
 [Method](docs/method.md) · [Report schema](docs/schema.md) · [Security](docs/security.md) · [Catalog](catalog/index.json)
 
-> **Status: V0–V4 in progress.** All seven dimensions run end to end, batches
-> are supported, and the catalogue holds **2 `verified` reports**. V4's 20-subject
-> acceptance run has not happened yet — see
-> [docs/evidence/V4.md](docs/evidence/V4.md). Sessions run against a replayed
-> transcript, never a credential, and every report says so. Read
+> **Status: V0–V4 done.** All seven dimensions run end to end, batches are
+> supported, and the catalogue holds **24 reports — 19 `verified`** from a
+> 20-subject acceptance run plus the four earliest. Sessions run against a
+> replayed transcript, never a credential, and every report says so. See
+> [docs/evidence/V4.md](docs/evidence/V4.md) and
+> [the survey](docs/survey/README.md). Read
 > [docs/security.md](docs/security.md) first.
 
 ---
@@ -61,13 +62,13 @@ lose `verified`. There is **no score and no ranking** — that is the whole poin
 
 ```
 catalog/
-├── index.json                      # generated, never hand-edited; CI fails if stale
-└── npm/
-    ├── dsh-cost-meter.json         # verified         — all seven dimensions
-    ├── dsh-pet.json                # verified         — 62 MB, four capability signals
-    ├── dsh-find-plugin.json        # partial          — L1 refused: peer-incompatible
-    └── morlay__session-branch.json # not-installable — not a bundle; L1-L6 pre-filtered
+├── index.json     # generated, never hand-edited; CI fails if it is stale
+└── npm/           # one dsh.plugin.report.v1 per verified subject
 ```
+
+`index.json` carries the current counts and the per-subject dimension statuses.
+At the time of writing: **19 `verified`, 4 `partial`, 1 `not-installable`**.
+
 
 Layout note: the contract proposed `catalog/<owner>/<repo>.json`. The subject is
 an npm package, not a git repository — one repository can publish several
@@ -136,6 +137,21 @@ All are dependency-free and run in CI. TypeScript is executed directly by Node
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Agents should read
 [AGENTS.md](AGENTS.md) — it carries binding stop conditions.
+
+## What a batch costs
+
+Measured, not assumed: **~94 s per subject**, and the distribution is flat
+because the cost is fixed setup (six sampled boots for L5, a headless profile
+and two installs for L3) rather than anything about the subject. A 20-subject
+batch is about 31 minutes of CI. `verify_specs` takes a comma-separated list.
+
+## The subject survey
+
+`docs/survey/` answers a question the reports cannot: how many packages claiming
+to be DSH plugins actually are. Of the first 250 packages under the npm
+`dsh-plugin` keyword, **240 declare an installable bundle but only 130 are
+peer-compatible with the pinned runtime** — so 110 would be refused at install.
+Registry metadata only; no container, no credential, 26 seconds.
 
 ## Known limitations
 
