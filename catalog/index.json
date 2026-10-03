@@ -1,0 +1,87 @@
+{
+  "schema": "dsh.plugin.catalog.v1",
+  "generatedAt": "2026-10-03T14:55:07.705Z",
+  "counts": {
+    "total": 3,
+    "byVerdict": {
+      "partial": 2,
+      "not-installable": 1
+    }
+  },
+  "coverage": {
+    "note": "This catalogue is a verified slice, not a census. An unreported plugin is unreported, not suspicious, and no ranking is published.",
+    "curatedPoolTarget": 600
+  },
+  "entries": [
+    {
+      "reportId": "npm:@morlay/session-branch@0.1.5",
+      "name": "@morlay/session-branch",
+      "version": "0.1.5",
+      "verdict": "not-installable",
+      "path": "catalog/npm/morlay__session-branch.json",
+      "generatedAt": "2026-10-03T14:53:16.937Z",
+      "integrity": "sha512-l2H7RhC7Tw9w2sXB0VZ+FdxNKvYtqT4MaGc6j93THglh+OqtD1qrbeR7lVfSLSo609+LCXo5C4q/g3ahd7OcNQ==",
+      "dshVersion": "not-executed",
+      "dimensions": {
+        "L0_qualification": "fail",
+        "L1_install": "skip",
+        "L2_load": "skip",
+        "L3_run": "skip",
+        "L4_capability": "pass",
+        "L5_overhead": "skip",
+        "L6_uninstall": "skip"
+      },
+      "presentCapabilities": [],
+      "repoPath": "morlay__session-branch"
+    },
+    {
+      "reportId": "npm:dsh-find-plugin@0.4.0",
+      "name": "dsh-find-plugin",
+      "version": "0.4.0",
+      "verdict": "partial",
+      "path": "catalog/npm/dsh-find-plugin.json",
+      "generatedAt": "2026-10-03T14:53:14.712Z",
+      "integrity": "sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==",
+      "dshVersion": "not-executed",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "skip",
+        "L2_load": "skip",
+        "L3_run": "skip",
+        "L4_capability": "pass",
+        "L5_overhead": "skip",
+        "L6_uninstall": "skip"
+      },
+      "presentCapabilities": [
+        "network_egress"
+      ],
+      "repoPath": "dsh-find-plugin"
+    },
+    {
+      "reportId": "npm:dsh-pet@0.3.1",
+      "name": "dsh-pet",
+      "version": "0.3.1",
+      "verdict": "partial",
+      "path": "catalog/npm/dsh-pet.json",
+      "generatedAt": "2026-10-03T14:54:58.676Z",
+      "integrity": "sha512-7K8jDdoIT9nCX6HN0xhdcdOVAtSygSArE+zAWSBUfivC+gs6k9Szl7T8ozHfPs/QzOg45YRLLWvZVNZZfewcyQ==",
+      "dshVersion": "not-executed",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "skip",
+        "L2_load": "skip",
+        "L3_run": "skip",
+        "L4_capability": "pass",
+        "L5_overhead": "skip",
+        "L6_uninstall": "skip"
+      },
+      "presentCapabilities": [
+        "listens_on_port",
+        "network_egress",
+        "spawns_process",
+        "writes_outside_workspace"
+      ],
+      "repoPath": "dsh-pet"
+    }
+  ]
+}

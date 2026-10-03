@@ -6,10 +6,10 @@ Evidence-linked, reproducible, not another star list.
 [Method](docs/method.md) · [Report schema](docs/schema.md) · [Security](docs/security.md) · [Catalog](catalog/index.json)
 
 > **Status: V1 in progress.** L0 (qualification) and L4 (capability) run end to
-> end and produce validated `dsh.plugin.report.v1` reports; L1–L3, L5 and L6
-> require the verification container and are reported as `skip` until they run.
-> The verdict for a static-only report is therefore capped at **`partial`** —
-> by design, not by omission. Read [docs/security.md](docs/security.md) first.
+> end and produce validated `dsh.plugin.report.v1` reports — 3 published so far.
+> L1–L3, L5 and L6 require the verification container and are reported as `skip`
+> until they run, so a static-only verdict is capped at **`partial`** — by
+> design, not by omission. Read [docs/security.md](docs/security.md) first.
 
 ---
 
@@ -62,9 +62,9 @@ lose `verified`. There is **no score and no ranking** — that is the whole poin
 catalog/
 ├── index.json                      # generated, never hand-edited; CI fails if stale
 └── npm/
-    ├── dsh-find-plugin.json        # partial         — L0 pass, L4 findings
+    ├── dsh-find-plugin.json        # partial         — L0 pass, L4: network egress
     ├── morlay__session-branch.json # not-installable — declares no dsh.bundle.patch
-    └── dsh-pet.json                # inconclusive    — artifact exceeded the fetch budget
+    └── dsh-pet.json                # partial         — 62 MB artifact, 98 s to fetch
 ```
 
 Layout note: the contract proposed `catalog/<owner>/<repo>.json`. The subject is
