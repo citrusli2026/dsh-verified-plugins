@@ -1,11 +1,11 @@
 {
   "schema": "dsh.plugin.report.v1",
   "reportId": "npm:dsh-find-plugin@0.4.0",
-  "generatedAt": "2026-10-03T14:53:14.712Z",
+  "generatedAt": "2026-10-03T14:58:35.427Z",
   "verifier": {
     "name": "dsh-verified",
     "version": "0.1.0",
-    "commit": "9c7ff94c515320018111c26c3f1ae139e555f593"
+    "commit": "164438713684a0d1bcaae32053aa1c41a7658a06"
   },
   "subject": {
     "spec": "dsh-find-plugin@0.4.0",
@@ -85,7 +85,7 @@
     "L4_capability": {
       "id": "L4",
       "status": "pass",
-      "summary": "1 capability signal(s) present across 9 scanned file(s)",
+      "summary": "2 capability signal(s) present across 9 scanned file(s)",
       "metrics": {
         "scannedFiles": 9,
         "scannedBytes": 53201,
@@ -145,6 +145,25 @@
           "file": "package/lib/registry.js",
           "line": 111,
           "snippet": "const res = await fetch(REGISTRY_URL, { headers, signal: AbortSignal.timeout(TIMEOUT_MS) });"
+        }
+      ]
+    },
+    {
+      "id": "writes_outside_workspace",
+      "present": true,
+      "confidence": "low",
+      "attribution": "author-source",
+      "notes": "resolves a path outside the workspace (e.g. os.homedir(), DSH_HOME), which is normal for DSH profile handling; static analysis cannot determine whether it also writes there",
+      "evidence": [
+        {
+          "file": "package/src/registry.ts",
+          "line": 73,
+          "snippet": "const fromEnv = process.env.DSH_HOME"
+        },
+        {
+          "file": "package/lib/registry.js",
+          "line": 42,
+          "snippet": "const fromEnv = process.env.DSH_HOME;"
         }
       ]
     },
@@ -211,14 +230,6 @@
       "attribution": "unknown",
       "notes": "watches the filesystem; a recursive workspace watch is the documented cause of host stalls",
       "evidence": []
-    },
-    {
-      "id": "writes_outside_workspace",
-      "present": false,
-      "confidence": "low",
-      "attribution": "unknown",
-      "notes": "writes or resolves paths that can fall outside the workspace; heuristic, expect false positives",
-      "evidence": []
     }
   ],
   "evidence": [
@@ -227,7 +238,7 @@
       "kind": "command",
       "command": "resolve dsh-find-plugin@0.4.0 -> dsh-find-plugin@0.4.0",
       "exitCode": 0,
-      "durationMs": 1237,
+      "durationMs": 1935,
       "excerpt": "{\n  \"name\": \"dsh-find-plugin\",\n  \"version\": \"0.4.0\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/dsh-find-plugin/-/dsh-find-plugin-0.4.0.tgz\",\n  \"advertisedIntegrity\": \"sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==\",\n  \"publishedAt\": \"2026-09-25T14:59:44.271Z\"\n}"
     },
     {
@@ -235,7 +246,7 @@
       "kind": "artifact",
       "command": "fetch https://registry.npmjs.org/dsh-find-plugin/-/dsh-find-plugin-0.4.0.tgz",
       "exitCode": 0,
-      "durationMs": 527,
+      "durationMs": 890,
       "excerpt": "{\n  \"bytes\": 45308,\n  \"resolvedIntegrity\": \"sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==\",\n  \"advertisedIntegrity\": \"sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"39fc2dfd519b53bc71c9d4fb8cb7faa678d2c14ffb77c6df38daf0eedf0b56a0\"\n}",
       "excerptBytes": 382,
       "sha256": "39fc2dfd519b53bc71c9d4fb8cb7faa678d2c14ffb77c6df38daf0eedf0b56a0"
@@ -259,8 +270,8 @@
       "id": "e-l4",
       "kind": "static",
       "command": "scan 9 shipped source file(s) for capability signatures",
-      "excerpt": "{\n  \"present\": [\n    {\n      \"id\": \"network_egress\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/github.ts\",\n        \"line\": 164,\n        \"snippet\": \"res = await fetch(url, { headers, signal: signalFor() })\"\n      }\n    }\n  ],\n  \"scannedFiles\": 9,\n  \"skippedFiles\": 0,\n  \"limits\": [\n    \"static analysis cannot see dynamically constructed code or prove intent\"\n  ]\n}",
-      "excerptBytes": 444
+      "excerpt": "{\n  \"present\": [\n    {\n      \"id\": \"network_egress\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/github.ts\",\n        \"line\": 164,\n        \"snippet\": \"res = await fetch(url, { headers, signal: signalFor() })\"\n      }\n    },\n    {\n      \"id\": \"writes_outside_workspace\",\n      \"confidence\": \"low\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/registry.ts\",\n        \"line\": 73,\n        \"snippet\": \"const fromEnv = process.env.DSH_HOME\"\n      }\n    }\n  ],\n  \"scannedFiles\": 9,\n  \"skippedFiles\": 0,\n  \"limits\": [\n    \"static analysis cannot see dynamically constructed code or prove intent\"\n  ]\n}",
+      "excerptBytes": 716
     }
   ],
   "redactions": [],

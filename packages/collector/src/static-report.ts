@@ -396,7 +396,15 @@ export async function buildStaticReport(spec: string, options: StaticReportOptio
     evidence,
     redactions: [],
     disclaimers: [DISCLAIMER],
-    limits: capabilities.limits,
+    limits: [
+      ...(qualification.shipsSource
+        ? []
+        : [
+            'the artifact ships no source paths, so capability findings describe build output only; ' +
+              'code-level attribution between the author and inlined dependencies is not resolvable from this artifact',
+          ]),
+      ...capabilities.limits,
+    ],
     ...(bundlePatch ? { bundlePatch } : {}),
   };
 

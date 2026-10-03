@@ -106,6 +106,17 @@ and `evidence[{file, line, snippet}]`.
 `writes_outside_workspace`, `watches_filesystem`, `network_egress`,
 `eval_or_dynamic_code`.
 
+Two ids are narrower than their name suggests, and every finding carries a
+`notes` string saying precisely what was matched:
+
+- `writes_outside_workspace` matches path **resolution** outside the workspace
+  (`os.homedir()`, `DSH_HOME`, `/etc`, `/usr`). A regex cannot tell resolution
+  from a write, and resolving `~/.dsh` is normal and expected in a DSH plugin,
+  so the finding does not read as an accusation of writing somewhere it should
+  not.
+- `eval_or_dynamic_code` matches `eval`, `new Function` and `vm.runIn*`, which
+  are frequently bundler output. See attribution below.
+
 ### Attribution is the load-bearing field
 
 `attribution` is one of `author-source`, `build-output`, `dependency`,
@@ -120,6 +131,12 @@ failure mode of this class of tool (observed deviation ≈ 1/7). Accordingly:
 - when a package ships both `src/` and compiled `lib/`, evidence is shown from
   the **author's source first**, so the sample a reader opens matches the
   attribution;
+- `lib/` is **not** treated as build output. It holds compiled output in some
+  packages and hand-written JavaScript in others, so it is reported as
+  `unknown` rather than guessed at. `dist/`, `build/`, `out/`, `bundled/`,
+  `esm/` and `cjs/` are treated as output;
+- when the artifact ships **no source at all**, every finding describes build
+  output, and the report says so in `limits[]`;
 - standalone comment lines are not scanned, so prose mentioning `~/.dsh`
   cannot produce a `writes_outside_workspace` finding. This was a real
   false positive on the first live run.

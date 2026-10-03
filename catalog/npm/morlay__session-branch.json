@@ -1,11 +1,11 @@
 {
   "schema": "dsh.plugin.report.v1",
   "reportId": "npm:@morlay/session-branch@0.1.5",
-  "generatedAt": "2026-10-03T14:53:16.937Z",
+  "generatedAt": "2026-10-03T14:58:38.670Z",
   "verifier": {
     "name": "dsh-verified",
     "version": "0.1.0",
-    "commit": "9c7ff94c515320018111c26c3f1ae139e555f593"
+    "commit": "164438713684a0d1bcaae32053aa1c41a7658a06"
   },
   "subject": {
     "spec": "@morlay/session-branch@0.1.5",
@@ -92,6 +92,7 @@
         "e-l4"
       ],
       "notes": [
+        "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
         "static analysis cannot see dynamically constructed code or prove intent"
       ]
     },
@@ -192,7 +193,7 @@
       "present": false,
       "confidence": "low",
       "attribution": "unknown",
-      "notes": "writes or resolves paths that can fall outside the workspace; heuristic, expect false positives",
+      "notes": "resolves a path outside the workspace (e.g. os.homedir(), DSH_HOME), which is normal for DSH profile handling; static analysis cannot determine whether it also writes there",
       "evidence": []
     }
   ],
@@ -202,7 +203,7 @@
       "kind": "command",
       "command": "resolve @morlay/session-branch@0.1.5 -> @morlay/session-branch@0.1.5",
       "exitCode": 0,
-      "durationMs": 1731,
+      "durationMs": 2168,
       "excerpt": "{\n  \"name\": \"@morlay/session-branch\",\n  \"version\": \"0.1.5\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/@morlay/session-branch/-/session-branch-0.1.5.tgz\",\n  \"advertisedIntegrity\": \"sha512-l2H7RhC7Tw9w2sXB0VZ+FdxNKvYtqT4MaGc6j93THglh+OqtD1qrbeR7lVfSLSo609+LCXo5C4q/g3ahd7OcNQ==\",\n  \"publishedAt\": \"2026-10-02T10:52:44.685Z\"\n}"
     },
     {
@@ -210,7 +211,7 @@
       "kind": "artifact",
       "command": "fetch https://registry.npmjs.org/@morlay/session-branch/-/session-branch-0.1.5.tgz",
       "exitCode": 0,
-      "durationMs": 335,
+      "durationMs": 905,
       "excerpt": "{\n  \"bytes\": 5903,\n  \"resolvedIntegrity\": \"sha512-l2H7RhC7Tw9w2sXB0VZ+FdxNKvYtqT4MaGc6j93THglh+OqtD1qrbeR7lVfSLSo609+LCXo5C4q/g3ahd7OcNQ==\",\n  \"advertisedIntegrity\": \"sha512-l2H7RhC7Tw9w2sXB0VZ+FdxNKvYtqT4MaGc6j93THglh+OqtD1qrbeR7lVfSLSo609+LCXo5C4q/g3ahd7OcNQ==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"1bfe2527e8a1224b9cf65258d057d28d19cfdddf6a67572690d8ebb0fe87bf15\"\n}",
       "excerptBytes": 381,
       "sha256": "1bfe2527e8a1224b9cf65258d057d28d19cfdddf6a67572690d8ebb0fe87bf15"
@@ -226,8 +227,8 @@
       "id": "e-l4",
       "kind": "static",
       "command": "scan 10 shipped source file(s) for capability signatures",
-      "excerpt": "{\n  \"present\": [],\n  \"scannedFiles\": 10,\n  \"skippedFiles\": 0,\n  \"limits\": [\n    \"static analysis cannot see dynamically constructed code or prove intent\"\n  ]\n}",
-      "excerptBytes": 159
+      "excerpt": "{\n  \"present\": [],\n  \"scannedFiles\": 10,\n  \"skippedFiles\": 0,\n  \"limits\": [\n    \"the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency\",\n    \"static analysis cannot see dynamically constructed code or prove intent\"\n  ]\n}",
+      "excerptBytes": 291
     }
   ],
   "redactions": [],
@@ -235,6 +236,7 @@
     "Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence."
   ],
   "limits": [
+    "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
     "static analysis cannot see dynamically constructed code or prove intent"
   ]
 }
