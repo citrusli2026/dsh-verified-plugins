@@ -1,22 +1,24 @@
 # Method of record
 
-How a report in this repository is produced, what each tier proves, and what
-none of it proves. This document is normative: a report that contradicts it is
-wrong even if its numbers are right.
+How a report is produced, what each dimension proves, and what none of it
+proves. This document is normative: a report that contradicts it is wrong even
+if its numbers are right.
 
-**Verified against** DSH `0.2.0-rc.2` as shipped in DeepSeek Harness Desktop
-(packages `@deepseek-ai/dsh`, `dsh-package-manifest`, `dsh-plugin-manager`,
-`dsh-host-plugin-inventory`, `dsh-headless`). Claims below about DSH behaviour
-are drawn from those packages' published contracts and observed locally; DSH
-pre-1.0 changes, so a report records the runtime version it ran against and its
-findings are scoped to that version.
+Read [security.md](security.md) first — the boundary outranks every feature
+here — and [schema.md](schema.md) for the field contract.
+
+**Verified against** DSH `0.2.0-rc.2` (`@deepseek-ai/dsh`), with
+`dsh-package-manifest`, `dsh-plugin-manager`, `dsh-host-plugin-inventory`,
+`dsh-headless` and `dsh-llm-replay` as shipped in that release. DSH is pre-1.0
+and its behaviour moves between release candidates, so every report records the
+runtime it ran against and its findings are scoped to that version.
 
 ---
 
 ## 1. What a DSH plugin is
 
-A plugin is an **npm package** that declares DSH metadata in `package.json`
-under `dsh`. There is no separate plugin format and no registry of its own.
+An npm package that declares DSH metadata in `package.json` under `dsh`. There
+is no separate plugin format and no registry of its own.
 
 ```jsonc
 {
@@ -33,273 +35,212 @@ under `dsh`. There is no separate plugin format and no registry of its own.
 
 | Field | Meaning |
 |---|---|
-| `dsh.manifestVersion` | Manifest format identifier. The declared format is `1`. Independent of the npm version and of the session format version. |
-| `dsh.bundle.patch` | One patch-file path, or an ordered list of them, each relative to the package root. The launcher applies a list **in order as one bundle layer**. |
+| `dsh.manifestVersion` | Manifest format identifier; the declared format is `1`. |
+| `dsh.bundle.patch` | One patch path, or an ordered list, each relative to the package root. Applied in order as **one bundle layer**. |
 | `dsh.client.platform` | Declares a client (UI) half, e.g. `web`. |
-| `engines.dsh` | Author-declared compatible DSH versions as a SemVer range. **Declarative only.** |
+| `engines.dsh` | Author-declared compatible versions as a SemVer range. **Declarative only.** |
 
 A plugin becomes active by *selecting its bundle* in a profile: the profile's
 `package.json` carries an ordered `dsh.profile.bundles` list, and the bundle's
 patch is applied on top of the profile's configuration layers.
 
-## 2. What "running" a plugin means here
+## 2. The seven dimensions
 
-DSH composes plugins through the Cordis Loader. The observable fact we build
-tiers on is the **root fiber phase** of a loader entry, read via the
-read-only `pluginInventory/list` projection:
+Each dimension is one question. A report answers all seven, and a dimension
+that did not run is `skip` — never omitted, never inferred.
 
-`pending` → waits to load · `loading` → being read · **`active` → running** ·
-`failed` → its fiber rejected · `unloading` → tearing down · `null` → no live
-root fiber.
+### L0 — Qualification
 
-`pluginInventory/list` is a point-in-time snapshot with **no history**: a fiber
-that failed and was removed is simply absent. That has a direct methodological
-consequence — *the absence of a row is not evidence that a plugin loaded
-cleanly*; a report must show the boot log and the phase, not merely a listing
-that lacks an error.
+**Question:** is this actually an installable DSH bundle?
 
-## 3. Tiers
+Pass requires: `dsh.bundle.patch` is declared, and **every** path it names
+exists in the published tarball. Absent `dsh.bundle.patch`, the verdict is
+`not-installable` and the subject does not enter the main catalogue.
 
-Each tier is a gate. A report claims only the highest tier that executed, and
-all lower tiers must also have passed.
+Not a failure: a missing `dsh.manifestVersion`, or an `engines.dsh` that looks
+implausible. Those are notes. Qualification is about installability, not
+quality.
 
-### T0 — Static audit (no execution)
+### L1 — Install
 
-Read-only inspection of the resolved package. Nothing is installed and nothing
-is executed.
+**Question:** does it install into a clean `DSH_HOME`, and if not, why?
 
-- Resolve the spec and record the exact version and integrity hash.
-- Validate `dsh.manifestVersion` is present and supported.
-- Confirm every path in `dsh.bundle.patch` exists in the tarball.
-- Read the bundle patch and list which configuration entries it adds, overrides,
-  or disables.
-- Record `engines.dsh`, **as a declaration by the author**.
-- Count dependencies and enumerate lifecycle scripts (`preinstall`,
-  `install`, `postinstall`, `prepare`) requested by the package and its
-  dependency tree.
+Run `dsh plugin --profile <p> add <spec>` in a throwaway profile inside the
+container. Record the exit code, the wall time, and a failure attribution:
+registry unreachable, package absent, network failure, pending build scripts,
+or peer incompatibility.
 
-`pnpm view` (or the DSH `inspect` path) is used for registry specs. Note what
-`inspect` cannot do: for a git address or tarball it reports only the *form* and
-the *host* it would be fetched from — it does not inspect the contents before
-installation, and a git or tarball spec is compatibility-checked only *after*
-installation.
+**Pending build scripts are a finding, not a chore.** pnpm blocks dependency
+build scripts by default and DSH asks the user to approve them; approval
+"permits commands with the host user's permissions". The report lists the
+requested scripts verbatim and states whether any were approved. A run that
+approves them says so explicitly. Third-party subjects are never approved
+silently.
 
-### T1 — Install
-
-Install into a **throwaway profile** — never the reporter's live profile. The
-profile directory is disposable and `DSH_HOME` is redirected to a temp path.
-
-Record: resolver output, lockfile entry including integrity, install wall time,
-unpacked size, dependency count (direct and transitive), the list of dependency
-build scripts requested, and whether any were approved.
-
-DSH's own compatibility check runs before pnpm for *named* packages (a local
+DSH's own compatibility check runs *before* pnpm for named packages (a local
 path is read from its own `package.json`; a registry spec is resolved and its
-declared peers checked), refusing with a `compatible` failure before anything is
-downloaded. Git and tarball specs cannot be pre-checked this way.
+declared peers checked), refusing with a compatibility error before anything is
+downloaded. Git and tarball specs cannot be pre-checked this way and are judged
+after installation.
 
-> **Build scripts are a finding, not a chore.** pnpm blocks dependency build
-> scripts by default and DSH asks the user to approve them. Approval "permits
-> commands with the host user's permissions". A report records the requested
-> scripts verbatim and **never approves them on the user's behalf**. Running an
-> install *with* scripts approved, where a report does so, is stated explicitly.
+### L2 — Load
 
-### T2 — Load (no model key required)
+**Question:** do the Host and Client halves actually come up?
 
-Boot a profile with the bundle selected and observe the fiber phase. The
-mechanism that makes this tier free of credentials is documented by DSH itself:
-**a profile whose own plugins fail to load exits before the agent runner
-mounts**, and such a run "keeps only the loader's stderr diagnostics". Load
-failure is therefore observable in the exit status and the loader's diagnostics
-*without any model call* — no key, no network, no cost. That is the technical
-basis for this repository's zero-secrets property.
+Pass requires the loader entries for the subject to reach the `active` fiber
+phase with no error. The supporting fact, documented by DSH itself: **a profile
+whose own plugins fail to load exits before the agent runner mounts**, keeping
+only the loader's stderr diagnostics. Load failure is therefore observable in
+an exit status and a log, with no model call.
 
-Record: exit status, loader diagnostics verbatim, and the boot log showing the
-entry's phase reaching `active`. A snapshot from `pluginInventory/list` may
-accompany it, but the boot log is the evidence — that projection has no history,
-so an absent row proves nothing.
+`pluginInventory/list` gives the phase (`pending`, `loading`, `active`,
+`failed`, `unloading`, `null`). It is a point-in-time projection with **no
+history**, so an absent row is not evidence of a clean load. The boot log is
+the evidence; the inventory may accompany it.
 
-**Open item, stated rather than glossed.** The exact invocation that composes a
-profile, loads it, and returns without reaching a model is version-dependent and
-is *not* pinned down here. Observed on DSH `0.1.0-rc.6`:
+### L3 — Run
 
-```sh
-export DSH_HOME="$(mktemp -d)/dsh-home"          # never a real profile
-dsh plugin --profile <name> version-exemptions   # initialises the profile
+**Question:** does a minimal session complete **without a credential**?
+
+The key-free path is `@deepseek-ai/dsh-llm-replay`, which "short-circuits
+`llm/stream` with model chunks reconstructed from a recorded session JSONL
+(keyless snapshot tests)".
+
+**This is blocked as published** (see § 5, F2): the replay plugin declares a
+peer, `@deepseek-ai/dsh-compact`, that does not exist on npm, and caret ranges
+on `0.0.x` cannot reach the current `0.2.x` runtime. A report therefore records
+`L3_run: blocked` with that reason unless the run used a pinned older runtime
+whose peers resolve, or a recorded-transcript adapter.
+
+A real API key is **never** used in CI, and never appears in a report.
+
+### L4 — Capability (static)
+
+**Question:** what can it reach for?
+
+Findings cover: runtime patching, subprocess creation, port listening, reading
+credential-shaped environment variables, hooking system-prompt assembly or the
+API gate, writing outside the workspace, filesystem watching, network egress,
+and eval/dynamic code. Every finding carries `file:line`.
+
+**Capability is not intent.** A finding is never characterised as malicious.
+`dsh-xray` and `dsh-poison-guard` do static capability and AST work; this
+project does not duplicate them and does not accuse.
+
+The **bundle patch is analysed separately** and is the most DSH-specific
+surface here. A `cordis.patch.yml` is not merely configuration: it can disable
+host entries the plugin does not own, rewrite their configuration, and carry
+`!!js` expressions, which are code evaluated from a configuration file. None of
+that appears in a `lib/**` scan.
+
+Attribution rules are in [schema.md](schema.md#attribution-is-the-load-bearing-field).
+
+### L5 — Overhead (dynamic)
+
+**Question:** what does it cost at runtime?
+
+**Differential attribution**: measure a baseline, activate the subject, measure
+again. Same container, same order, 3 runs, median. Sample libuv handle count,
+watcher count, timer count, file descriptors, RSS, host start-up time, and CPU
+time over 60 s idle.
+
+Report only **repeatable, significant** deltas — for example an order-of-
+magnitude change in watcher count, RSS growth beyond 100 MB, or start-up
+increased by more than 2 s. Otherwise the result is `no-significant-delta`.
+
+**No scores.** Where a difference is not significant, say so. An invented
+number is worse than an absent one.
+
+### L6 — Uninstall
+
+**Question:** after removal, is anything left?
+
+Run `dsh plugin remove`, then check the profile for residual patch layers,
+orphan child processes, and left-behind files.
+
+## 3. Verdict aggregation
+
+Derived from the dimensions, never authored independently:
+
+```
+L0 = fail                    -> not-installable
+all seven = pass             -> verified
+some pass, not all           -> partial
+none pass                    -> inconclusive
 ```
 
-That writes `package.json` (carrying `dsh.profile.bundles`), `cordis.patch.yml`
-and `pnpm-workspace.yaml`; booting afterwards composes `cordis.yml` from those
-bundle layers. But `dsh --profile <name> --help` in that version **composes the
-profile and then keeps running** — it is not a one-shot boot and must not be
-used as the T2 evidence command. The first published report must establish and
-record its own boot command for its runtime version; until a report shows one
-working, `L2` claims are pending by default.
+`tools/`-side enforcement lives in `packages/report/src/validate.ts`, and the
+validator **rejects a declared verdict that disagrees with its dimensions**.
+One blocked dimension loses `verified`. A static-only run reaches `partial` at
+best, because nothing was installed, loaded, or run.
 
-A related trap this repository exists to catch: the observed runtime matters.
-The globally installed CLI on the machine used to draft this method was
-`0.1.0-rc.6`, which does not implement the `version-exemptions` subcommand at
-all — it forwards the unknown argument to pnpm and fails. The same command
-exists in the `0.2.0-rc.2` runtime shipped in the desktop app. A report that
-omits its runtime version is unreadable.
+## 4. Evidence and redaction
 
-### T3 — Measure
+1. Every conclusion maps to an entry in `evidence[]`. A sentence with nothing
+   behind it is deleted or downgraded to `limits`.
+2. Evidence is raw and unedited. Redaction is `[redacted:<reason>]` and is
+   disclosed. Excerpts are capped at 2 KiB and the declared byte count is
+   checked, so a hand-edited excerpt is caught.
+3. The environment is recorded exactly: verifier version and commit, DSH
+   version, Node version, OS/arch, container image, and time.
+4. Never published: full command output, absolute host paths, environment
+   variable values, session content, anything from `~/.dsh`.
+5. A report is merged only after a **second party reproduces it**.
+6. Corrections are **additive**. A wrong finding is superseded by a new dated
+   entry and a bumped verdict, never quietly edited. Plugin authors have a
+   standing right of reply.
 
-Aggregate T1–T2 into comparable, reproducible numbers, written to
-`evidence/t3-metrics.json`, plus a `repro.sh` that regenerates every evidence
-file from a clean checkout.
+## 5. Known limits and open findings
 
-Record at minimum: install wall time, direct and transitive dependency counts,
-unpacked size, count of requested build scripts, boot-to-`active` wall time,
-exit statuses, and the exact DSH runtime version and Node version. Repeat runs
-are reported as a distribution, not a single number, where duration is claimed.
-
-### T4 — Behaviour (requires a model key)
-
-Model-driven probes of what the plugin actually does. These call a model and
-therefore require credentials.
-
-```sh
-dsh --profile <throwaway> --json "<probe task>"
-```
-
-`--json` emits a newline-delimited event stream: `session` first, `final` last,
-with `status`, `text`, `thinking`, `tool_call` and `tool_result` between. Exit
-code `0` means the task completed and `1` means it aborted or errored; a
-well-formed stream can still describe a failed run, so the exit code and the
-`turn_end` reason are the failure signals, not the stream's shape.
-
-Constraints on T4, all mandatory:
-
-- **Never runs in this repo's CI.** T4 is run by the reporter, locally, with
-  their own credential. The result is committed as evidence; the key is not.
-- Probe tasks must be deterministic and stated verbatim in the report so a
-  reader can re-run them. Probes with non-deterministic output are recorded as
-  such and cannot support a claim of reproducibility.
-- If a probe's output contains anything credential-shaped, it is redacted as
-  `[redacted:<reason>]` with the reason stated, and the redaction is disclosed.
-
-## 4. Verdict rubric
-
-| Verdict | Requires | Meaning |
-|---|---|---|
-| `L0 UNVERIFIED` | T0 only (or nothing) | Metadata read; no execution. |
-| `L1 INSTALLS` | T0 + T1 | Installs cleanly into a throwaway profile. |
-| `L2 LOADS` | + T2 | Profile boots; the plugin's fiber reaches `active`. |
-| `L3 MEASURED` | + T3 | Metrics captured and regenerable from committed evidence. |
-| `L4 BEHAVES` | + T4 | Model-driven probes executed and recorded. |
-| `X-FAILED` | any tier that executed and failed | State the failing tier and quote the error. |
-| `BLOCKED` | execution prevented | State the concrete blocker. |
-| `REFUSED` | declined | State why; e.g. requires a credential or host mutation. |
-
-`L2` is the headline tier. It is the strongest claim obtainable **without a
-credential**, and it is the one a star list can never make.
-
-## 5. Evidence rules
-
-1. **Every claim maps to a file** under `reports/<plugin>/evidence/`. A sentence
-   with no artifact behind it is deleted or downgraded to an open question.
-2. **Evidence is raw and unedited.** No trimming, reordering, or reflowing.
-   Redaction uses `[redacted:<reason>]` and is disclosed in the report.
-3. **The environment is recorded exactly**: DSH runtime version, Node version,
-   OS and architecture, profile template, and the commit SHA of the report.
-4. **`repro.sh` must regenerate the evidence** from a clean checkout with no
-   credentials. If it cannot, the report is `BLOCKED`.
-5. **A report is merged only after a second party reproduces it.** The
-   maintainer re-runs `repro.sh` and records that in the PR.
-6. **Corrections are additive.** A wrong finding is corrected by a new dated
-   section and a bumped verdict, not by quietly editing the original. Plugin
-   authors have a standing right of reply.
-
-## 6. Threat model
-
-### What we are defending against
-
-Running third-party code in a CI system that holds credentials. The
-consequences here are unusually direct: DSH loads plugin Host code *in-process,
-outside the workspace sandbox*, so "the plugin" is ordinary code running with
-the user's permissions. There is no sandbox to break out of; a malicious plugin
-is not an escalation, it is simply the user's own authority, exercised.
-
-### The split
-
-| | `ci.yml` — static | `verify.yml` — execution |
-|---|---|---|
-| Trigger | `pull_request`, `push` to `main` | `workflow_dispatch` only |
-| Runs plugin code? | **never** | yes, in an ephemeral throwaway profile |
-| Credentials present | none | none |
-| `permissions` | `contents: read` | `{}` |
-| OIDC | disabled | disabled |
-| Secrets referenced | none | none |
-| Network | not required | not required for T1–T2 |
-
-Static CI validates front-matter, layout and workflow policy, and never
-installs or executes a plugin. The execution tier is manual, so no pull request
-— from a fork or otherwise — can cause third-party code to run in this
-repository's CI.
-
-### Enforced controls
-
-[`tools/policy/check-workflows.mjs`](../tools/policy/check-workflows.mjs) fails
-CI when a workflow:
-
-- references `secrets.*` (any secret, any job);
-- uses `pull_request_target` or `workflow_run`;
-- grants write permissions or `id-token: write`;
-- runs a plugin-executing step (`pnpm add`, `dsh plugin add`, `dsh plugin …`)
-  outside a `workflow_dispatch`-only workflow, or in a workflow that is not
-  `permissions: {}`;
-- uses an unpinned or non-SHA-pinned action, or a non-first-party action
-  without an explicit pin;
-- exports a token into the environment (`GITHUB_TOKEN`, `ACTIONS_RUNTIME_TOKEN`)
-  for a step that executes plugin code.
-
-The checker has a **self-test with bad fixtures**: if the rules stop firing, CI
-fails. A guardrail that cannot be shown to trigger is theatre.
-
-### Residual risk, stated honestly
-
-- A GitHub-hosted runner has ambient credentials that are not repository
-  secrets. The manual execution tier therefore also drops `GITHUB_TOKEN` from
-  the environment of the plugin-executing step and disables OIDC; it does not
-  pretend the runner is a security boundary.
-- **We cannot cryptographically prove "zero secrets" from inside CI.** The
-  no-secrets claim is auditable from outside via the GitHub API
-  (`tools/audit/no-secrets.sh`) and is asserted as a reviewable repo property.
-- T1–T3 fetch a package. The registry and its TLS are trusted implicitly, which
-  is exactly why the resolved integrity hash — not the registry's advertised
-  one — is recorded.
-- This is not a security audit and no report is a safety guarantee. A report
-  says what was run and what was seen. A plugin can be malicious in ways no
-  smoke test detects.
-
-## 7. Known limits
-
-Stated plainly, because the credibility of the reports depends on not
+Stated plainly, because the credibility of these reports depends on not
 overclaiming.
 
-1. **`engines.dsh` is not enforced.** The manifest package's own documentation
-   says compatibility "is declarative" and that "current installers and loaders
-   do not enforce `dsh.manifestVersion` or `engines.dsh`; declaring a range does
-   not reject incompatible hosts or validate SemVer syntax." A plugin can claim
-   any range. Reports therefore record the *observed* runtime and never treat a
-   declared range as evidence of compatibility.
-2. **Version exemptions bypass the compatibility check entirely.** A profile's
-   `compatibility.json` maps an exact `package@version` to exact DSH runtime
-   versions. Granting one is an explicit accept-risk operation (the CLI warns
-   that incompatible plugins may break the application or corrupt data). No
-   report relies on an exemption, and a report that needed one says so.
-3. **"Loaded" is not "correct".** A fiber reaching `active` proves the plugin
-   mounted, not that its behaviour is right, safe, or useful. Reaching `active`
-   is a floor, not a certificate.
-4. **No history in the inventory.** `pluginInventory/list` provides no change
-   subscription and no history, so a transient failure that is later removed is
-   invisible to a snapshot. Only the boot log is evidence.
-5. **T4 is not reproducible in the strict sense.** Model output varies between
-   runs and providers. T4 evidence is bounded by the recorded runtime, model
-   and prompt, and is reported as an observation, not a measurement.
-6. **Single-environment reports.** A report is scoped to the OS, architecture
-   and DSH version recorded in it. Cross-platform behaviour is not established
-   by a single report.
-7. **Quantity is not coverage.** This repo will always hold a small fraction of
-   published DSH plugins. An unreported plugin is unreported, not suspicious.
+**F1 — `engines.dsh` is not enforced.** The manifest package's own
+documentation says compatibility "is declarative" and that installers and
+loaders "do not enforce `dsh.manifestVersion` or `engines.dsh`". A plugin can
+claim any range. Reports record the *observed* runtime and never treat a
+declared range as evidence of compatibility.
+
+**F2 — the official keyless replay plugin is not installable as published.**
+`@deepseek-ai/dsh-llm-replay@0.0.1-rc.1` declares
+`@deepseek-ai/dsh-compact@^0.0.1-rc.1`, and that package returns 404 on npm.
+Its other peers are `^0.0.1-rc.1`, and a caret range on `0.0.x` pins below
+`0.0.2`, so `0.2.0-rc.2` cannot satisfy them under any resolution. Consequence:
+**L3 is blocked** unless a pinned older runtime is used or a transcript adapter
+is written. Relaxing peer resolution was rejected — papering over a mismatch
+would make the report lie about installability.
+
+**F3 — static analysis cannot see intent.** Dynamically constructed code is
+invisible, and a regex match is not a behaviour. `limits[]` records this in
+every report that carries L4 findings.
+
+**F4 — bundle attribution is best-effort.** Code inside a bundle cannot be
+reliably split into the author's own code and inlined dependencies. Findings
+whose only sightings are build output are labelled as such and downgraded.
+
+**F5 — "loaded" is not "correct".** A fiber reaching `active` proves the plugin
+mounted, not that it behaves well. It is a floor, not a certificate.
+
+**F6 — T4/L5 environments are single-point.** A report is scoped to the OS,
+architecture, and DSH version recorded in it. Cross-platform behaviour is not
+established by one report.
+
+**F7 — no static type gate.** Node 24 strips TypeScript types without checking
+them, and installing a compiler in PR CI would either trip the execution policy
+or require weakening it. Three defects in this codebase were caught by runtime
+schema validation instead of by a type checker. The trade-off is recorded, not
+hidden.
+
+**F8 — coverage is a slice.** An unreported plugin is unreported, not
+suspicious. There is no ranking, because a ranking is what made the existing
+signal untrustworthy.
+
+## 6. Cost control
+
+Verification is bounded (see [security.md](security.md) § S4). Exceeding a
+ceiling yields `timeout`/`inconclusive`, never a failure verdict — a plugin
+that is merely large is not broken. Observed in practice: one subject's 62 MB
+artifact took 174 s at 358 KB/s, which would have stalled a run indefinitely
+without a fetch budget. Defaults: 120 s and 128 MiB per artifact, overridable
+per run, and the **effective** budget is recorded in evidence so a timeout
+report is reproducible.

@@ -50,5 +50,7 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '24'
-      - name: Report contract (front-matter, tiers, evidence)
-        run: node tools/validate-reports.mjs
+      - name: Verifier unit tests (schema, verdict caps, redaction, collectors)
+        run: node --test packages/report/test/*.test.ts packages/collector/test/*.test.ts
+      - name: Report contract and catalog index freshness
+        run: node packages/cli/src/main.ts catalog --check

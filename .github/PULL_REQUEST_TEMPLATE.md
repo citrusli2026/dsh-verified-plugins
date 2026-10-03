@@ -9,7 +9,7 @@
 
 ## Type
 
-- [ ] New verification report (`reports/<plugin>/`)
+- [ ] New verification report (`catalog/<registry>/<name>.json`)
 - [ ] Reproduced / added an environment to an existing report
 - [ ] Author reply
 - [ ] Tooling or policy change
@@ -18,11 +18,11 @@
 ## If this is a verification report
 
 - [ ] Subject is an **exact `name@version`**, not a range, tag, or branch.
-- [ ] Verdict matches the tiers that actually executed (`docs/method.md` § 4).
-- [ ] Every claim maps to a file under `reports/<plugin>/evidence/`.
+- [ ] Verdict matches the seven dimensions that actually executed (derived by `packages/report`).
+- [ ] Every conclusion maps to an entry in the report's `evidence[]`.
 - [ ] Evidence is raw and unedited; any redaction uses `[redacted:<reason>]` and is disclosed.
-- [ ] `repro.sh` regenerates the evidence from a clean checkout with **no credentials**.
-- [ ] `repro.sh` redirects `DSH_HOME` to a throwaway profile — nothing touched the reporter's live profile.
+- [ ] The static command in the report reproduces the findings from a clean checkout with **no credentials**.
+- [ ] No third-party plugin code was executed on a machine holding credentials.
 - [ ] DSH runtime version, Node version, OS/arch, and report commit are recorded.
 - [ ] Dependency build scripts requested are listed verbatim, and **whether any were approved** is stated.
 - [ ] `engines.dsh` is reported as an author declaration, not as proof of compatibility.
@@ -39,9 +39,10 @@
 ## Checks
 
 ```sh
+node --test packages/report/test/*.test.ts packages/collector/test/*.test.ts
+node packages/cli/src/main.ts catalog --check
 node tools/policy/check-workflows.mjs
 node tools/check-hygiene.mjs
-node tools/validate-reports.mjs
 ```
 
 - [ ] All three pass locally.

@@ -31,8 +31,9 @@ const REQUIRED_FILES = [
   'CONTRIBUTING.md',
   '.gitignore',
   'docs/method.md',
-  'schemas/report.schema.json',
-  'reports/_TEMPLATE.md',
+  'docs/security.md',
+  'docs/schema.md',
+  'schemas/dsh.plugin.report.v1.schema.json',
   '.github/workflows/ci.yml',
   '.github/workflows/verify.yml',
 ];

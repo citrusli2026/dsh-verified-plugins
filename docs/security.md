@@ -88,10 +88,11 @@ machine-enforced rather than documented.
 
 ### Secondary adversary: a report that misleads
 
-A report that overclaims is a security failure too. A verdict is capped by the
-tiers that actually executed, enforced by `tools/validate-reports.mjs`. A
-plugin that "looks fine" is not reported as fine; it is reported as
-`L2 LOADS` and nothing more.
+A report that overclaims is a security failure too. A verdict is derived from
+the seven dimensions and capped by what actually executed, enforced by
+`packages/report/src/validate.ts`: the validator rejects a declared verdict
+that disagrees with its dimensions. A plugin that "looks fine" is not reported
+as fine; it is reported as `partial` and nothing more.
 
 ### Explicit non-goals
 
@@ -188,7 +189,7 @@ around it — when any of these holds:
 | no token in the executor environment | same (R7) |
 | actions pinned to commit SHAs | same (R4) |
 | zero configured secrets | `tools/audit/no-secrets.sh` (outside CI, where it is provable) |
-| reports do not overclaim | `tools/validate-reports.mjs` |
+| reports do not overclaim | `packages/report` (verdict derived from dimensions, rejected if declared otherwise) |
 
 The policy checker carries **self-test fixtures**: if a rule stops firing, CI
 fails. A guardrail that cannot be shown to trigger is theatre.

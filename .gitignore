@@ -22,9 +22,8 @@ credentials.json
 profiles/desktop/
 
 # ---------------------------------------------------------------------------
-# Verification scratch space.
-# Evidence that must be committed lives in reports/<plugin>/evidence/ and is
-# explicitly re-included below, so it survives the broad ignores above.
+# Verification scratch space. Published evidence lives inside catalog/*.json
+# (the report's `evidence` array), so nothing here needs re-including.
 # ---------------------------------------------------------------------------
 .verify/
 tmp/
@@ -32,11 +31,6 @@ scratch/
 *.log
 *.tgz
 *.tar.gz
-
-!reports/**/evidence/*.log
-!reports/**/evidence/*.txt
-!reports/**/evidence/*.json
-!reports/**/evidence/*.ndjson
 
 # OS / editor
 .DS_Store

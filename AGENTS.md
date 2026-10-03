@@ -66,7 +66,11 @@ Stop, record `blocked`, and surface it — do not route around any of these:
 - Quote error text verbatim. Paraphrase belongs in the analysis field.
 - Distinguish **author-written source** from **build output** in capability
   findings. Attributing a bundler's inlined dependency to the plugin author is a
-  known, published failure mode of this kind of tool; do not repeat it.
+  known, published failure mode of this kind of tool; do not repeat it. Evidence
+  shown to a reader must come from author source when it exists.
+- Never let a verdict exceed the dimensions that executed. It is derived, and
+  the validator rejects a mismatch — but do not rely on the validator to catch
+  a claim you knew was unearned.
 
 ## Working conventions
 
@@ -77,9 +81,10 @@ Stop, record `blocked`, and surface it — do not route around any of these:
   they may run locally. Real third-party plugins may not.
 - Run the full local gate before committing:
   ```sh
+  node --test packages/report/test/*.test.ts packages/collector/test/*.test.ts
+  node packages/cli/src/main.ts catalog --check
   node tools/policy/check-workflows.mjs
   node tools/check-hygiene.mjs
-  node tools/validate-reports.mjs
   ```
 - `main` is protected: PR required, `policy` + `reports` checks must pass, no
   direct pushes, no force pushes, linear history, enforced for admins too.
@@ -94,13 +99,13 @@ Stop, record `blocked`, and surface it — do not route around any of these:
 |---|---|
 | `docs/security.md` | **Read first.** The security boundary and stop conditions |
 | `docs/method.md` | Normative decision standards for dimensions L0–L6 |
-| `docs/schema.md` | `dsh.plugin.report.v1` field definitions |
+| `docs/schema.md` | `dsh.plugin.report.v1` field definitions and attribution rules |
 | `docs/evidence/V<n>.md` | Per-phase handover record |
 | `packages/runner` | Single-plugin verification executor (container-side) |
 | `packages/collector` | Capability static scan (L4) + overhead sampling (L5) |
 | `packages/report` | Schema validation, redaction, Markdown/JSON rendering |
 | `packages/cli` | `dsh-verified <spec>` local reproduction |
-| `catalog/` | Published product: one JSON per plugin + `index.json` |
+| `catalog/` | Published product: one `dsh.plugin.report.v1` JSON per subject + generated `index.json` |
 | `site/` | Static site rendered from `catalog/` |
 | `tools/policy`, `tools/audit` | Repo governance: enforcement, not product |
 
