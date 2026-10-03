@@ -1,11 +1,11 @@
 {
   "schema": "dsh.plugin.catalog.v1",
-  "generatedAt": "2026-10-03T15:52:22.058Z",
+  "generatedAt": "2026-10-03T16:02:15.994Z",
   "counts": {
     "total": 4,
     "byVerdict": {
-      "verified": 1,
-      "partial": 2,
+      "verified": 2,
+      "partial": 1,
       "not-installable": 1
     }
   },
@@ -20,9 +20,9 @@
       "version": "0.1.5",
       "verdict": "not-installable",
       "path": "catalog/npm/morlay__session-branch.json",
-      "generatedAt": "2026-10-03T14:58:38.670Z",
+      "generatedAt": "2026-10-03T15:58:13.711Z",
       "integrity": "sha512-l2H7RhC7Tw9w2sXB0VZ+FdxNKvYtqT4MaGc6j93THglh+OqtD1qrbeR7lVfSLSo609+LCXo5C4q/g3ahd7OcNQ==",
-      "dshVersion": "not-executed",
+      "dshVersion": "0.2.0-rc.2",
       "dimensions": {
         "L0_qualification": "fail",
         "L1_install": "skip",
@@ -41,7 +41,7 @@
       "version": "1.8.8",
       "verdict": "verified",
       "path": "catalog/npm/dsh-cost-meter.json",
-      "generatedAt": "2026-10-03T15:49:28.613Z",
+      "generatedAt": "2026-10-03T15:56:06.201Z",
       "integrity": "sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==",
       "dshVersion": "0.2.0-rc.2",
       "dimensions": {
@@ -67,16 +67,16 @@
       "version": "0.4.0",
       "verdict": "partial",
       "path": "catalog/npm/dsh-find-plugin.json",
-      "generatedAt": "2026-10-03T15:20:23.829Z",
+      "generatedAt": "2026-10-03T15:57:40.152Z",
       "integrity": "sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==",
       "dshVersion": "0.2.0-rc.2",
       "dimensions": {
         "L0_qualification": "pass",
         "L1_install": "fail",
         "L2_load": "skip",
-        "L3_run": "blocked",
+        "L3_run": "skip",
         "L4_capability": "pass",
-        "L5_overhead": "skip",
+        "L5_overhead": "inconclusive",
         "L6_uninstall": "skip"
       },
       "presentCapabilities": [
@@ -89,19 +89,19 @@
       "reportId": "npm:dsh-pet@0.3.1",
       "name": "dsh-pet",
       "version": "0.3.1",
-      "verdict": "partial",
+      "verdict": "verified",
       "path": "catalog/npm/dsh-pet.json",
-      "generatedAt": "2026-10-03T14:59:18.735Z",
+      "generatedAt": "2026-10-03T15:59:47.698Z",
       "integrity": "sha512-7K8jDdoIT9nCX6HN0xhdcdOVAtSygSArE+zAWSBUfivC+gs6k9Szl7T8ozHfPs/QzOg45YRLLWvZVNZZfewcyQ==",
-      "dshVersion": "not-executed",
+      "dshVersion": "0.2.0-rc.2",
       "dimensions": {
         "L0_qualification": "pass",
-        "L1_install": "skip",
-        "L2_load": "skip",
-        "L3_run": "skip",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
         "L4_capability": "pass",
-        "L5_overhead": "skip",
-        "L6_uninstall": "skip"
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
       },
       "presentCapabilities": [
         "listens_on_port",

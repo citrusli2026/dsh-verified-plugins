@@ -58,6 +58,20 @@ for raw in "${LIST[@]}"; do
     continue
   fi
 
+  # L0 pre-filter: a package with no bundle declaration is not a plugin. It
+  # still installs — as a plain dependency that is never composed — so running
+  # the execution dimensions would burn a container to measure the absence of
+  # the subject, and report it as a pass. The static report is already a valid
+  # final report for this case.
+  declares=$(node -p "const r=JSON.parse(require('node:fs').readFileSync(process.argv[1],'utf8')); (r.dimensions.L0_qualification.metrics?.patchPaths ?? []).length" "$dir/static.json" 2>/dev/null || echo 1)
+  if [ "$declares" = "0" ]; then
+    cp "$dir/static.json" "$dir/report.json"
+    secs=$(( $(date +%s) - started ))
+    echo "   -> not a bundle; L0 pre-filtered, no container started (${secs}s)"
+    printf '%s\tnot-a-bundle\t%s\n' "$spec" "$secs" >> "$OUTROOT/timings.tsv"
+    continue
+  fi
+
   # One container, one subject, discarded. Mounts are read-only.
   cname="suite-$DONE"
   docker rm -f "$cname" >/dev/null 2>&1 || true

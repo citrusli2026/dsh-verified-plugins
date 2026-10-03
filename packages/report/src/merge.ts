@@ -115,6 +115,31 @@ function l5Skipped(): Dimension {
   };
 }
 
+/**
+ * Does the subject declare a bundle at all?
+ *
+ * This is the L0 pre-filter, and it guards a real false pass. A package with no
+ * `dsh.bundle.patch` still installs — as a *plain dependency* that is never
+ * composed into the tree. Every execution dimension then "succeeds" while
+ * measuring the absence of the subject: the install returns 0, the profile
+ * boots, a session runs, removal leaves nothing. `@morlay/session-branch` was
+ * published with L1-L6 all passing on a package that is not a plugin.
+ *
+ * A bundle with a *missing* patch path is still a bundle: its install or load
+ * can fail informatively, so execution is worth running.
+ */
+export function declaresBundle(staticReport: Record<string, any>): boolean {
+  const patchPaths = staticReport?.dimensions?.L0_qualification?.metrics?.patchPaths;
+  if (Array.isArray(patchPaths)) return patchPaths.length > 0;
+  // No metric to read: fall back to the declared field, then to the verdict.
+  const declared = staticReport?.subject?.dshBundlePatch;
+  if (declared !== undefined && declared !== null) return true;
+  return staticReport?.dimensions?.L0_qualification?.status === 'pass';
+}
+
+const NOT_A_BUNDLE_REASON =
+  'not run: the subject declares no dsh.bundle.patch, so it installs as a plain dependency that is never composed; running this dimension would measure the absence of the subject rather than the subject';
+
 export function mergeExecution(
   staticReport: Record<string, any>,
   execution: ExecutionResult,
@@ -169,6 +194,7 @@ export function mergeExecution(
   if (l3Step) evidence.push(evidenceFromStep('e-l3-session', l3Step, 'dsh --profile l3 --patch <overlay> --json <task>'));
 
   const dims = report.dimensions as Record<string, Dimension>;
+  const isBundle = declaresBundle(report);
 
   const l1 = execution.L1_install;
   const l1Status: Dimension['status'] = !l1Step
@@ -341,6 +367,27 @@ export function mergeExecution(
   if (nodeVersion !== undefined) runtime.nodeVersion = nodeVersion;
   if (os !== undefined) runtime.os = os;
   if (arch !== undefined) runtime.arch = arch;
+  // Enforce the pre-filter last, so it overrides whatever execution reported.
+  if (!isBundle) {
+    for (const key of ['L1_install', 'L2_load', 'L3_run', 'L5_overhead', 'L6_uninstall'] as const) {
+      dims[key] = {
+        id: key.slice(0, 2),
+        status: 'skip',
+        summary: NOT_A_BUNDLE_REASON,
+        evidenceRefs: [],
+        notes: [
+          'a package that is not a bundle cannot be loaded, run, measured or uninstalled as a plugin',
+          'this dimension was skipped by the L0 pre-filter rather than measured',
+        ],
+      };
+    }
+    delete report.overhead;
+    report.limits = [
+      ...((report.limits as string[] | undefined) ?? []),
+      'the subject is not an installable plugin bundle, so no execution dimension applies to it',
+    ];
+  }
+
   report.runtime = runtime;
 
   report.container = {
