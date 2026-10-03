@@ -19,10 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-Note on scope: this license covers the contents of this repository only —
-the verification method, tooling, schemas and reports. It grants no rights to
-any third-party plugin, and a report published here is not an endorsement,
-certification, or warranty of the plugin it describes. See docs/method.md.
