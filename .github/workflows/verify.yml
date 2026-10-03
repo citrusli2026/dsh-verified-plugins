@@ -29,8 +29,8 @@ on:
         required: false
         default: 'dsh-find-plugin@0.4.0'
         type: string
-      verify_spec:
-        description: 'Subject for the full static+execution verification'
+      verify_specs:
+        description: 'Comma-separated subjects for a batch verification'
         required: false
         default: 'dsh-cost-meter@1.8.8'
         type: string
@@ -157,7 +157,7 @@ jobs:
   exec-verify:
     name: exec-verify
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -167,63 +167,61 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Static report (L0 + L4), on the runner
+      # A batch of subjects. Each gets its own one-off container, its own
+      # wall-clock ceiling, and its own report; one failure does not abort the
+      # rest. Wall time per subject is emitted, so batch cost is measured
+      # rather than assumed.
+      - name: Build the verification container
         env:
-          VERIFY_SPEC: ${{ inputs.verify_spec }}
+          DSH_VERSION: ${{ inputs.dsh_version }}
+        run: |
+          set -euo pipefail
+          docker build --build-arg "DSH_VERSION=${DSH_VERSION:-0.2.0-rc.2}" \
+            -t "dsh-verifier:${DSH_VERSION:-0.2.0-rc.2}" packages/runner/container
+
+      - name: Verify each subject
+        env:
+          DSH_VERSION: ${{ inputs.dsh_version }}
+          VERIFY_SPECS: ${{ inputs.verify_specs }}
           # Provenance: the report records the commit that produced it. Set here
           # so a run on main cites a main commit rather than a pull-request head.
           DSH_VERIFY_COMMIT: ${{ github.sha }}
         run: |
-          set -euo pipefail
-          node packages/cli/src/main.ts static "${VERIFY_SPEC:-dsh-cost-meter@1.8.8}" \
-            --out .verify/report/static.json
-
-      - name: Execution probe (L1 + L2 + L6), in a one-off container
-        env:
-          DSH_VERSION: ${{ inputs.dsh_version }}
-          VERIFY_SPEC: ${{ inputs.verify_spec }}
-        run: |
           set -uo pipefail
           unset GITHUB_TOKEN GH_TOKEN ACTIONS_RUNTIME_TOKEN \
                 ACTIONS_ID_TOKEN_REQUEST_TOKEN ACTIONS_ID_TOKEN_REQUEST_URL || true
+          IMAGE="dsh-verifier:${DSH_VERSION:-0.2.0-rc.2}" \
+            packages/runner/container/run-suite.sh \
+            "${VERIFY_SPECS:-dsh-cost-meter@1.8.8}" .verify/reports || true
 
-          IMAGE="dsh-verifier:${DSH_VERSION:-0.2.0-rc.2}"
-          SPEC="${VERIFY_SPEC:-dsh-cost-meter@1.8.8}"
-
-          docker build --build-arg "DSH_VERSION=${DSH_VERSION:-0.2.0-rc.2}" \
-            -t "$IMAGE" packages/runner/container
-
-          docker rm -f exec-run >/dev/null 2>&1 || true
-          # The probe uses only Node built-ins, so it is mounted as a single
-          # read-only file. No host home, no credentials, no DSH_HOME reuse.
-          # The host sampler is injected into the process under test through
-          # NODE_OPTIONS, so it must exist at the path the probe names.
-          docker run --name exec-run --entrypoint node \
-            -e "PROBE_SPEC=${SPEC}" -e "OUT_DIR=/work/out/exec" \
-            -e "SAMPLER_PATH=/work/host-sampler.mjs" \
-            -v "$PWD/packages/runner/src/execution-probe.ts:/work/execution-probe.ts:ro" \
-            -v "$PWD/packages/runner/src/host-sampler.mjs:/work/host-sampler.mjs:ro" \
-            -v "$PWD/packages/runner/fixtures:/work/fixtures:ro" \
-            "$IMAGE" /work/execution-probe.ts "$SPEC"
-
-          mkdir -p .verify/report
-          docker cp exec-run:/work/out/exec/execution.json .verify/report/execution.json
-          docker rm -f exec-run >/dev/null 2>&1 || true
-
-      - name: Merge into the published report
+      - name: Report outcomes
+        if: always()
         run: |
-          set -euo pipefail
-          node packages/cli/src/main.ts merge \
-            .verify/report/static.json .verify/report/execution.json \
-            --out .verify/report/report.json
-          node packages/cli/src/main.ts validate .verify/report/report.json
+          set -uo pipefail
+          echo "== per-subject cost =="
+          cat .verify/reports/timings.tsv 2>/dev/null || echo "(no timings)"
+          echo
+          node -e "
+            const fs = require('node:fs');
+            const dir = '.verify/reports';
+            let ok = 0, bad = 0;
+            for (const slug of fs.existsSync(dir) ? fs.readdirSync(dir) : []) {
+              const f = dir + '/' + slug + '/report.json';
+              if (!fs.existsSync(f)) { console.log('  MISSING ' + slug); bad++; continue; }
+              const r = JSON.parse(fs.readFileSync(f, 'utf8'));
+              const dims = Object.entries(r.dimensions).map(([k, v]) => k.slice(0,2) + '=' + v.status).join(' ');
+              console.log('  ' + r.reportId + '  ' + r.verdict + '  ' + dims);
+              ok++;
+            }
+            console.log(ok + ' report(s) produced, ' + bad + ' missing');
+          "
 
-      - name: Upload the report
+      - name: Upload the reports
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: exec-report
-          path: .verify/report
+          name: exec-reports
+          path: .verify/reports
           if-no-files-found: warn
           retention-days: 30
 
