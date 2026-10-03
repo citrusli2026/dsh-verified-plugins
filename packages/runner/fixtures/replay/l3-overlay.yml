@@ -1,0 +1,22 @@
+# L3 overlay: mount the official key-free replay adapter as a loader entry.
+#
+# The replay plugin declares no `dsh.bundle`, so installing it does not compose
+# it — DSH reports "installed as a plain dependency, not a profile layer". It is
+# a plain plugin row, and this is the patch that adds one. The `insert` form is
+# taken from a shipped bundle patch (@deepseek-ai/dsh-base/cordis.patch.yml),
+# not guessed.
+#
+# `file` and `overrideFile` deliberately name the SAME path. In the plugin's own
+# `readPrimaryFixture`, `config.file === config.overrideFile` means "no session
+# JSONL is present" and the sidecar is used as the whole script — so a bare
+# ReplayEntry[] is enough and no recorded session log is needed.
+#
+# The recorded script is authored in this repository. It is a fixture, not a
+# recording of anyone's session: driving a real recording would need a provider
+# credential, which this project never injects.
+- insert:
+    - id: llm-replay
+      name: '@deepseek-ai/dsh-llm-replay'
+      config:
+        file: /work/fixtures/replay/session.replay.json
+        overrideFile: /work/fixtures/replay/session.replay.json

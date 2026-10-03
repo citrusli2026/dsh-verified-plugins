@@ -1,0 +1,29 @@
+[
+  {
+    "kind": "chunks",
+    "chunks": [
+      { "type": "block-start", "index": 0, "blockType": "text" },
+      { "type": "text-delta", "index": 0, "text": "Replay fixture: no provider was called." },
+      { "type": "block-end", "index": 0, "block": { "type": "text", "text": "Replay fixture: no provider was called." } },
+      { "type": "finish", "reason": { "kind": "stop" } }
+    ]
+  },
+  {
+    "kind": "chunks",
+    "chunks": [
+      { "type": "block-start", "index": 0, "blockType": "text" },
+      { "type": "text-delta", "index": 0, "text": "Replay fixture: second recorded call." },
+      { "type": "block-end", "index": 0, "block": { "type": "text", "text": "Replay fixture: second recorded call." } },
+      { "type": "finish", "reason": { "kind": "stop" } }
+    ]
+  },
+  {
+    "kind": "chunks",
+    "chunks": [
+      { "type": "block-start", "index": 0, "blockType": "text" },
+      { "type": "text-delta", "index": 0, "text": "Replay fixture: third recorded call." },
+      { "type": "block-end", "index": 0, "block": { "type": "text", "text": "Replay fixture: third recorded call." } },
+      { "type": "finish", "reason": { "kind": "stop" } }
+    ]
+  }
+]
