@@ -302,12 +302,201 @@ function collectResidue(subjectName: string): ResidueCheck {
   return { residue, inspectable: true };
 }
 
+// --- L5: differential overhead sampling -----------------------------------
+//
+// Baseline pass (a profile with no subject) then activated pass (after the
+// subject is installed), same container, same order, median of N runs. Both
+// passes load the sampler into the host process itself, so the numbers come
+// from the process under test rather than from outside it.
+//
+// Only repeatable, significant deltas are reported. When nothing clears the
+// thresholds the result is `no-significant-delta`, which is a finding, not an
+// absence of one.
+
+const SAMPLER_PATH = process.env.SAMPLER_PATH ?? '/work/host-sampler.mjs';
+const SAMPLE_RUNS = Number(process.env.SAMPLE_RUNS ?? 3);
+const SAMPLE_SETTLE_MS = Number(process.env.SAMPLE_SETTLE_MS ?? 6000);
+const SAMPLE_COUNT = Number(process.env.SAMPLE_COUNT ?? 5);
+const SAMPLE_INTERVAL_MS = Number(process.env.SAMPLE_INTERVAL_MS ?? 1000);
+const BASELINE_PROFILE = 'baseline';
+
+const SAMPLED_METRICS = [
+  'atMs',
+  'rss',
+  'heapUsed',
+  'external',
+  'activeTotal',
+  'watchers',
+  'timers',
+  'libuvHandles',
+  'libuvActiveHandles',
+  'libuvRequests',
+  'fds',
+] as const;
+
+type SampledMetric = (typeof SAMPLED_METRICS)[number];
+
+function median(values: number[]): number | null {
+  const usable = values.filter((v) => Number.isFinite(v));
+  if (usable.length === 0) return null;
+  const sorted = [...usable].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0 ? Math.round(((sorted[mid - 1] as number) + (sorted[mid] as number)) / 2) : (sorted[mid] as number);
+}
+
+interface SampledRun {
+  label: string;
+  run: number;
+  ok: boolean;
+  reason: string;
+  file: string;
+  perMetric: Partial<Record<SampledMetric, number>>;
+  /** What the active resources actually were — a bare count tells a reader little. */
+  activeKinds?: Record<string, number>;
+  libuvHandleTypes?: Record<string, number>;
+}
+
+/**
+ * One sampling run. The sampler exits by itself once it has written its file,
+ * so the bound here is a backstop rather than the normal path.
+ */
+function sampleOnce(profile: string, label: string, run: number): SampledRun {
+  const file = join(OUT_DIR, `sample-${label}-${run}.json`);
+  const t0 = Date.now();
+  const bound = SAMPLE_SETTLE_MS + SAMPLE_COUNT * SAMPLE_INTERVAL_MS + 20_000;
+
+  spawnSync('dsh', ['--profile', profile], {
+    encoding: 'utf8',
+    timeout: bound,
+    maxBuffer: 16 * 1024 * 1024,
+    env: {
+      ...process.env,
+      NODE_OPTIONS: `--import ${SAMPLER_PATH}`,
+      SAMPLE_OUT: file,
+      SAMPLER_T0: String(t0),
+      SAMPLE_SETTLE_MS: String(SAMPLE_SETTLE_MS),
+      SAMPLE_COUNT: String(SAMPLE_COUNT),
+      SAMPLE_INTERVAL_MS: String(SAMPLE_INTERVAL_MS),
+    },
+  });
+
+  if (!existsSync(file)) {
+    return { label, run, ok: false, reason: 'the host produced no sample file', file, perMetric: {} };
+  }
+
+  let parsed: { samples?: Array<Record<string, number>> };
+  try {
+    parsed = JSON.parse(readFileSync(file, 'utf8')) as { samples?: Array<Record<string, number>> };
+  } catch (error) {
+    return { label, run, ok: false, reason: `unreadable sample file: ${String(error)}`, file, perMetric: {} };
+  }
+
+  const samples = parsed.samples ?? [];
+  if (samples.length === 0) {
+    return { label, run, ok: false, reason: 'the sample file carried no samples', file, perMetric: {} };
+  }
+
+  const perMetric: Partial<Record<SampledMetric, number>> = {};
+  for (const metric of SAMPLED_METRICS) {
+    const values = samples.map((s) => s[metric]).filter((v): v is number => typeof v === 'number');
+    const m = median(values);
+    if (m !== null) perMetric[metric] = m;
+  }
+
+  const last = samples[samples.length - 1] as Record<string, any>;
+  return {
+    label,
+    run,
+    ok: true,
+    reason: `${samples.length} samples`,
+    file,
+    perMetric,
+    activeKinds: (last.activeKinds ?? {}) as Record<string, number>,
+    libuvHandleTypes: (last.libuvHandleTypes ?? {}) as Record<string, number>,
+  };
+}
+
+interface OverheadOutcome {
+  status: 'measured' | 'no-significant-delta' | 'inconclusive';
+  reason: string;
+  samples: number;
+  baseline: Partial<Record<SampledMetric, number>>;
+  activated: Partial<Record<SampledMetric, number>>;
+  delta: Partial<Record<SampledMetric, number>>;
+  significant: Array<{ metric: string; baseline: number; activated: number; delta: number; ratio: number; reason: string }>;
+  runs: SampledRun[];
+}
+
+function aggregate(runs: SampledRun[]): Partial<Record<SampledMetric, number>> {
+  const out: Partial<Record<SampledMetric, number>> = {};
+  const ok = runs.filter((r) => r.ok);
+  if (ok.length === 0) return out;
+  for (const metric of SAMPLED_METRICS) {
+    const per = ok.map((r) => r.perMetric[metric]).filter((v): v is number => typeof v === 'number');
+    const m = median(per);
+    if (m !== null) out[metric] = m;
+  }
+  return out;
+}
+
+/**
+ * Thresholds are deliberately coarse. The specification's examples are
+ * order-of-magnitude watcher changes, RSS growth beyond 100 MB and startup
+ * increases beyond 2 s; anything finer on a shared CI runner is noise dressed
+ * up as measurement.
+ */
+function findSignificant(
+  baseline: Partial<Record<SampledMetric, number>>,
+  activated: Partial<Record<SampledMetric, number>>,
+): OverheadOutcome['significant'] {
+  const found: OverheadOutcome['significant'] = [];
+  const push = (metric: SampledMetric, reason: string) => {
+    const b = baseline[metric];
+    const a = activated[metric];
+    if (b === undefined || a === undefined) return;
+    found.push({ metric, baseline: b, activated: a, delta: a - b, ratio: b === 0 ? Infinity : Number((a / b).toFixed(2)), reason });
+  };
+
+  const bH = baseline.libuvHandles;
+  const aH = activated.libuvHandles;
+  if (bH !== undefined && aH !== undefined && aH >= bH * 2 && aH - bH >= 20) push('libuvHandles', 'at least doubled and grew by 20 or more');
+  const bA = baseline.activeTotal;
+  const aA = activated.activeTotal;
+  if (bA !== undefined && aA !== undefined && aA >= bA * 2 && aA - bA >= 10) push('activeTotal', 'at least doubled and grew by 10 or more');
+  const bW = baseline.watchers;
+  const aW = activated.watchers;
+  if (bW !== undefined && aW !== undefined && ((aW >= bW * 2 && aW - bW >= 5) || aW - bW >= 10)) push('watchers', 'filesystem watchers increased materially');
+  const bT = baseline.timers;
+  const aT = activated.timers;
+  if (bT !== undefined && aT !== undefined && aT - bT >= 20) push('timers', '20 or more additional timers');
+  const bR = baseline.rss;
+  const aR = activated.rss;
+  if (bR !== undefined && aR !== undefined && aR - bR > 100 * 1024 * 1024) push('rss', 'resident memory grew by more than 100 MiB');
+  const bF = baseline.fds;
+  const aF = activated.fds;
+  if (bF !== undefined && aF !== undefined && aF - bF >= 50) push('fds', '50 or more additional open descriptors');
+  const bS = baseline.atMs;
+  const aS = activated.atMs;
+  if (bS !== undefined && aS !== undefined && aS - bS > 2000) push('atMs', 'steady state arrived more than 2 s later');
+  return found;
+}
+
 // --- L1 -------------------------------------------------------------------
 mkdirSync(DSH_HOME, { recursive: true });
+// The sampler writes into OUT_DIR from inside the host process, so the
+// directory must exist before the first sampling run.
+mkdirSync(OUT_DIR, { recursive: true });
 // The runtime version is a first-class fact: every finding is scoped to it, and
 // DSH behaviour moves between release candidates.
 const versionStep = run('dsh-version', ['--version'], 30_000);
 const dshVersion = versionStep.excerpt.trim().split('\n').pop()?.trim() ?? 'unknown';
+
+// Baseline first, on a profile that does not contain the subject.
+run('l5-baseline-profile', ['plugin', `--profile`, BASELINE_PROFILE, 'version-exemptions'], 60_000);
+const baselineRuns: SampledRun[] = [];
+if (existsSync(join(DSH_HOME, 'profiles', BASELINE_PROFILE, 'package.json'))) {
+  for (let i = 0; i < SAMPLE_RUNS; i++) baselineRuns.push(sampleOnce(BASELINE_PROFILE, 'baseline', i));
+}
 
 const l1Step = run('l1-install', ['plugin', `--profile`, PROFILE, 'add', SPEC], 240_000);
 const l1 = classifyInstall(l1Step);
@@ -326,15 +515,18 @@ let l6: L6Outcome = {
   residue: [],
 };
 
+const subjectName = SPEC.startsWith('@')
+  ? SPEC.slice(0, SPEC.lastIndexOf('@'))
+  : (SPEC.split('@')[0] as string);
+
+const activatedRuns: SampledRun[] = [];
+
 if (l1.status === 'pass') {
-  const subjectNameForBoot = SPEC.startsWith('@')
-    ? SPEC.slice(0, SPEC.lastIndexOf('@'))
-    : (SPEC.split('@')[0] as string);
+  for (let i = 0; i < SAMPLE_RUNS; i++) activatedRuns.push(sampleOnce(PROFILE, 'activated', i));
+
+  const subjectNameForBoot = subjectName;
   l2 = classifyBoot(run('l2-boot', ['--profile', PROFILE], BOOT_BOUND_MS), subjectNameForBoot);
 
-  const subjectName = SPEC.startsWith('@')
-    ? SPEC.slice(0, SPEC.lastIndexOf('@'))
-    : (SPEC.split('@')[0] as string);
   run('l6-remove', ['plugin', `--profile`, PROFILE, 'remove', subjectName], 180_000);
   const check = collectResidue(subjectName);
   l6 = !check.inspectable
@@ -355,6 +547,46 @@ if (l1.status === 'pass') {
       };
 }
 
+const baselineAgg = aggregate(baselineRuns);
+const activatedAgg = aggregate(activatedRuns);
+const overhead: OverheadOutcome = (() => {
+  const runs = [...baselineRuns, ...activatedRuns];
+  const empty = { method: 'differential' as const };
+  if (baselineRuns.length === 0 || !baselineRuns.some((r) => r.ok)) {
+    return { ...empty, status: 'inconclusive', reason: 'no usable baseline samples were collected', samples: 0, baseline: {}, activated: {}, delta: {}, significant: [], runs } as OverheadOutcome;
+  }
+  if (l1.status !== 'pass') {
+    return { ...empty, status: 'inconclusive', reason: 'the subject did not install, so there was nothing to activate', samples: 0, baseline: baselineAgg, activated: {}, delta: {}, significant: [], runs } as OverheadOutcome;
+  }
+  if (activatedRuns.length === 0 || !activatedRuns.some((r) => r.ok)) {
+    return { ...empty, status: 'inconclusive', reason: 'no usable activated samples were collected', samples: 0, baseline: baselineAgg, activated: {}, delta: {}, significant: [], runs } as OverheadOutcome;
+  }
+
+  const delta: Partial<Record<SampledMetric, number>> = {};
+  for (const metric of SAMPLED_METRICS) {
+    const b = baselineAgg[metric];
+    const a = activatedAgg[metric];
+    if (b !== undefined && a !== undefined) delta[metric] = a - b;
+  }
+  const significant = findSignificant(baselineAgg, activatedAgg);
+  const usableRuns = [...baselineRuns, ...activatedRuns].filter((r) => r.ok).length;
+
+  return {
+    ...empty,
+    status: significant.length > 0 ? 'measured' : 'no-significant-delta',
+    reason:
+      significant.length > 0
+        ? `${significant.length} metric(s) moved beyond the significance thresholds`
+        : 'no metric moved beyond the significance thresholds; that is the finding',
+    samples: usableRuns,
+    baseline: baselineAgg,
+    activated: activatedAgg,
+    delta,
+    significant,
+    runs,
+  } as OverheadOutcome;
+})();
+
 const execution = {
   schema: 'dsh.verifier.execution.v1',
   spec: SPEC,
@@ -366,19 +598,24 @@ const execution = {
     arch: arch(),
     dshHome: DSH_HOME,
     profile: PROFILE,
+    baselineProfile: BASELINE_PROFILE,
     bootBoundMs: BOOT_BOUND_MS,
+    sampleRuns: SAMPLE_RUNS,
+    sampleSettleMs: SAMPLE_SETTLE_MS,
+    sampleCount: SAMPLE_COUNT,
   },
   L1_install: l1,
   L2_load: l2,
+  L5_overhead: overhead,
   L6_uninstall: l6,
   steps,
   notes: [
-    'L5 overhead sampling is not implemented; the dimension is reported as skip rather than estimated',
     'no dependency build script was approved by this executor',
+    'overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta',
+    'sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test',
   ],
 };
 
-mkdirSync(OUT_DIR, { recursive: true });
 const text = `${JSON.stringify(execution, null, 2)}\n`;
 try {
   writeFileSync(join(OUT_DIR, 'execution.json'), text);

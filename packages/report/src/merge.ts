@@ -45,6 +45,22 @@ export interface ExecutionResult {
     logPath: string | null;
   };
   L2_load: { status: string; reason: string; detail: string; diagnostics: string };
+  L5_overhead?: {
+    status: string;
+    reason: string;
+    samples: number;
+    baseline: Record<string, number>;
+    activated: Record<string, number>;
+    delta: Record<string, number>;
+    significant: Array<{ metric: string; baseline: number; activated: number; delta: number; ratio: number; reason: string }>;
+    runs?: Array<{
+      label: string;
+      run: number;
+      ok: boolean;
+      activeKinds?: Record<string, number>;
+      libuvHandleTypes?: Record<string, number>;
+    }>;
+  };
   L6_uninstall: { status: string; reason: string; detail: string; residue: string[] };
   steps: ExecutionStep[];
   notes: string[];
@@ -152,6 +168,32 @@ export function mergeExecution(
     ).excerpt,
   });
 
+  // L5 evidence is the medians themselves: the numbers a reader would have to
+  // reproduce to disagree, rather than a rendered conclusion.
+  const l5 = execution.L5_overhead;
+  if (l5 && l5.status !== 'inconclusive') {
+    evidence.push({
+      id: 'e-l5-overhead',
+      kind: 'sample',
+      command: 'dsh --profile <baseline|activated> with the host sampler injected via NODE_OPTIONS=--import',
+      excerpt: capExcerpt(
+        JSON.stringify(
+          {
+            method: 'differential',
+            status: l5.status,
+            samples: l5.samples,
+            baselineMedian: l5.baseline,
+            activatedMedian: l5.activated,
+            delta: l5.delta,
+            significant: l5.significant,
+          },
+          null,
+          2,
+        ),
+      ).excerpt,
+    });
+  }
+
   const dims = report.dimensions as Record<string, Dimension>;
 
   const l1 = execution.L1_install;
@@ -239,7 +281,57 @@ export function mergeExecution(
   }
 
   dims.L3_run = l3Blocked(dshVersion);
-  dims.L5_overhead = l5Skipped();
+
+  if (!l5) {
+    dims.L5_overhead = l5Skipped();
+  } else if (l5.status === 'inconclusive') {
+    dims.L5_overhead = {
+      id: 'L5',
+      status: 'inconclusive',
+      summary: l5.reason,
+      metrics: { samples: l5.samples },
+      evidenceRefs: [],
+      notes: ['no overhead claim is made when the differential could not be completed'],
+    };
+  } else {
+    // A successful measurement is a pass whether or not a delta cleared the
+    // thresholds: `no-significant-delta` is a finding, not a missing one.
+    dims.L5_overhead = {
+      id: 'L5',
+      status: 'pass',
+      summary:
+        l5.status === 'measured'
+          ? `${l5.significant.length} metric(s) beyond the significance thresholds across ${l5.samples} sampled run(s)`
+          : `no significant delta across ${l5.samples} sampled run(s)`,
+      metrics: { samples: l5.samples, baseline: l5.baseline, activated: l5.activated, delta: l5.delta },
+      evidenceRefs: ['e-l5-overhead'],
+      notes: [
+        l5.reason,
+        'differential attribution: baseline profile first, then the subject activated, same container and order',
+        'thresholds are coarse on purpose — order-of-magnitude watcher changes, RSS growth beyond 100 MiB, steady state more than 2 s later',
+      ],
+    };
+  }
+
+  if (l5 && l5.status !== 'inconclusive') {
+    // What the resources actually were, not just how many. A bare count of 11
+    // tells a reader nothing about what a plugin holds open.
+    const kindsFor = (label: string): Record<string, number> => {
+      const run = (l5.runs ?? []).filter((r) => r.label === label && r.ok).pop();
+      return { ...(run?.activeKinds ?? {}), ...(run?.libuvHandleTypes ?? {}) };
+    };
+
+    report.overhead = {
+      method: 'differential',
+      status: l5.status,
+      samples: l5.samples,
+      baseline: l5.baseline,
+      activated: l5.activated,
+      delta: l5.delta,
+      significant: l5.significant,
+      resourceKinds: { baseline: kindsFor('baseline'), activated: kindsFor('activated') },
+    };
+  }
 
   // Only set keys that actually have a value: an `undefined` property is still
   // a property, and the schema rejects it. This produced invalid reports
@@ -263,7 +355,9 @@ export function mergeExecution(
   report.verdict = deriveVerdict(dims as Record<DimensionKey, Dimension>);
   report.limits = [
     ...(report.limits ?? []).filter((l: string) => !/no source paths/.test(l) || true),
-    'L5 overhead sampling is not implemented, so no cost claim is made',
+    ...(l5 && l5.status !== 'inconclusive'
+      ? []
+      : ['L5 overhead sampling did not complete, so no cost claim is made']),
     'the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase',
     ...execution.notes,
   ].filter((l: string, i: number, all: string[]) => all.indexOf(l) === i);

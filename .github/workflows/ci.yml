@@ -52,5 +52,7 @@ jobs:
           node-version: '24'
       - name: Verifier unit tests (schema, verdict caps, redaction, collectors)
         run: node --test packages/report/test/*.test.ts packages/collector/test/*.test.ts
+      - name: Overhead detector acceptance (the watcher anomaly must be caught)
+        run: node tools/acceptance/watcher.mjs
       - name: Report contract and catalog index freshness
         run: node packages/cli/src/main.ts catalog --check

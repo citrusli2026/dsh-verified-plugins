@@ -177,3 +177,72 @@ test('merge: every executed dimension cites evidence that resolves', () => {
     }
   }
 });
+
+test('merge: a measured overhead delta is a pass and cites its samples', () => {
+  const exec = execution({
+    L5_overhead: {
+      status: 'measured',
+      reason: '1 metric(s) moved beyond the significance thresholds',
+      samples: 6,
+      baseline: { rss: 100_000_000, libuvHandles: 12, watchers: 0 },
+      activated: { rss: 260_000_000, libuvHandles: 480, watchers: 69_000 },
+      delta: { rss: 160_000_000, libuvHandles: 468, watchers: 69_000 },
+      significant: [
+        { metric: 'rss', baseline: 100_000_000, activated: 260_000_000, delta: 160_000_000, ratio: 2.6, reason: 'resident memory grew by more than 100 MiB' },
+      ],
+    },
+  });
+  const merged = mergeExecution(staticReport(), exec);
+  const l5 = (merged.dimensions as Record<string, Dimension>).L5_overhead;
+  assert.equal(l5.status, 'pass');
+  assert.match(l5.summary, /beyond the significance thresholds/);
+  assert.deepEqual(l5.evidenceRefs, ['e-l5-overhead']);
+  assert.equal(merged.overhead.status, 'measured');
+  assert.equal(merged.overhead.significant.length, 1);
+  assert.deepEqual(validateReport(merged, SCHEMA), []);
+});
+
+test('merge: no significant delta is a finding, not a missing measurement', () => {
+  const exec = execution({
+    L5_overhead: {
+      status: 'no-significant-delta',
+      reason: 'no metric moved beyond the significance thresholds; that is the finding',
+      samples: 6,
+      baseline: { rss: 100_000_000 },
+      activated: { rss: 101_000_000 },
+      delta: { rss: 1_000_000 },
+      significant: [],
+    },
+  });
+  const merged = mergeExecution(staticReport(), exec);
+  const l5 = (merged.dimensions as Record<string, Dimension>).L5_overhead;
+  assert.equal(l5.status, 'pass', 'a completed measurement passes even with a null result');
+  assert.equal(merged.overhead.status, 'no-significant-delta');
+  assert.deepEqual(validateReport(merged, SCHEMA), []);
+});
+
+test('merge: an incomplete differential makes no cost claim', () => {
+  const exec = execution({
+    L5_overhead: {
+      status: 'inconclusive',
+      reason: 'the subject did not install, so there was nothing to activate',
+      samples: 0,
+      baseline: { rss: 100_000_000 },
+      activated: {},
+      delta: {},
+      significant: [],
+    },
+  });
+  const merged = mergeExecution(staticReport(), exec);
+  const l5 = (merged.dimensions as Record<string, Dimension>).L5_overhead;
+  assert.equal(l5.status, 'inconclusive');
+  assert.equal(merged.overhead, undefined, 'no overhead object may be published without a measurement');
+  assert.ok((merged.limits as string[]).some((l) => /no cost claim/.test(l)));
+  assert.deepEqual(validateReport(merged, SCHEMA), []);
+});
+
+test('merge: without execution overhead at all, L5 stays skipped', () => {
+  const merged = mergeExecution(staticReport(), execution());
+  assert.equal((merged.dimensions as Record<string, Dimension>).L5_overhead.status, 'skip');
+  assert.equal(merged.overhead, undefined);
+});

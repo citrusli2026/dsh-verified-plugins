@@ -1,10 +1,11 @@
 {
   "schema": "dsh.plugin.report.v1",
   "reportId": "npm:dsh-cost-meter@1.8.8",
-  "generatedAt": "2026-10-03T15:17:51.090Z",
+  "generatedAt": "2026-10-03T15:32:25.531Z",
   "verifier": {
     "name": "dsh-verified",
-    "version": "0.1.0"
+    "version": "0.1.0",
+    "commit": "2bb349a13499247b762102ae193b0296c83b5865"
   },
   "subject": {
     "spec": "dsh-cost-meter@1.8.8",
@@ -60,7 +61,7 @@
       "status": "pass",
       "summary": "installed",
       "metrics": {
-        "durationMs": 2056,
+        "durationMs": 1950,
         "exitCode": 0,
         "declaredPeers": null,
         "bundlesAfterInstall": [
@@ -85,7 +86,7 @@
       "summary": "booted, mounted and stayed alive",
       "metrics": {
         "bootBoundMs": 25000,
-        "durationMs": 25048,
+        "durationMs": 25042,
         "signal": null
       },
       "evidenceRefs": [
@@ -129,11 +130,54 @@
     },
     "L5_overhead": {
       "id": "L5",
-      "status": "skip",
-      "summary": "not run: differential overhead sampling is not implemented yet",
-      "evidenceRefs": [],
+      "status": "pass",
+      "summary": "no significant delta across 6 sampled run(s)",
+      "metrics": {
+        "samples": 6,
+        "baseline": {
+          "atMs": 8032,
+          "rss": 199528448,
+          "heapUsed": 68433248,
+          "external": 5188103,
+          "activeTotal": 10,
+          "watchers": 7,
+          "timers": 0,
+          "libuvHandles": 22,
+          "libuvActiveHandles": 17,
+          "fds": 20
+        },
+        "activated": {
+          "atMs": 8048,
+          "rss": 231133184,
+          "heapUsed": 84459296,
+          "external": 7869397,
+          "activeTotal": 11,
+          "watchers": 8,
+          "timers": 0,
+          "libuvHandles": 23,
+          "libuvActiveHandles": 19,
+          "fds": 20
+        },
+        "delta": {
+          "atMs": 16,
+          "rss": 31604736,
+          "heapUsed": 16026048,
+          "external": 2681294,
+          "activeTotal": 1,
+          "watchers": 1,
+          "timers": 0,
+          "libuvHandles": 1,
+          "libuvActiveHandles": 2,
+          "fds": 0
+        }
+      },
+      "evidenceRefs": [
+        "e-l5-overhead"
+      ],
       "notes": [
-        "reporting an overhead figure here would mean inventing one; the dimension stays visible as not having run"
+        "no metric moved beyond the significance thresholds; that is the finding",
+        "differential attribution: baseline profile first, then the subject activated, same container and order",
+        "thresholds are coarse on purpose — order-of-magnitude watcher changes, RSS growth beyond 100 MiB, steady state more than 2 s later"
       ]
     },
     "L6_uninstall": {
@@ -142,7 +186,7 @@
       "summary": "removed without residue",
       "metrics": {
         "residue": [],
-        "durationMs": 240
+        "durationMs": 169
       },
       "evidenceRefs": [
         "e-l6-remove"
@@ -269,7 +313,7 @@
       "kind": "command",
       "command": "resolve dsh-cost-meter@1.8.8 -> dsh-cost-meter@1.8.8",
       "exitCode": 0,
-      "durationMs": 154,
+      "durationMs": 126,
       "excerpt": "{\n  \"name\": \"dsh-cost-meter\",\n  \"version\": \"1.8.8\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/dsh-cost-meter/-/dsh-cost-meter-1.8.8.tgz\",\n  \"advertisedIntegrity\": \"sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==\",\n  \"publishedAt\": \"2026-10-03T10:59:09.474Z\"\n}"
     },
     {
@@ -277,7 +321,7 @@
       "kind": "artifact",
       "command": "fetch https://registry.npmjs.org/dsh-cost-meter/-/dsh-cost-meter-1.8.8.tgz",
       "exitCode": 0,
-      "durationMs": 52,
+      "durationMs": 56,
       "excerpt": "{\n  \"bytes\": 411843,\n  \"resolvedIntegrity\": \"sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==\",\n  \"advertisedIntegrity\": \"sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"21e4fd0d9655707fddb328ce8cb93cc49a8d21f304f946ae7674b336bba51080\"\n}",
       "excerptBytes": 383,
       "sha256": "21e4fd0d9655707fddb328ce8cb93cc49a8d21f304f946ae7674b336bba51080"
@@ -309,18 +353,18 @@
       "kind": "command",
       "command": "dsh plugin --profile verify add dsh-cost-meter@1.8.8",
       "exitCode": 0,
-      "durationMs": 2056,
-      "excerpt": "Progress: resolved 0, reused 0, downloaded 1, added 0\nAdded 1 entry to minimumReleaseAgeExclude in pnpm-workspace.yaml (set minimumReleaseAgeStrict to true to gate these updates with a prompt):\n  dsh-cost-meter@1.8.8\nPackages are hard linked from the content-addressable store to the virtual store.\n  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nPackages: +2\n++\nProgress: resolved 2, reused 0, downloaded 2, added 2, done\n[WARN] Issues with peer dependencies found. Run \"pnpm peers check\" to list them.\n\ndependencies:\n+ dsh-cost-meter 1.8.8\n\nDone in 407ms using pnpm v12.8.1\ndsh: initialized profile verify at /work/dsh-home/profiles/verify\n",
+      "durationMs": 1950,
+      "excerpt": "Progress: resolved 0, reused 0, downloaded 1, added 0\nAdded 1 entry to minimumReleaseAgeExclude in pnpm-workspace.yaml (set minimumReleaseAgeStrict to true to gate these updates with a prompt):\n  dsh-cost-meter@1.8.8\nPackages are hard linked from the content-addressable store to the virtual store.\n  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nPackages: +2\n++\nProgress: resolved 2, reused 0, downloaded 2, added 2, done\n[WARN] Issues with peer dependencies found. Run \"pnpm peers check\" to list them.\n\ndependencies:\n+ dsh-cost-meter 1.8.8\n\nDone in 606ms using pnpm v12.8.1\ndsh: initialized profile verify at /work/dsh-home/profiles/verify\n",
       "excerptBytes": 726,
       "truncated": false,
-      "sha256": "b565ceaedc193b865a548a9c458ff774984baf3a0390aaac46ec86ba012d9531"
+      "sha256": "a2b8ddc59d7395bed37d08cd1e92bec776d340187af0ba8211a9f3b4a8393a44"
     },
     {
       "id": "e-l2-boot",
       "kind": "command",
       "command": "dsh --profile verify",
       "exitCode": 0,
-      "durationMs": 25048,
+      "durationMs": 25042,
       "excerpt": "[dsh-cost-meter] 已加载,账本:/work/dsh-home/storages/cost-meter/ledger.json\n",
       "excerptBytes": 81,
       "truncated": false,
@@ -331,11 +375,11 @@
       "kind": "command",
       "command": "dsh plugin --profile verify remove dsh-cost-meter",
       "exitCode": 0,
-      "durationMs": 240,
-      "excerpt": "Packages: -2\n--\n\ndependencies:\n- dsh-cost-meter 1.8.8\n\nDone in 13ms using pnpm v12.8.1\n",
+      "durationMs": 169,
+      "excerpt": "Packages: -2\n--\n\ndependencies:\n- dsh-cost-meter 1.8.8\n\nDone in 17ms using pnpm v12.8.1\n",
       "excerptBytes": 87,
       "truncated": false,
-      "sha256": "b0ef6398872ff31ad147addd685bb77b89092ff30fcccd0ef04ba40567a0f663"
+      "sha256": "6ebb3cfcf9b59277f26a8853dd90cf95fc221716f91e567b97b39fa7f453eb97"
     },
     {
       "id": "e-l3-blocked",
@@ -343,6 +387,12 @@
       "command": "dsh plugin --profile replay add @deepseek-ai/dsh-llm-replay",
       "exitCode": 1,
       "excerpt": "@deepseek-ai/dsh-llm-replay@0.0.1-rc.1 declares peerDependencies:\n  @deepseek-ai/dsh-llm ^0.0.1-rc.1, @deepseek-ai/dsh-compact ^0.0.1-rc.1,\n  @deepseek-ai/dsh-session ^0.0.1-rc.1, @deepseek-ai/dsh-invariants ^0.0.1-rc.1\nDSH 0.2.0-rc.2 refuses the install: caret ranges on 0.0.x cannot reach 0.2.x,\nand @deepseek-ai/dsh-compact does not exist on npm at any version.\nObserved in the container; see docs/evidence/V3.md."
+    },
+    {
+      "id": "e-l5-overhead",
+      "kind": "sample",
+      "command": "dsh --profile <baseline|activated> with the host sampler injected via NODE_OPTIONS=--import",
+      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8032,\n    \"rss\": 199528448,\n    \"heapUsed\": 68433248,\n    \"external\": 5188103,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8048,\n    \"rss\": 231133184,\n    \"heapUsed\": 84459296,\n    \"external\": 7869397,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 23,\n    \"libuvActiveHandles\": 19,\n    \"fds\": 20\n  },\n  \"delta\": {\n    \"atMs\": 16,\n    \"rss\": 31604736,\n    \"heapUsed\": 16026048,\n    \"external\": 2681294,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 1,\n    \"libuvActiveHandles\": 2,\n    \"fds\": 0\n  },\n  \"significant\": []\n}"
     }
   ],
   "redactions": [],
@@ -353,10 +403,10 @@
     "the artifact ships no source paths, so capability findings describe build output only; code-level attribution between the author and inlined dependencies is not resolvable from this artifact",
     "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
     "static analysis cannot see dynamically constructed code or prove intent",
-    "L5 overhead sampling is not implemented, so no cost claim is made",
     "the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase",
-    "L5 overhead sampling is not implemented; the dimension is reported as skip rather than estimated",
-    "no dependency build script was approved by this executor"
+    "no dependency build script was approved by this executor",
+    "overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta",
+    "sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test"
   ],
   "bundlePatch": {
     "path": "cordis.patch.yml",
@@ -381,5 +431,75 @@
     "notes": [
       "textual analysis: a line number is provided for review, not a YAML object model"
     ]
+  },
+  "overhead": {
+    "method": "differential",
+    "status": "no-significant-delta",
+    "samples": 6,
+    "baseline": {
+      "atMs": 8032,
+      "rss": 199528448,
+      "heapUsed": 68433248,
+      "external": 5188103,
+      "activeTotal": 10,
+      "watchers": 7,
+      "timers": 0,
+      "libuvHandles": 22,
+      "libuvActiveHandles": 17,
+      "fds": 20
+    },
+    "activated": {
+      "atMs": 8048,
+      "rss": 231133184,
+      "heapUsed": 84459296,
+      "external": 7869397,
+      "activeTotal": 11,
+      "watchers": 8,
+      "timers": 0,
+      "libuvHandles": 23,
+      "libuvActiveHandles": 19,
+      "fds": 20
+    },
+    "delta": {
+      "atMs": 16,
+      "rss": 31604736,
+      "heapUsed": 16026048,
+      "external": 2681294,
+      "activeTotal": 1,
+      "watchers": 1,
+      "timers": 0,
+      "libuvHandles": 1,
+      "libuvActiveHandles": 2,
+      "fds": 0
+    },
+    "significant": [],
+    "resourceKinds": {
+      "baseline": {
+        "PipeWrap": 3,
+        "FSEventWrap": 7,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 7,
+        "loop": 1
+      },
+      "activated": {
+        "PipeWrap": 3,
+        "FSEventWrap": 8,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 8,
+        "loop": 1
+      }
+    }
   }
 }
