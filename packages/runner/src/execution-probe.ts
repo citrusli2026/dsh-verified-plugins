@@ -185,55 +185,87 @@ interface L2Outcome {
 }
 
 /**
+ * Did anything actually fail?
+ *
+ * The first version treated *any* output as a failure signal, on the assumption
+ * that a clean composition is silent. The first real execution disproved it:
+ * dsh-cost-meter prints its own success line ("loaded, ledger: ...") on startup
+ * and was duly reported as a load failure. Plugins log; that is not an error.
+ *
+ * The test is therefore failure-shaped text. The composition's own diagnostics
+ * are the authority: DSH names a skipped bundle and a failed entry, so their
+ * absence while the app stays alive is evidence the bundle was neither skipped
+ * nor rejected.
+ */
+const FAILURE_SHAPES = [
+  /failed to load/i,
+  /\bERR_[A-Z_]+\b/,
+  /\bskippedBundles?\b/i,
+  /incompatible with/i,
+  /installation rejected/i,
+  /(^|\n)\s*(?:uncaught|unhandled)/i,
+  /\bat\s+\S+\s+\(.*:\d+:\d+\)/,
+];
+
+function failureDiagnostics(text: string, subjectName: string): string[] {
+  if (text.trim() === '') return [];
+  return text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line !== '')
+    .filter(
+      (line) =>
+        FAILURE_SHAPES.some((re) => re.test(line)) ||
+        (subjectName !== '' && line.includes(subjectName) && /fail|skip|deny|error|refus/i.test(line)),
+    );
+}
+
+/**
  * Load: boot the profile under a wall-clock bound.
  *
  * Observed behaviour (evidence in docs/evidence/V3.md): a healthy composition
- * boots, has nothing to say, and waits — so the bound kills it and the process
- * is reported as signalled. A composition whose plugins fail to load exits
- * early with loader diagnostics, because DSH exits before the runner mounts.
- * Those two are distinguishable, and that distinction is the whole test.
+ * boots, mounts and waits, so the bound reaches it and DSH shuts down
+ * gracefully. A composition whose plugins fail to load reports them, and a
+ * failed *required* entry exits non-zero. The classifier keys on failure-shaped
+ * diagnostics, never on the mere presence of output.
  */
-function classifyBoot(step: StepResult): L2Outcome {
+function classifyBoot(step: StepResult, subjectName: string): L2Outcome {
   const text = step.excerpt.trim();
+  const failures = failureDiagnostics(text, subjectName);
 
-  // The bound fired. DSH answers SIGTERM by shutting down gracefully with exit
-  // 0, so "still running when the bound arrived, and quiet" is the healthy
-  // outcome: the composition mounted and waited.
-  if (step.timedOut && text === '') {
-    return {
-      status: 'pass',
-      reason: 'booted and settled',
-      detail:
-        'the process was still running with no diagnostics when the wall-clock bound reached it, which is what a healthy composition does: it mounts and waits',
-      diagnostics: '',
-    };
-  }
-  if (step.timedOut && text !== '') {
+  if (failures.length > 0) {
     return {
       status: 'fail',
-      reason: 'emitted diagnostics before the bound',
-      detail: 'a composition that loads cleanly has nothing to say on stderr',
+      reason: 'the composition reported a failure',
+      detail: `${failures.length} failure-shaped diagnostic line(s); the composition names what it could not load`,
+      diagnostics: failures.join('\n'),
+    };
+  }
+
+  if (step.timedOut) {
+    return {
+      status: 'pass',
+      reason: 'booted, mounted and stayed alive',
+      detail:
+        'the process was still running when the wall-clock bound reached it and reported no failure diagnostics, so the bundle was neither skipped nor rejected',
       diagnostics: text,
     };
   }
 
-  // Exited before the bound, on its own. A clean exit with nothing on stderr
-  // means the composition ran and finished — not a load failure. Only a
-  // non-zero exit, or an error on the way out, is that.
-  const looksLikeFailure = step.exitCode !== 0 || /error|failed|cannot|refus/i.test(text);
-  if (!looksLikeFailure) {
+  if (step.exitCode === 0) {
     return {
       status: 'pass',
       reason: 'the composition booted and exited cleanly',
-      detail: `exit code ${step.exitCode} with no error diagnostics, before the wall-clock bound`,
-      diagnostics: '',
+      detail: `exit code 0 with no failure diagnostics, before the wall-clock bound`,
+      diagnostics: text,
     };
   }
+
   return {
     status: 'fail',
     reason: `the composition exited with code ${step.exitCode}`,
     detail:
-      'a profile whose plugins fail to load exits before the agent runner mounts, so a non-zero exit with diagnostics is the load-failure signal',
+      'a profile whose plugins fail to load exits before the agent runner mounts, so a non-zero exit is the load-failure signal',
     diagnostics: text,
   };
 }
@@ -295,7 +327,10 @@ let l6: L6Outcome = {
 };
 
 if (l1.status === 'pass') {
-  l2 = classifyBoot(run('l2-boot', ['--profile', PROFILE], BOOT_BOUND_MS));
+  const subjectNameForBoot = SPEC.startsWith('@')
+    ? SPEC.slice(0, SPEC.lastIndexOf('@'))
+    : (SPEC.split('@')[0] as string);
+  l2 = classifyBoot(run('l2-boot', ['--profile', PROFILE], BOOT_BOUND_MS), subjectNameForBoot);
 
   const subjectName = SPEC.startsWith('@')
     ? SPEC.slice(0, SPEC.lastIndexOf('@'))
