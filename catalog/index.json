@@ -1,11 +1,11 @@
 {
   "schema": "dsh.plugin.catalog.v1",
-  "generatedAt": "2026-10-03T16:02:15.994Z",
+  "generatedAt": "2026-10-03T16:52:56.390Z",
   "counts": {
-    "total": 4,
+    "total": 24,
     "byVerdict": {
-      "verified": 2,
-      "partial": 1,
+      "verified": 19,
+      "partial": 4,
       "not-installable": 1
     }
   },
@@ -14,6 +14,127 @@
     "curatedPoolTarget": 600
   },
   "entries": [
+    {
+      "reportId": "npm:@dfy-plugins/dsh-bundle@0.1.2",
+      "name": "@dfy-plugins/dsh-bundle",
+      "version": "0.1.2",
+      "verdict": "verified",
+      "path": "catalog/npm/dfy-plugins__dsh-bundle.json",
+      "generatedAt": "2026-10-03T16:21:44.587Z",
+      "integrity": "sha512-6zMz+avT+RCyyWZfob0f7GFHCOzKqpWsT1SUNSPhlzwceAXfuHJEdPMagrc2sP8xLG8ZYHwDVrCYNLFxyJP+qA==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [],
+      "repoPath": "dfy-plugins__dsh-bundle"
+    },
+    {
+      "reportId": "npm:@iasiv5/dsh-obmc-web@0.1.3",
+      "name": "@iasiv5/dsh-obmc-web",
+      "version": "0.1.3",
+      "verdict": "verified",
+      "path": "catalog/npm/iasiv5__dsh-obmc-web.json",
+      "generatedAt": "2026-10-03T16:27:07.267Z",
+      "integrity": "sha512-Ey3PaDmWK4zzu57SDf99one2J0xjVi5q6N/HlZswQbQlbPtVOqq+cCCtFNDFFnYmhTGPf4zqnr5cYhkk4GyfQQ==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "listens_on_port",
+        "network_egress",
+        "spawns_process",
+        "writes_outside_workspace"
+      ],
+      "repoPath": "iasiv5__dsh-obmc-web"
+    },
+    {
+      "reportId": "npm:@liustack/modsearch@5.10.5",
+      "name": "@liustack/modsearch",
+      "version": "5.10.5",
+      "verdict": "verified",
+      "path": "catalog/npm/liustack__modsearch.json",
+      "generatedAt": "2026-10-03T16:20:09.806Z",
+      "integrity": "sha512-SHeZ5pr0BuCEKBJSDN4no008ETwlBl3GNOuOPfDjLTkVkGriNc5NPeAz1kG91CwmG7klLzzGAvnjTrkLrRqyfw==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "network_egress",
+        "spawns_process",
+        "writes_outside_workspace"
+      ],
+      "repoPath": "liustack__modsearch"
+    },
+    {
+      "reportId": "npm:@michengai/dsh-archive-manager@1.0.11",
+      "name": "@michengai/dsh-archive-manager",
+      "version": "1.0.11",
+      "verdict": "verified",
+      "path": "catalog/npm/michengai__dsh-archive-manager.json",
+      "generatedAt": "2026-10-03T16:10:38.935Z",
+      "integrity": "sha512-fg6bs3GMxHjDHdqH9rQsLIC4DKeTxRygIrim/HP+ID8xjhoaF4RYJx6SuODiBPEes7oTLS2GUvljnOssdzuq/Q==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "network_egress",
+        "spawns_process"
+      ],
+      "repoPath": "michengai__dsh-archive-manager"
+    },
+    {
+      "reportId": "npm:@michengai/dsh-skills-manager@1.1.8",
+      "name": "@michengai/dsh-skills-manager",
+      "version": "1.1.8",
+      "verdict": "verified",
+      "path": "catalog/npm/michengai__dsh-skills-manager.json",
+      "generatedAt": "2026-10-03T16:12:12.863Z",
+      "integrity": "sha512-Bz8npEazkkVOD7Ku8EOHSzc/CMrypl+UhBbScHjBZZSyt27xgNGL1EaNYEcwuxbDIJPKHF38yOmjh92iy1xM3w==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "network_egress",
+        "spawns_process",
+        "writes_outside_workspace"
+      ],
+      "repoPath": "michengai__dsh-skills-manager"
+    },
     {
       "reportId": "npm:@morlay/session-branch@0.1.5",
       "name": "@morlay/session-branch",
@@ -34,6 +155,189 @@
       },
       "presentCapabilities": [],
       "repoPath": "morlay__session-branch"
+    },
+    {
+      "reportId": "npm:@nanmicoder/dsh-agent-teams@0.1.22",
+      "name": "@nanmicoder/dsh-agent-teams",
+      "version": "0.1.22",
+      "verdict": "verified",
+      "path": "catalog/npm/nanmicoder__dsh-agent-teams.json",
+      "generatedAt": "2026-10-03T16:18:35.568Z",
+      "integrity": "sha512-JF6bpHf+BYQbe14+yH1uM5EeviRZmi72gGZiIvS/5R8FHq6/i5+H+dXoy7s6CNQVRhM4NWjw4XsC8tSjwDksvQ==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "hooks_system_prompt",
+        "network_egress"
+      ],
+      "repoPath": "nanmicoder__dsh-agent-teams"
+    },
+    {
+      "reportId": "npm:@noob-stupid/dsh-plugin-console@0.5.36",
+      "name": "@noob-stupid/dsh-plugin-console",
+      "version": "0.5.36",
+      "verdict": "verified",
+      "path": "catalog/npm/noob-stupid__dsh-plugin-console.json",
+      "generatedAt": "2026-10-03T16:35:04.332Z",
+      "integrity": "sha512-KzWzTBrJ4TstXBIxRL+IWnrBFxI695hhiUapbc/2LGk8iT2Wm4iplMWWVRaNZkwQ+sNQADsIc0rj6s05bopqDg==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "network_egress",
+        "spawns_process",
+        "writes_outside_workspace"
+      ],
+      "repoPath": "noob-stupid__dsh-plugin-console"
+    },
+    {
+      "reportId": "npm:@roarpeng/graphflow@2.2.0",
+      "name": "@roarpeng/graphflow",
+      "version": "2.2.0",
+      "verdict": "partial",
+      "path": "catalog/npm/roarpeng__graphflow.json",
+      "generatedAt": "2026-10-03T16:49:48.347Z",
+      "integrity": "sha512-IyY6QjSNuQLojcV92qR44ILiXwu0n/yeaQDd0zzOC18iMRqybt1wIiI7FCcPmUDInlvLd4rEnM49AYsW/AF4NA==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "fail",
+        "L2_load": "skip",
+        "L3_run": "skip",
+        "L4_capability": "pass",
+        "L5_overhead": "inconclusive",
+        "L6_uninstall": "skip"
+      },
+      "presentCapabilities": [
+        "hooks_system_prompt",
+        "listens_on_port",
+        "network_egress",
+        "reads_secret_env",
+        "spawns_process",
+        "writes_outside_workspace"
+      ],
+      "repoPath": "roarpeng__graphflow"
+    },
+    {
+      "reportId": "npm:@tt-a1i/archify-dsh@0.1.0",
+      "name": "@tt-a1i/archify-dsh",
+      "version": "0.1.0",
+      "verdict": "verified",
+      "path": "catalog/npm/tt-a1i__archify-dsh.json",
+      "generatedAt": "2026-10-03T16:36:38.476Z",
+      "integrity": "sha512-D8fDqV6DV/vo80Gj/3rgidd+hwBbhTVncaVoD5Uhh+DbgYlEoQQOmBVbhU5HW33wE5OqJP/2HkTRPJ0hf7W0tA==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "listens_on_port",
+        "spawns_process",
+        "watches_filesystem"
+      ],
+      "repoPath": "tt-a1i__archify-dsh"
+    },
+    {
+      "reportId": "npm:@wxg-prc-cpg/browser-skill-dsh-plugin@0.3.2",
+      "name": "@wxg-prc-cpg/browser-skill-dsh-plugin",
+      "version": "0.3.2",
+      "verdict": "partial",
+      "path": "catalog/npm/wxg-prc-cpg__browser-skill-dsh-plugin.json",
+      "generatedAt": "2026-10-03T16:51:03.913Z",
+      "integrity": "sha512-Z8m5KmNzCqc83M99q6pSPUwzFYr+RI4F1pQNCHp56rL/97Ogz7Z/YcWGEwYlvfSMWePjcib8aUQNpSVInW35AA==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "fail",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "network_egress",
+        "spawns_process"
+      ],
+      "repoPath": "wxg-prc-cpg__browser-skill-dsh-plugin"
+    },
+    {
+      "reportId": "npm:@xmanrui/dsh-im@4.34.2",
+      "name": "@xmanrui/dsh-im",
+      "version": "4.34.2",
+      "verdict": "verified",
+      "path": "catalog/npm/xmanrui__dsh-im.json",
+      "generatedAt": "2026-10-03T16:15:21.847Z",
+      "integrity": "sha512-6t3Epsq8ZqCqAEhmJzvtBgwjUKC2bBxsfnJj26uqWOAGDt+6jpBlaDZFr/So1RTS0SJ3SbfW9KDJ5verP4iHCQ==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "hooks_system_prompt",
+        "listens_on_port",
+        "network_egress",
+        "reads_secret_env",
+        "runtime_patch",
+        "spawns_process",
+        "watches_filesystem",
+        "writes_outside_workspace"
+      ],
+      "repoPath": "xmanrui__dsh-im"
+    },
+    {
+      "reportId": "npm:dsh-codex-connect@0.2.0-alpha.1",
+      "name": "dsh-codex-connect",
+      "version": "0.2.0-alpha.1",
+      "verdict": "partial",
+      "path": "catalog/npm/dsh-codex-connect.json",
+      "generatedAt": "2026-10-03T16:50:28.029Z",
+      "integrity": "sha512-gS1Xh27k6dU3FeI5XN/sX72pdWy6ypr9MkiAki/u28mmxTS+sqyGRFXTdIR8BUb3J/zKcWQJoadNkv8zR7Qd3g==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "fail",
+        "L2_load": "skip",
+        "L3_run": "skip",
+        "L4_capability": "pass",
+        "L5_overhead": "inconclusive",
+        "L6_uninstall": "skip"
+      },
+      "presentCapabilities": [
+        "eval_or_dynamic_code",
+        "hooks_api_gate",
+        "listens_on_port",
+        "network_egress",
+        "spawns_process"
+      ],
+      "repoPath": "dsh-codex-connect"
     },
     {
       "reportId": "npm:dsh-cost-meter@1.8.8",
@@ -86,6 +390,59 @@
       "repoPath": "dsh-find-plugin"
     },
     {
+      "reportId": "npm:dsh-free-search@0.7.2",
+      "name": "dsh-free-search",
+      "version": "0.7.2",
+      "verdict": "verified",
+      "path": "catalog/npm/dsh-free-search.json",
+      "generatedAt": "2026-10-03T16:25:32.784Z",
+      "integrity": "sha512-keV1VsfTIT10vSU4IfNFhGsDAbEwsoh4EZSriYR4DKb1x/CJsqtMlHOkCIuucDIysIPytCepgyj+FtRQaAkhUQ==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "hooks_system_prompt",
+        "network_egress",
+        "spawns_process",
+        "writes_outside_workspace"
+      ],
+      "repoPath": "dsh-free-search"
+    },
+    {
+      "reportId": "npm:dsh-mnemon@0.5.23",
+      "name": "dsh-mnemon",
+      "version": "0.5.23",
+      "verdict": "verified",
+      "path": "catalog/npm/dsh-mnemon.json",
+      "generatedAt": "2026-10-03T16:23:19.346Z",
+      "integrity": "sha512-Ey0rlzroEj1OpKmjU5NWaCrNLL0ujI4/8m5AjT+mZRA2fQERuL84gr1xDJ0RE8fK1WhzqRiwrV4pVTCXAGvirA==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "eval_or_dynamic_code",
+        "hooks_system_prompt",
+        "network_egress",
+        "spawns_process",
+        "writes_outside_workspace"
+      ],
+      "repoPath": "dsh-mnemon"
+    },
+    {
       "reportId": "npm:dsh-pet@0.3.1",
       "name": "dsh-pet",
       "version": "0.3.1",
@@ -110,6 +467,161 @@
         "writes_outside_workspace"
       ],
       "repoPath": "dsh-pet"
+    },
+    {
+      "reportId": "npm:dsh-plugin-wallpaper-engine@1.2.0",
+      "name": "dsh-plugin-wallpaper-engine",
+      "version": "1.2.0",
+      "verdict": "verified",
+      "path": "catalog/npm/dsh-plugin-wallpaper-engine.json",
+      "generatedAt": "2026-10-03T16:28:41.376Z",
+      "integrity": "sha512-WgY1pLh2zbGyLSPJP1aSKq42hntF8PnrAlSeQWqpZwPoLdMByL/9Abth9ELlhw+t0odXNs4Fbiyljju0MF0tfA==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "eval_or_dynamic_code",
+        "listens_on_port",
+        "network_egress",
+        "spawns_process"
+      ],
+      "repoPath": "dsh-plugin-wallpaper-engine"
+    },
+    {
+      "reportId": "npm:dsh-pocket@2.10.6",
+      "name": "dsh-pocket",
+      "version": "2.10.6",
+      "verdict": "verified",
+      "path": "catalog/npm/dsh-pocket.json",
+      "generatedAt": "2026-10-03T16:30:14.999Z",
+      "integrity": "sha512-yqybeWWutozi1yBLDpSs6ien9SndFPVNK6HlmhJf8q0AOLauzcLntmFyGQ0/v3EzS3V8ftM4yvqcc/o6LcGcGA==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "listens_on_port",
+        "network_egress",
+        "runtime_patch",
+        "spawns_process",
+        "writes_outside_workspace"
+      ],
+      "repoPath": "dsh-pocket"
+    },
+    {
+      "reportId": "npm:dsh-tiddlywiki@0.30.57",
+      "name": "dsh-tiddlywiki",
+      "version": "0.30.57",
+      "verdict": "verified",
+      "path": "catalog/npm/dsh-tiddlywiki.json",
+      "generatedAt": "2026-10-03T16:31:50.044Z",
+      "integrity": "sha512-7s9yTorn9FquZTDoOfC1U0QuXvdANEbBOX9yuIlITFksAFkycjDDsPq7xBpWP6O1tILtezYMZnUyEX37vvVJ+w==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "hooks_system_prompt",
+        "listens_on_port",
+        "network_egress",
+        "spawns_process",
+        "watches_filesystem",
+        "writes_outside_workspace"
+      ],
+      "repoPath": "dsh-tiddlywiki"
+    },
+    {
+      "reportId": "npm:dsh-univer-office@0.3.6",
+      "name": "dsh-univer-office",
+      "version": "0.3.6",
+      "verdict": "verified",
+      "path": "catalog/npm/dsh-univer-office.json",
+      "generatedAt": "2026-10-03T16:16:59.497Z",
+      "integrity": "sha512-IaLbxGvKdPHS6hdb/K/Bl+j3C2WoEDN/LIKzAVi6n2VCwi6mPZhkmu1W4egvEo9kXJ+YIEikuvfc5B0ZzF9hEA==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "network_egress"
+      ],
+      "repoPath": "dsh-univer-office"
+    },
+    {
+      "reportId": "npm:dsh-whale-widget@0.3.18",
+      "name": "dsh-whale-widget",
+      "version": "0.3.18",
+      "verdict": "verified",
+      "path": "catalog/npm/dsh-whale-widget.json",
+      "generatedAt": "2026-10-03T16:13:47.135Z",
+      "integrity": "sha512-2RMevYiKTa2P+FzLutXlpTmQ9coWRbRQ7eG1b07MbkxB1HXXWbN/lqn0MZgDu49AILeJqmGivwB0S0H09pc9xQ==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "network_egress",
+        "writes_outside_workspace"
+      ],
+      "repoPath": "dsh-whale-widget"
+    },
+    {
+      "reportId": "npm:dshmarket@1.66.8",
+      "name": "dshmarket",
+      "version": "1.66.8",
+      "verdict": "verified",
+      "path": "catalog/npm/dshmarket.json",
+      "generatedAt": "2026-10-03T16:09:04.793Z",
+      "integrity": "sha512-zOYCijI/du6qlcmUbx47aaUv6OM7Z/akIQ8n3f9Q2ihtV3U3sbRI5nG0guS+8npsb/vhA2turyEf9Yblg6LweQ==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "pass",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [
+        "listens_on_port",
+        "network_egress",
+        "spawns_process",
+        "watches_filesystem",
+        "writes_outside_workspace"
+      ],
+      "repoPath": "dshmarket"
     }
   ]
 }

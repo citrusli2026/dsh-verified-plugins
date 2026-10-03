@@ -25,6 +25,7 @@ import { buildStaticReport } from '../../collector/src/static-report.ts';
 import { loadSchema, validateReport } from '../../report/src/validate.ts';
 import { buildCatalogIndex, INDEX_SCHEMA, summariseReport } from '../../report/src/catalog.ts';
 import { mergeExecution, type ExecutionResult } from '../../report/src/merge.ts';
+import { searchPackageNames, survey } from '../../collector/src/survey.ts';
 import { RegistryError } from '../../collector/src/registry.ts';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -41,11 +42,14 @@ function usage(): void {
       '  dsh-verified validate <report.json> [...]',
       '  dsh-verified catalog [catalog-dir]',
       '  dsh-verified merge <static.json> <execution.json> [--out <file>]',
+      '  dsh-verified survey (--query <text> | --list <a,b>) [--limit N] [--out <file>]',
       '',
       '  static    L0 qualification + L4 capability scan. Runs no plugin code.',
       '  validate  Check report(s) against the schema and the verdict rules.',
       '  catalog   Rebuild and validate catalog/index.json from the reports on disk.',
       '  merge     Combine a static report (L0+L4) with execution results (L1+L2+L6).',
+      '  survey    Registry metadata only: how many packages that claim to be DSH',
+      '            plugins actually declare an installable bundle. Runs no plugin code.',
       '',
       'Specs are exact: name@1.2.3 or a bare name (resolves to latest).',
       '',
@@ -149,6 +153,61 @@ function commandValidate(args: ParsedArgs): number {
   }
 
   return failed > 0 ? 1 : 0;
+}
+
+/**
+ * The L0 pre-filter at scale, without a container: registry metadata only.
+ * This is the by-product the specification asks for — how many packages
+ * claiming to be DSH plugins are actually installable bundles.
+ */
+async function commandSurvey(args: ParsedArgs): Promise<number> {
+  const query = args.flags.get('query');
+  const list = args.flags.get('list');
+  const limit = Number(args.flags.get('limit') ?? 250);
+  const registry = args.flags.get('registry');
+
+  if (!query && !list) {
+    process.stderr.write('error: survey needs --query <text> or --list <a,b,c>\n');
+    return 2;
+  }
+
+  let names: string[];
+  if (list) {
+    names = list.split(',').map((n) => n.trim()).filter(Boolean).slice(0, limit);
+  } else {
+    process.stderr.write(`searching: ${query}\n`);
+    names = await searchPackageNames(query as string, limit);
+  }
+
+  process.stderr.write(`surveying ${names.length} package(s) — registry metadata only\n`);
+  const runtimeVersion = args.flags.get('runtime') ?? null;
+  const summary = await survey(names, {
+    ...(registry ? { registry } : {}),
+    ...(runtimeVersion ? { runtimeVersion } : {}),
+    query: query ?? null,
+  });
+
+  const out = args.flags.get('out');
+  const text = `${JSON.stringify(summary, null, 2)}\n`;
+  if (out) {
+    mkdirSync(dirname(out), { recursive: true });
+    writeFileSync(out, text);
+    process.stderr.write(`wrote ${out}\n`);
+  } else {
+    process.stdout.write(text);
+  }
+
+  const c = summary.counts;
+  process.stderr.write(
+    `\nscanned ${c.scanned}  reachable ${c.reachable}  unreachable ${c.unreachable}\n` +
+      `declares an installable bundle: ${c.declaresBundle} of ${c.reachable}\n` +
+      `declares no bundle: ${c.declaresNoBundle}\n` +
+      (summary.runtimeVersion
+        ? `peer-compatible with DSH ${summary.runtimeVersion}: ${c.peerCompatible} of ${c.declaresBundle}\n` +
+          `peer-incompatible: ${c.peerIncompatible}\n`
+        : ''),
+  );
+  return 0;
 }
 
 /**
@@ -305,6 +364,9 @@ async function main(): Promise<void> {
         break;
       case 'merge':
         code = commandMerge(args);
+        break;
+      case 'survey':
+        code = await commandSurvey(args);
         break;
       default:
         process.stderr.write(`error: unknown command "${args.command}"\n\n`);

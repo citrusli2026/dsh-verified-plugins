@@ -1,0 +1,634 @@
+{
+  "schema": "dsh.plugin.report.v1",
+  "reportId": "npm:@xmanrui/dsh-im@4.34.2",
+  "generatedAt": "2026-10-03T16:15:21.847Z",
+  "verifier": {
+    "name": "dsh-verified",
+    "version": "0.1.0",
+    "commit": "ec8d77c8d74dce7dfc3070ef2ab081e28d154612"
+  },
+  "subject": {
+    "spec": "@xmanrui/dsh-im@4.34.2",
+    "name": "@xmanrui/dsh-im",
+    "version": "4.34.2",
+    "registry": "https://registry.npmjs.org",
+    "tarball": "https://registry.npmjs.org/@xmanrui/dsh-im/-/dsh-im-4.34.2.tgz",
+    "integrity": "sha512-6t3Epsq8ZqCqAEhmJzvtBgwjUKC2bBxsfnJj26uqWOAGDt+6jpBlaDZFr/So1RTS0SJ3SbfW9KDJ5verP4iHCQ==",
+    "shasum": "0ce7d12641758bf1289ef9aac2550157bab17c0a",
+    "repository": "git+https://github.com/xmanrui/dsh-im.git",
+    "license": "MIT",
+    "publishedAt": "2026-10-02T19:07:18.009Z",
+    "dshBundlePatch": "./cordis.patch.yml"
+  },
+  "runtime": {
+    "dshVersion": "0.2.0-rc.2",
+    "nodeVersion": "v24.21.0",
+    "os": "linux 6.17.0-1022-azure",
+    "arch": "x64"
+  },
+  "container": {
+    "image": "none",
+    "imageDigest": null,
+    "notes": "executed in a one-off container; the subject was installed, booted and removed there"
+  },
+  "verdict": "verified",
+  "dimensions": {
+    "L0_qualification": {
+      "id": "L0",
+      "status": "pass",
+      "summary": "declares dsh.bundle.patch and every declared patch path exists (417 files, 21135309 bytes unpacked)",
+      "metrics": {
+        "fileCount": 417,
+        "unpackedBytes": 21135309,
+        "patchPaths": [
+          "./cordis.patch.yml"
+        ],
+        "declaredEnginesDsh": null,
+        "shipsSource": true
+      },
+      "evidenceRefs": [
+        "e-resolve",
+        "e-tarball",
+        "e-l0"
+      ],
+      "notes": [
+        "dsh.manifestVersion is not declared; the reader does not infer a default"
+      ]
+    },
+    "L1_install": {
+      "id": "L1",
+      "status": "pass",
+      "summary": "installed",
+      "metrics": {
+        "durationMs": 3068,
+        "exitCode": 0,
+        "declaredPeers": null,
+        "bundlesAfterInstall": [
+          "@deepseek-ai/dsh-base",
+          "@xmanrui/dsh-im"
+        ],
+        "pendingBuildScripts": [],
+        "buildScriptsApproved": 0,
+        "diagnosticsLog": null
+      },
+      "evidenceRefs": [
+        "e-l1-install"
+      ],
+      "notes": [
+        "the CLI completed the install with exit code 0",
+        "no dependency build script was approved by the verifier; approval permits commands with the host user permissions"
+      ]
+    },
+    "L2_load": {
+      "id": "L2",
+      "status": "pass",
+      "summary": "booted, mounted and stayed alive",
+      "metrics": {
+        "bootBoundMs": 25000,
+        "durationMs": 25053,
+        "signal": null
+      },
+      "evidenceRefs": [
+        "e-l2-boot"
+      ],
+      "notes": [
+        "the process was still running when the wall-clock bound reached it and reported no failure diagnostics, so the bundle was neither skipped nor rejected",
+        "the fiber phase is not read directly: an early exit with diagnostics is the load-failure signal, and a boot that settles and waits is the success signal"
+      ]
+    },
+    "L3_run": {
+      "id": "L3",
+      "status": "pass",
+      "summary": "a session completed with no credential",
+      "metrics": {
+        "replayAdapter": "@deepseek-ai/dsh-llm-replay@0.2.0-rc.2",
+        "probeTask": "reply with any text",
+        "events": {
+          "session": "session-ef11223d-acd0-43cf-b035-47666e8c1478",
+          "turnEndReason": {
+            "kind": "completed"
+          },
+          "finalText": "Replay fixture: no provider was called.",
+          "textEventCount": 1,
+          "error": null,
+          "exitCode": 0,
+          "durationMs": 1808,
+          "eventCount": 7
+        }
+      },
+      "evidenceRefs": [
+        "e-l3-session"
+      ],
+      "notes": [
+        "the model call was served by the official replay adapter from a fixture authored in this repository; no provider was contacted and no credential was present",
+        "probe task, stated verbatim: \"reply with any text\""
+      ]
+    },
+    "L4_capability": {
+      "id": "L4",
+      "status": "pass",
+      "summary": "8 capability signal(s) present across 395 scanned file(s)",
+      "metrics": {
+        "scannedFiles": 395,
+        "scannedBytes": 5440080,
+        "skippedFiles": 1
+      },
+      "evidenceRefs": [
+        "e-l4",
+        "e-patch"
+      ],
+      "notes": [
+        "1 file(s) larger than 2097152 bytes were not scanned",
+        "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+        "static analysis cannot see dynamically constructed code or prove intent"
+      ]
+    },
+    "L5_overhead": {
+      "id": "L5",
+      "status": "pass",
+      "summary": "no significant delta across 6 sampled run(s)",
+      "metrics": {
+        "samples": 6,
+        "baseline": {
+          "atMs": 8040,
+          "rss": 199176192,
+          "heapUsed": 68620336,
+          "external": 5186663,
+          "activeTotal": 10,
+          "watchers": 7,
+          "timers": 0,
+          "libuvHandles": 22,
+          "libuvActiveHandles": 17,
+          "fds": 20
+        },
+        "activated": {
+          "atMs": 8039,
+          "rss": 288210944,
+          "heapUsed": 118081184,
+          "external": 23946431,
+          "activeTotal": 11,
+          "watchers": 8,
+          "timers": 0,
+          "libuvHandles": 23,
+          "libuvActiveHandles": 18,
+          "fds": 20
+        },
+        "delta": {
+          "atMs": -1,
+          "rss": 89034752,
+          "heapUsed": 49460848,
+          "external": 18759768,
+          "activeTotal": 1,
+          "watchers": 1,
+          "timers": 0,
+          "libuvHandles": 1,
+          "libuvActiveHandles": 1,
+          "fds": 0
+        }
+      },
+      "evidenceRefs": [
+        "e-l5-overhead"
+      ],
+      "notes": [
+        "no metric moved beyond the significance thresholds; that is the finding",
+        "differential attribution: baseline profile first, then the subject activated, same container and order",
+        "thresholds are coarse on purpose — order-of-magnitude watcher changes, RSS growth beyond 100 MiB, steady state more than 2 s later"
+      ]
+    },
+    "L6_uninstall": {
+      "id": "L6",
+      "status": "pass",
+      "summary": "removed without residue",
+      "metrics": {
+        "residue": [],
+        "durationMs": 293
+      },
+      "evidenceRefs": [
+        "e-l6-remove"
+      ],
+      "notes": [
+        "the profile retains no bundle selection, dependency entry or files for the subject"
+      ]
+    }
+  },
+  "capabilities": [
+    {
+      "id": "hooks_system_prompt",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks system-prompt assembly, so it can influence what the model is told",
+      "evidence": [
+        {
+          "file": "package/plugin-src/host/index.mjs",
+          "line": 144,
+          "snippet": "ctx.inject(['tools', 'systemPrompt'], (artifactCtx) => {"
+        },
+        {
+          "file": "package/plugin-src/host/injected-context.mjs",
+          "line": 71,
+          "snippet": "ctx.inject(['systemPrompt'], startGuidanceContext);"
+        }
+      ]
+    },
+    {
+      "id": "listens_on_port",
+      "present": true,
+      "confidence": "high",
+      "attribution": "author-source",
+      "notes": "opens a listening socket",
+      "evidence": [
+        {
+          "file": "package/src/channels/wecom-app/callback-server.mjs",
+          "line": 123,
+          "snippet": "const server = createServer((request, response) => {"
+        }
+      ]
+    },
+    {
+      "id": "network_egress",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "author-source",
+      "notes": "can make outbound network requests",
+      "evidence": [
+        {
+          "file": "package/src/channels/dingtalk/connection-error.mjs",
+          "line": 54,
+          "snippet": "const axios = dingtalkStream ? resolvedPackage('axios', dingtalkStream.require) : null;"
+        },
+        {
+          "file": "package/src/channels/dingtalk/device-auth.mjs",
+          "line": 187,
+          "snippet": "response = await this.#fetch(`${this.#baseUrl}${path}`, {"
+        },
+        {
+          "file": "package/src/channels/shared/diagnostic-details.mjs",
+          "line": 61,
+          "snippet": "for (const name of ['dingtalkStream', 'axios', 'httpsProxyAgent', 'agentBase']) {"
+        },
+        {
+          "file": "package/src/channels/discord/discord-api.mjs",
+          "line": 289,
+          "snippet": "response = await this.#fetch(new URL(path, this.#baseUrl), {"
+        },
+        {
+          "file": "package/src/channels/shared/harness-client.mjs",
+          "line": 997,
+          "snippet": "const response = await this.#fetch(new URL(`/api/${method}`, this.#baseUrl), {"
+        }
+      ]
+    },
+    {
+      "id": "reads_secret_env",
+      "present": true,
+      "confidence": "high",
+      "attribution": "author-source",
+      "notes": "reads an environment variable whose name looks credential-shaped",
+      "evidence": [
+        {
+          "file": "package/src/channels/feishu/config.mjs",
+          "line": 12,
+          "snippet": "if (process.env.FEISHU_APP_SECRET?.trim()) return process.env.FEISHU_APP_SECRET.trim();"
+        },
+        {
+          "file": "package/scripts/verify-interface-language.mjs",
+          "line": 58,
+          "snippet": "const botToken = process.env.DSH_IM_TELEGRAM_TOKEN;"
+        }
+      ]
+    },
+    {
+      "id": "runtime_patch",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "author-source",
+      "notes": "patches runtime objects rather than only registering its own services",
+      "evidence": [
+        {
+          "file": "package/src/channels/feishu/bridge.mjs",
+          "line": 3122,
+          "snippet": "const response = await this.#client.im.v1.message.patch({"
+        },
+        {
+          "file": "package/src/channels/shared/conversation-state-store.mjs",
+          "line": 65,
+          "snippet": "patchDeferred(id, patch) { return this.#deferred.patch(id, patch); }"
+        },
+        {
+          "file": "package/src/channels/feishu/feishu-runtime.mjs",
+          "line": 65,
+          "snippet": "patch: (url, data, options) => httpInstance.patch(url, data, optionsWithTimeout(options)),"
+        },
+        {
+          "file": "package/src/channels/dingtalk/state-store.mjs",
+          "line": 158,
+          "snippet": "patchDeferred(id, patch) { return this.#deferred.patch(id, patch); }"
+        },
+        {
+          "file": "package/src/channels/feishu/state-store.mjs",
+          "line": 61,
+          "snippet": "patchDeferred(id, patch) { return this.#deferred.patch(id, patch); }"
+        }
+      ]
+    },
+    {
+      "id": "spawns_process",
+      "present": true,
+      "confidence": "high",
+      "attribution": "author-source",
+      "notes": "spawns or would spawn an operating-system process",
+      "evidence": [
+        {
+          "file": "package/src/channels/email/transports/agently-cli.mjs",
+          "line": 19,
+          "snippet": "import { spawn } from 'node:child_process';"
+        },
+        {
+          "file": "package/src/channels/feishu/config.mjs",
+          "line": 1,
+          "snippet": "import { execFileSync } from 'node:child_process';"
+        },
+        {
+          "file": "package/src/channels/shared/harness-client.mjs",
+          "line": 1,
+          "snippet": "import { spawn } from 'node:child_process';"
+        },
+        {
+          "file": "package/src/channels/imessage/imessage-api.mjs",
+          "line": 1,
+          "snippet": "import { execFile } from 'node:child_process';"
+        },
+        {
+          "file": "package/src/channels/feishu/voice.mjs",
+          "line": 8,
+          "snippet": "import { spawn } from 'node:child_process';"
+        }
+      ]
+    },
+    {
+      "id": "watches_filesystem",
+      "present": true,
+      "confidence": "high",
+      "attribution": "author-source",
+      "notes": "watches the filesystem; a recursive workspace watch is the documented cause of host stalls",
+      "evidence": [
+        {
+          "file": "package/src/channels/feishu/bridge.mjs",
+          "line": 138,
+          "snippet": "const WATCH_COMMAND = /^\\/watch(?:\\s+([^\\s]+))?$/i;"
+        }
+      ]
+    },
+    {
+      "id": "writes_outside_workspace",
+      "present": true,
+      "confidence": "low",
+      "attribution": "author-source",
+      "notes": "resolves a path outside the workspace (e.g. os.homedir(), DSH_HOME), which is normal for DSH profile handling; static analysis cannot determine whether it also writes there",
+      "evidence": [
+        {
+          "file": "package/src/channels/feishu/config.mjs",
+          "line": 18,
+          "snippet": "return execFileSync('/usr/bin/security', ["
+        },
+        {
+          "file": "package/src/channels/shared/default-workspace.mjs",
+          "line": 6,
+          "snippet": "const dshHome = config.dshHome ?? process.env.DSH_HOME ?? join(homedir(), '.dsh');"
+        },
+        {
+          "file": "package/src/channels/shared/image-input-settings-store.mjs",
+          "line": 56,
+          "snippet": "const root = resolve(config.dshHome ?? process.env.DSH_HOME ?? join(homedir(), '.dsh'));"
+        },
+        {
+          "file": "package/src/channels/imessage/imessage-api.mjs",
+          "line": 5,
+          "snippet": "const DEFAULT_DB_PATH = `${process.env.HOME ?? ''}/Library/Messages/chat.db`;"
+        },
+        {
+          "file": "package/bin/dsh-im.mjs",
+          "line": 49,
+          "snippet": "const dshHome = process.env.DSH_HOME || join(homedir(), '.dsh');"
+        }
+      ]
+    },
+    {
+      "id": "eval_or_dynamic_code",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "eval or synthesised code; common and often benign, and frequently bundler output",
+      "evidence": []
+    },
+    {
+      "id": "hooks_api_gate",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks the API/LLM path, so it can observe or alter provider traffic",
+      "evidence": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e-resolve",
+      "kind": "command",
+      "command": "resolve @xmanrui/dsh-im@4.34.2 -> @xmanrui/dsh-im@4.34.2",
+      "exitCode": 0,
+      "durationMs": 437,
+      "excerpt": "{\n  \"name\": \"@xmanrui/dsh-im\",\n  \"version\": \"4.34.2\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/@xmanrui/dsh-im/-/dsh-im-4.34.2.tgz\",\n  \"advertisedIntegrity\": \"sha512-6t3Epsq8ZqCqAEhmJzvtBgwjUKC2bBxsfnJj26uqWOAGDt+6jpBlaDZFr/So1RTS0SJ3SbfW9KDJ5verP4iHCQ==\",\n  \"publishedAt\": \"2026-10-02T19:07:18.009Z\"\n}"
+    },
+    {
+      "id": "e-tarball",
+      "kind": "artifact",
+      "command": "fetch https://registry.npmjs.org/@xmanrui/dsh-im/-/dsh-im-4.34.2.tgz",
+      "exitCode": 0,
+      "durationMs": 236,
+      "excerpt": "{\n  \"bytes\": 9488652,\n  \"resolvedIntegrity\": \"sha512-6t3Epsq8ZqCqAEhmJzvtBgwjUKC2bBxsfnJj26uqWOAGDt+6jpBlaDZFr/So1RTS0SJ3SbfW9KDJ5verP4iHCQ==\",\n  \"advertisedIntegrity\": \"sha512-6t3Epsq8ZqCqAEhmJzvtBgwjUKC2bBxsfnJj26uqWOAGDt+6jpBlaDZFr/So1RTS0SJ3SbfW9KDJ5verP4iHCQ==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"e3cfc7261bdb373377894a8a5cb134913b6e414903f32438ea67453303d56521\"\n}",
+      "excerptBytes": 384,
+      "sha256": "e3cfc7261bdb373377894a8a5cb134913b6e414903f32438ea67453303d56521"
+    },
+    {
+      "id": "e-l0",
+      "kind": "static",
+      "command": "read published package.json and verify declared dsh.bundle.patch paths exist",
+      "excerpt": "{\n  \"status\": \"pass\",\n  \"reasons\": [],\n  \"declared\": {\n    \"manifestVersion\": null,\n    \"bundlePatch\": [\n      \"./cordis.patch.yml\"\n    ],\n    \"clientPlatform\": \"web\",\n    \"enginesDsh\": null,\n    \"enginesNode\": \">=22.19\"\n  },\n  \"missingPatchPaths\": [],\n  \"fileCount\": 417,\n  \"unpackedBytes\": 21135309,\n  \"shipsSource\": true\n}",
+      "excerptBytes": 325
+    },
+    {
+      "id": "e-patch",
+      "kind": "static",
+      "command": "read cordis.patch.yml",
+      "excerpt": "- insert:\n    - id: xmanrui-dsh-im\n      name: '@xmanrui/dsh-im'\n",
+      "excerptBytes": 65,
+      "sha256": "1491d44ea8568e43be3b193d4050c59779ab545e6cdc1fbd304e527ec234c8f5"
+    },
+    {
+      "id": "e-l4",
+      "kind": "static",
+      "command": "scan 395 shipped source file(s) for capability signatures",
+      "excerpt": "{\n  \"present\": [\n    {\n      \"id\": \"hooks_system_prompt\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/plugin-src/host/index.mjs\",\n        \"line\": 144,\n        \"snippet\": \"ctx.inject(['tools', 'systemPrompt'], (artifactCtx) => {\"\n      }\n    },\n    {\n      \"id\": \"listens_on_port\",\n      \"confidence\": \"high\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/channels/wecom-app/callback-server.mjs\",\n        \"line\": 123,\n        \"snippet\": \"const server = createServer((request, response) => {\"\n      }\n    },\n    {\n      \"id\": \"network_egress\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/channels/dingtalk/connection-error.mjs\",\n        \"line\": 54,\n        \"snippet\": \"const axios = dingtalkStream ? resolvedPackage('axios', dingtalkStream.require) : null;\"\n      }\n    },\n    {\n      \"id\": \"reads_secret_env\",\n      \"confidence\": \"high\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/channels/feishu/config.mjs\",\n        \"line\": 12,\n        \"snippet\": \"if (process.env.FEISHU_APP_SECRET?.trim()) return process.env.FEISHU_APP_SECRET.trim();\"\n      }\n    },\n    {\n      \"id\": \"runtime_patch\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/channels/feishu/bridge.mjs\",\n        \"line\": 3122,\n        \"snippet\": \"const response = await this.#client.im.v1.message.patch({\"\n      }\n    },\n    {\n      \"id\": \"spawns_process\",\n      \"confidence\": \"high\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/channels/email/transports/agently-cli.mjs\",\n        \"line\": 19,\n        \"snippet\": \"import { spawn } from 'node:child_process';\"\n      }\n    },\n    {\n      \"id\": \"watches_filesystem\",\n      \"confidence\": \"high\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"pack",
+      "excerptBytes": 2048
+    },
+    {
+      "id": "e-l1-install",
+      "kind": "command",
+      "command": "dsh plugin --profile verify add @xmanrui/dsh-im@4.34.2",
+      "exitCode": 0,
+      "durationMs": 3068,
+      "excerpt": "Downloading @xmanrui/dsh-im@4.34.2: 0.00 B/9.48 MB\nDownloading @img/sharp-libvips-linux-x64@1.3.3: 0.00 B/8.17 MB\nAdded 1 entry to minimumReleaseAgeExclude in pnpm-workspace.yaml (set minimumReleaseAgeStrict to true to gate these updates with a prompt):\n  @xmanrui/dsh-im@4.34.2\nPackages are hard linked from the content-addressable store to the virtual store.\n  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nPackages: +120\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\nProgress: resolved 120, reused 0, downloaded 123, added 120, done\n\ndependencies:\n+ @xmanrui/dsh-im 4.34.2\n\nDone in 1.1s using pnpm v12.8.1\ndsh: initialized profile verify at /work/dsh-home/profiles/verify\n",
+      "excerptBytes": 794,
+      "truncated": false,
+      "sha256": "286ba9f388324698523b01a28533ec15f6b91eae857ca02013f98a1a16a9059c"
+    },
+    {
+      "id": "e-l2-boot",
+      "kind": "command",
+      "command": "dsh --profile verify",
+      "exitCode": 0,
+      "durationMs": 25053,
+      "excerpt": "dsh: warning: 1 entry did not activate\nxmanrui-dsh-im (@xmanrui/dsh-im): pending (waiting for service: connection)\n",
+      "excerptBytes": 115,
+      "truncated": false,
+      "sha256": "cb2817892552e7109db72cdbea79d68bbeb45bfd6fc6e5e3c89de0d72743ce95"
+    },
+    {
+      "id": "e-l6-remove",
+      "kind": "command",
+      "command": "dsh plugin --profile verify remove @xmanrui/dsh-im",
+      "exitCode": 0,
+      "durationMs": 293,
+      "excerpt": "Packages: -151\n--------------------------------------------------------------------------------\n\ndependencies:\n- @xmanrui/dsh-im 4.34.2\n\nDone in 46ms using pnpm v12.8.1\n",
+      "excerptBytes": 169,
+      "truncated": false,
+      "sha256": "cbe6d18d0d03979aa8be765ac64a7faaca79e6c84ff11d5a011c7557614772b7"
+    },
+    {
+      "id": "e-l5-overhead",
+      "kind": "sample",
+      "command": "dsh --profile <baseline|activated> with the host sampler injected via NODE_OPTIONS=--import",
+      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8040,\n    \"rss\": 199176192,\n    \"heapUsed\": 68620336,\n    \"external\": 5186663,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8039,\n    \"rss\": 288210944,\n    \"heapUsed\": 118081184,\n    \"external\": 23946431,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 23,\n    \"libuvActiveHandles\": 18,\n    \"fds\": 20\n  },\n  \"delta\": {\n    \"atMs\": -1,\n    \"rss\": 89034752,\n    \"heapUsed\": 49460848,\n    \"external\": 18759768,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 1,\n    \"libuvActiveHandles\": 1,\n    \"fds\": 0\n  },\n  \"significant\": []\n}"
+    },
+    {
+      "id": "e-l3-session",
+      "kind": "command",
+      "command": "dsh --profile l3 --patch /work/fixtures/replay/l3-overlay.yml --json reply with any text",
+      "exitCode": 0,
+      "durationMs": 1808,
+      "excerpt": "{\"type\":\"session\",\"sessionId\":\"session-ef11223d-acd0-43cf-b035-47666e8c1478\",\"cwd\":\"/work\"}\n{\"type\":\"status\",\"phase\":\"turn_start\",\"turn\":1}\n{\"type\":\"status\",\"phase\":\"step_start\",\"turn\":1,\"step\":1}\n{\"type\":\"text\",\"text\":\"Replay fixture: no provider was called.\"}\n{\"type\":\"status\",\"phase\":\"step_end\",\"turn\":1,\"step\":1}\n{\"type\":\"status\",\"phase\":\"turn_end\",\"turn\":1,\"reason\":{\"kind\":\"completed\"}}\n{\"type\":\"final\",\"text\":\"Replay fixture: no provider was called.\"}\ndsh: warning: 1 entry did not activate\nxmanrui-dsh-im (@xmanrui/dsh-im): pending (waiting for service: connection)\n",
+      "excerptBytes": 574,
+      "truncated": false,
+      "sha256": "59b83632429034e1c2f2e948ef292b9ef28df93190183e048d063c2812794115"
+    }
+  ],
+  "redactions": [],
+  "disclaimers": [
+    "Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence."
+  ],
+  "limits": [
+    "1 file(s) larger than 2097152 bytes were not scanned",
+    "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+    "static analysis cannot see dynamically constructed code or prove intent",
+    "L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model",
+    "the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase",
+    "no dependency build script was approved by this executor",
+    "overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta",
+    "sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test"
+  ],
+  "bundlePatch": {
+    "path": "cordis.patch.yml",
+    "present": true,
+    "bytes": 65,
+    "entryCount": 2,
+    "disablesHostEntries": false,
+    "overridesConfig": false,
+    "usesJsExpressions": false,
+    "findings": [
+      {
+        "kind": "inserts-entry",
+        "line": 1,
+        "snippet": "- insert:"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 2,
+        "snippet": "- id: xmanrui-dsh-im"
+      }
+    ],
+    "notes": [
+      "textual analysis: a line number is provided for review, not a YAML object model"
+    ]
+  },
+  "overhead": {
+    "method": "differential",
+    "status": "no-significant-delta",
+    "samples": 6,
+    "baseline": {
+      "atMs": 8040,
+      "rss": 199176192,
+      "heapUsed": 68620336,
+      "external": 5186663,
+      "activeTotal": 10,
+      "watchers": 7,
+      "timers": 0,
+      "libuvHandles": 22,
+      "libuvActiveHandles": 17,
+      "fds": 20
+    },
+    "activated": {
+      "atMs": 8039,
+      "rss": 288210944,
+      "heapUsed": 118081184,
+      "external": 23946431,
+      "activeTotal": 11,
+      "watchers": 8,
+      "timers": 0,
+      "libuvHandles": 23,
+      "libuvActiveHandles": 18,
+      "fds": 20
+    },
+    "delta": {
+      "atMs": -1,
+      "rss": 89034752,
+      "heapUsed": 49460848,
+      "external": 18759768,
+      "activeTotal": 1,
+      "watchers": 1,
+      "timers": 0,
+      "libuvHandles": 1,
+      "libuvActiveHandles": 1,
+      "fds": 0
+    },
+    "significant": [],
+    "resourceKinds": {
+      "baseline": {
+        "PipeWrap": 3,
+        "FSEventWrap": 7,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 7,
+        "loop": 1
+      },
+      "activated": {
+        "PipeWrap": 3,
+        "FSEventWrap": 8,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 8,
+        "loop": 1
+      }
+    }
+  }
+}

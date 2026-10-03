@@ -1,0 +1,615 @@
+{
+  "schema": "dsh.plugin.report.v1",
+  "reportId": "npm:dsh-mnemon@0.5.23",
+  "generatedAt": "2026-10-03T16:23:19.346Z",
+  "verifier": {
+    "name": "dsh-verified",
+    "version": "0.1.0",
+    "commit": "ec8d77c8d74dce7dfc3070ef2ab081e28d154612"
+  },
+  "subject": {
+    "spec": "dsh-mnemon@0.5.23",
+    "name": "dsh-mnemon",
+    "version": "0.5.23",
+    "registry": "https://registry.npmjs.org",
+    "tarball": "https://registry.npmjs.org/dsh-mnemon/-/dsh-mnemon-0.5.23.tgz",
+    "integrity": "sha512-Ey0rlzroEj1OpKmjU5NWaCrNLL0ujI4/8m5AjT+mZRA2fQERuL84gr1xDJ0RE8fK1WhzqRiwrV4pVTCXAGvirA==",
+    "shasum": "b6d0d0b824da8e532ee74901d80f6e0e00224ec9",
+    "repository": "git+https://github.com/omdsh-dev/dsh-mnemon.git",
+    "license": "MIT",
+    "publishedAt": "2026-10-03T12:47:58.797Z",
+    "dshBundlePatch": "./cordis.patch.yml"
+  },
+  "runtime": {
+    "dshVersion": "0.2.0-rc.2",
+    "nodeVersion": "v24.21.0",
+    "os": "linux 6.17.0-1022-azure",
+    "arch": "x64"
+  },
+  "container": {
+    "image": "none",
+    "imageDigest": null,
+    "notes": "executed in a one-off container; the subject was installed, booted and removed there"
+  },
+  "verdict": "verified",
+  "dimensions": {
+    "L0_qualification": {
+      "id": "L0",
+      "status": "pass",
+      "summary": "declares dsh.bundle.patch and every declared patch path exists (59 files, 1519875 bytes unpacked)",
+      "metrics": {
+        "fileCount": 59,
+        "unpackedBytes": 1519875,
+        "patchPaths": [
+          "./cordis.patch.yml"
+        ],
+        "declaredEnginesDsh": null,
+        "shipsSource": true
+      },
+      "evidenceRefs": [
+        "e-resolve",
+        "e-tarball",
+        "e-l0"
+      ],
+      "notes": [
+        "dsh.manifestVersion is not declared; the reader does not infer a default"
+      ]
+    },
+    "L1_install": {
+      "id": "L1",
+      "status": "pass",
+      "summary": "installed",
+      "metrics": {
+        "durationMs": 2421,
+        "exitCode": 0,
+        "declaredPeers": null,
+        "bundlesAfterInstall": [
+          "@deepseek-ai/dsh-base",
+          "dsh-mnemon"
+        ],
+        "pendingBuildScripts": [],
+        "buildScriptsApproved": 0,
+        "diagnosticsLog": null
+      },
+      "evidenceRefs": [
+        "e-l1-install"
+      ],
+      "notes": [
+        "the CLI completed the install with exit code 0",
+        "no dependency build script was approved by the verifier; approval permits commands with the host user permissions"
+      ]
+    },
+    "L2_load": {
+      "id": "L2",
+      "status": "pass",
+      "summary": "booted, mounted and stayed alive",
+      "metrics": {
+        "bootBoundMs": 25000,
+        "durationMs": 25066,
+        "signal": null
+      },
+      "evidenceRefs": [
+        "e-l2-boot"
+      ],
+      "notes": [
+        "the process was still running when the wall-clock bound reached it and reported no failure diagnostics, so the bundle was neither skipped nor rejected",
+        "the fiber phase is not read directly: an early exit with diagnostics is the load-failure signal, and a boot that settles and waits is the success signal"
+      ]
+    },
+    "L3_run": {
+      "id": "L3",
+      "status": "pass",
+      "summary": "a session completed with no credential",
+      "metrics": {
+        "replayAdapter": "@deepseek-ai/dsh-llm-replay@0.2.0-rc.2",
+        "probeTask": "reply with any text",
+        "events": {
+          "session": "session-213ede21-1424-49ed-a85d-32f95c8e8247",
+          "turnEndReason": {
+            "kind": "completed"
+          },
+          "finalText": "Replay fixture: no provider was called.",
+          "textEventCount": 1,
+          "error": null,
+          "exitCode": 0,
+          "durationMs": 1480,
+          "eventCount": 7
+        }
+      },
+      "evidenceRefs": [
+        "e-l3-session"
+      ],
+      "notes": [
+        "the model call was served by the official replay adapter from a fixture authored in this repository; no provider was contacted and no credential was present",
+        "probe task, stated verbatim: \"reply with any text\""
+      ]
+    },
+    "L4_capability": {
+      "id": "L4",
+      "status": "pass",
+      "summary": "5 capability signal(s) present across 50 scanned file(s)",
+      "metrics": {
+        "scannedFiles": 50,
+        "scannedBytes": 1467754,
+        "skippedFiles": 0
+      },
+      "evidenceRefs": [
+        "e-l4",
+        "e-patch"
+      ],
+      "notes": [
+        "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+        "static analysis cannot see dynamically constructed code or prove intent"
+      ]
+    },
+    "L5_overhead": {
+      "id": "L5",
+      "status": "pass",
+      "summary": "no significant delta across 6 sampled run(s)",
+      "metrics": {
+        "samples": 6,
+        "baseline": {
+          "atMs": 8040,
+          "rss": 199122944,
+          "heapUsed": 68590120,
+          "external": 5188103,
+          "activeTotal": 10,
+          "watchers": 7,
+          "timers": 0,
+          "libuvHandles": 22,
+          "libuvActiveHandles": 17,
+          "fds": 20
+        },
+        "activated": {
+          "atMs": 8039,
+          "rss": 219471872,
+          "heapUsed": 95159832,
+          "external": 4704038,
+          "activeTotal": 11,
+          "watchers": 8,
+          "timers": 0,
+          "libuvHandles": 23,
+          "libuvActiveHandles": 18,
+          "fds": 20
+        },
+        "delta": {
+          "atMs": -1,
+          "rss": 20348928,
+          "heapUsed": 26569712,
+          "external": -484065,
+          "activeTotal": 1,
+          "watchers": 1,
+          "timers": 0,
+          "libuvHandles": 1,
+          "libuvActiveHandles": 1,
+          "fds": 0
+        }
+      },
+      "evidenceRefs": [
+        "e-l5-overhead"
+      ],
+      "notes": [
+        "no metric moved beyond the significance thresholds; that is the finding",
+        "differential attribution: baseline profile first, then the subject activated, same container and order",
+        "thresholds are coarse on purpose — order-of-magnitude watcher changes, RSS growth beyond 100 MiB, steady state more than 2 s later"
+      ]
+    },
+    "L6_uninstall": {
+      "id": "L6",
+      "status": "pass",
+      "summary": "removed without residue",
+      "metrics": {
+        "residue": [],
+        "durationMs": 275
+      },
+      "evidenceRefs": [
+        "e-l6-remove"
+      ],
+      "notes": [
+        "the profile retains no bundle selection, dependency entry or files for the subject"
+      ]
+    }
+  },
+  "capabilities": [
+    {
+      "id": "eval_or_dynamic_code",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "eval or synthesised code; common and often benign, and frequently bundler output",
+      "evidence": [
+        {
+          "file": "package/lib/testing.js",
+          "line": 223,
+          "snippet": "new Function(\"window\", readFileSync(path, \"utf8\"))(window);"
+        }
+      ]
+    },
+    {
+      "id": "hooks_system_prompt",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks system-prompt assembly, so it can influence what the model is told",
+      "evidence": [
+        {
+          "file": "package/lib/index.js",
+          "line": 2613,
+          "snippet": "ctx.inject([\"systemPrompt\"], (prompted) => {"
+        }
+      ]
+    },
+    {
+      "id": "network_egress",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "can make outbound network requests",
+      "evidence": [
+        {
+          "file": "package/lib/index.js",
+          "line": 6452,
+          "snippet": "const response = await fetch(url, {"
+        }
+      ]
+    },
+    {
+      "id": "spawns_process",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "spawns or would spawn an operating-system process",
+      "evidence": [
+        {
+          "file": "package/lib/index.js",
+          "line": 19,
+          "snippet": "import { spawn } from \"node:child_process\";"
+        }
+      ]
+    },
+    {
+      "id": "writes_outside_workspace",
+      "present": true,
+      "confidence": "low",
+      "attribution": "unknown",
+      "notes": "resolves a path outside the workspace (e.g. os.homedir(), DSH_HOME), which is normal for DSH profile handling; static analysis cannot determine whether it also writes there",
+      "evidence": [
+        {
+          "file": "package/lib/index.js",
+          "line": 522,
+          "snippet": "const globalRoot = process.env.MNEMON_DATA_DIR?.trim() || \"~/.mnemon\";"
+        }
+      ]
+    },
+    {
+      "id": "hooks_api_gate",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks the API/LLM path, so it can observe or alter provider traffic",
+      "evidence": []
+    },
+    {
+      "id": "listens_on_port",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "opens a listening socket",
+      "evidence": []
+    },
+    {
+      "id": "reads_secret_env",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "reads an environment variable whose name looks credential-shaped",
+      "evidence": []
+    },
+    {
+      "id": "runtime_patch",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "patches runtime objects rather than only registering its own services",
+      "evidence": []
+    },
+    {
+      "id": "watches_filesystem",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "watches the filesystem; a recursive workspace watch is the documented cause of host stalls",
+      "evidence": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e-resolve",
+      "kind": "command",
+      "command": "resolve dsh-mnemon@0.5.23 -> dsh-mnemon@0.5.23",
+      "exitCode": 0,
+      "durationMs": 193,
+      "excerpt": "{\n  \"name\": \"dsh-mnemon\",\n  \"version\": \"0.5.23\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/dsh-mnemon/-/dsh-mnemon-0.5.23.tgz\",\n  \"advertisedIntegrity\": \"sha512-Ey0rlzroEj1OpKmjU5NWaCrNLL0ujI4/8m5AjT+mZRA2fQERuL84gr1xDJ0RE8fK1WhzqRiwrV4pVTCXAGvirA==\",\n  \"publishedAt\": \"2026-10-03T12:47:58.797Z\"\n}"
+    },
+    {
+      "id": "e-tarball",
+      "kind": "artifact",
+      "command": "fetch https://registry.npmjs.org/dsh-mnemon/-/dsh-mnemon-0.5.23.tgz",
+      "exitCode": 0,
+      "durationMs": 44,
+      "excerpt": "{\n  \"bytes\": 351825,\n  \"resolvedIntegrity\": \"sha512-Ey0rlzroEj1OpKmjU5NWaCrNLL0ujI4/8m5AjT+mZRA2fQERuL84gr1xDJ0RE8fK1WhzqRiwrV4pVTCXAGvirA==\",\n  \"advertisedIntegrity\": \"sha512-Ey0rlzroEj1OpKmjU5NWaCrNLL0ujI4/8m5AjT+mZRA2fQERuL84gr1xDJ0RE8fK1WhzqRiwrV4pVTCXAGvirA==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"ad23be5b0c5751447710e65f03ef4ad3b6ef25dd2e959ceebe59cb869651c571\"\n}",
+      "excerptBytes": 383,
+      "sha256": "ad23be5b0c5751447710e65f03ef4ad3b6ef25dd2e959ceebe59cb869651c571"
+    },
+    {
+      "id": "e-l0",
+      "kind": "static",
+      "command": "read published package.json and verify declared dsh.bundle.patch paths exist",
+      "excerpt": "{\n  \"status\": \"pass\",\n  \"reasons\": [],\n  \"declared\": {\n    \"manifestVersion\": null,\n    \"bundlePatch\": [\n      \"./cordis.patch.yml\"\n    ],\n    \"clientPlatform\": \"web\",\n    \"enginesDsh\": null,\n    \"enginesNode\": \">=20\"\n  },\n  \"missingPatchPaths\": [],\n  \"fileCount\": 59,\n  \"unpackedBytes\": 1519875,\n  \"shipsSource\": true\n}",
+      "excerptBytes": 320
+    },
+    {
+      "id": "e-patch",
+      "kind": "static",
+      "command": "read cordis.patch.yml",
+      "excerpt": "# Mount the Mnemon bridge into a DSH profile. A profile's final patch may\n# replace this config row as a whole; use user settings or environment\n# variables for one-field overrides such as cliPath.\n- insert:\n    # Keep the v0.4 `mnemon` Entry as the public configuration target while\n    # making every v0.5 component inherit its enabled state. The expression\n    # reads the core row's own flag (rather than its effective state) to avoid\n    # recursing through this ancestor gate. The group itself prepares the\n    # Starter's dependency resolution before it imports its children.\n    - id: mnemon-bundle\n      name: dsh-mnemon/bundle\n      group: true\n      disabled: !!js >-\n        ((entry) => entry.options.disabled?.__jsExpr\n          ? Boolean(entry.evaluate(entry.options.disabled.__jsExpr))\n          : Boolean(entry.options.disabled))\n        ([...loader.entries()].find(entry => entry.options.id === 'mnemon'))\n      config:\n        - id: mnemon\n          # Core/Host and default settings. Sources own their independent Entries.\n          name: dsh-mnemon\n          config:\n            routingGuidance: true\n            lifecycleEnabled: true\n            recallMode: guided\n            writebackMode: guided\n            idleReviewMs: 30000\n            tabEnabled: true\n            writeEnabled: true\n            remoteAccess: read-only\n            timeoutMs: 10000\n            defaultRecallLimit: 10\n            embedding:\n              enabled: false\n              endpoint: http://localhost:11434\n              model: nomic-embed-text\n            recallQuality:\n              policy: strict-v1\n              lowScoreThreshold: 0.25\n              highScoreThreshold: 0.6\n              candidateMultiplier: 3\n              maxMediumResults: 4\n              maxUnknownResults: 2\n        - id: mnemon-source-runtime\n          name: dsh-mnemon-source-runtime\n        - id: mnemon-source-documents\n          name: dsh-mnemon-source-documents\n        - id: mnemon-source-memory-spaces\n          name: dsh-mnemon-source-memory-spaces\n        ",
+      "excerptBytes": 2048,
+      "sha256": "78ef185051f4c39dd133273b4738890cc591e99591a45dc6d78ac649eb6486a4"
+    },
+    {
+      "id": "e-l4",
+      "kind": "static",
+      "command": "scan 50 shipped source file(s) for capability signatures",
+      "excerpt": "{\n  \"present\": [\n    {\n      \"id\": \"eval_or_dynamic_code\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/lib/testing.js\",\n        \"line\": 223,\n        \"snippet\": \"new Function(\\\"window\\\", readFileSync(path, \\\"utf8\\\"))(window);\"\n      }\n    },\n    {\n      \"id\": \"hooks_system_prompt\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/lib/index.js\",\n        \"line\": 2613,\n        \"snippet\": \"ctx.inject([\\\"systemPrompt\\\"], (prompted) => {\"\n      }\n    },\n    {\n      \"id\": \"network_egress\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/lib/index.js\",\n        \"line\": 6452,\n        \"snippet\": \"const response = await fetch(url, {\"\n      }\n    },\n    {\n      \"id\": \"spawns_process\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/lib/index.js\",\n        \"line\": 19,\n        \"snippet\": \"import { spawn } from \\\"node:child_process\\\";\"\n      }\n    },\n    {\n      \"id\": \"writes_outside_workspace\",\n      \"confidence\": \"low\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/lib/index.js\",\n        \"line\": 522,\n        \"snippet\": \"const globalRoot = process.env.MNEMON_DATA_DIR?.trim() || \\\"~/.mnemon\\\";\"\n      }\n    }\n  ],\n  \"scannedFiles\": 50,\n  \"skippedFiles\": 0,\n  \"limits\": [\n    \"the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency\",\n    \"static analysis cannot see dynamically constructed code or prove intent\"\n  ]\n}",
+      "excerptBytes": 1680
+    },
+    {
+      "id": "e-l1-install",
+      "kind": "command",
+      "command": "dsh plugin --profile verify add dsh-mnemon@0.5.23",
+      "exitCode": 0,
+      "durationMs": 2421,
+      "excerpt": "Progress: resolved 0, reused 0, downloaded 1, added 0\nAdded 5 entries to minimumReleaseAgeExclude in pnpm-workspace.yaml (set minimumReleaseAgeStrict to true to gate these updates with a prompt):\n  dsh-mnemon-provider-holographic@0.5.6\n  dsh-mnemon-source-documents@0.5.9\n  dsh-mnemon-source-memory-spaces@0.5.15\n  dsh-mnemon-source-runtime@0.5.12\n  dsh-mnemon@0.5.23\nPackages are hard linked from the content-addressable store to the virtual store.\n  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nPackages: +25\n+++++++++++++++++++++++++\nProgress: resolved 25, reused 0, downloaded 25, added 25, done\n[WARN] Issues with peer dependencies found. Run \"pnpm peers check\" to list them.\n\ndependencies:\n+ dsh-mnemon 0.5.23\n\nDone in 532ms using pnpm v12.8.1\ndsh: initialized profile verify at /work/dsh-home/profiles/verify\n",
+      "excerptBytes": 901,
+      "truncated": false,
+      "sha256": "c82ad1929db3fc0e75ac7ebbfbebf5231a64e9e2eae7cdd434b231f66ed7aa4d"
+    },
+    {
+      "id": "e-l2-boot",
+      "kind": "command",
+      "command": "dsh --profile verify",
+      "exitCode": 0,
+      "durationMs": 25066,
+      "excerpt": "",
+      "excerptBytes": 0,
+      "truncated": false,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "e-l6-remove",
+      "kind": "command",
+      "command": "dsh plugin --profile verify remove dsh-mnemon",
+      "exitCode": 0,
+      "durationMs": 275,
+      "excerpt": "Packages: -25\n-------------------------\n\ndependencies:\n- dsh-mnemon 0.5.23\n\nDone in 28ms using pnpm v12.8.1\n",
+      "excerptBytes": 108,
+      "truncated": false,
+      "sha256": "d939b6742f7076a5d3c7f12c1c422702e64344723ca91a717014f2e8cee6dc13"
+    },
+    {
+      "id": "e-l5-overhead",
+      "kind": "sample",
+      "command": "dsh --profile <baseline|activated> with the host sampler injected via NODE_OPTIONS=--import",
+      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8040,\n    \"rss\": 199122944,\n    \"heapUsed\": 68590120,\n    \"external\": 5188103,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8039,\n    \"rss\": 219471872,\n    \"heapUsed\": 95159832,\n    \"external\": 4704038,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 23,\n    \"libuvActiveHandles\": 18,\n    \"fds\": 20\n  },\n  \"delta\": {\n    \"atMs\": -1,\n    \"rss\": 20348928,\n    \"heapUsed\": 26569712,\n    \"external\": -484065,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 1,\n    \"libuvActiveHandles\": 1,\n    \"fds\": 0\n  },\n  \"significant\": []\n}"
+    },
+    {
+      "id": "e-l3-session",
+      "kind": "command",
+      "command": "dsh --profile l3 --patch /work/fixtures/replay/l3-overlay.yml --json reply with any text",
+      "exitCode": 0,
+      "durationMs": 1480,
+      "excerpt": "{\"type\":\"session\",\"sessionId\":\"session-213ede21-1424-49ed-a85d-32f95c8e8247\",\"cwd\":\"/work\"}\n{\"type\":\"status\",\"phase\":\"turn_start\",\"turn\":1}\n{\"type\":\"status\",\"phase\":\"step_start\",\"turn\":1,\"step\":1}\n{\"type\":\"text\",\"text\":\"Replay fixture: no provider was called.\"}\n{\"type\":\"status\",\"phase\":\"step_end\",\"turn\":1,\"step\":1}\n{\"type\":\"status\",\"phase\":\"turn_end\",\"turn\":1,\"reason\":{\"kind\":\"completed\"}}\n{\"type\":\"final\",\"text\":\"Replay fixture: no provider was called.\"}\n",
+      "excerptBytes": 459,
+      "truncated": false,
+      "sha256": "875cca7bc9c750cc2184348a6ad813bf9f4f8108fbc98da9b9ac47c8149681b4"
+    }
+  ],
+  "redactions": [],
+  "disclaimers": [
+    "Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence."
+  ],
+  "limits": [
+    "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+    "static analysis cannot see dynamically constructed code or prove intent",
+    "L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model",
+    "the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase",
+    "no dependency build script was approved by this executor",
+    "overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta",
+    "sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test"
+  ],
+  "bundlePatch": {
+    "path": "cordis.patch.yml",
+    "present": true,
+    "bytes": 3842,
+    "entryCount": 20,
+    "disablesHostEntries": true,
+    "overridesConfig": true,
+    "usesJsExpressions": true,
+    "findings": [
+      {
+        "kind": "inserts-entry",
+        "line": 4,
+        "snippet": "- insert:"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 10,
+        "snippet": "- id: mnemon-bundle"
+      },
+      {
+        "kind": "disables-entry",
+        "line": 13,
+        "snippet": "disabled: !!js >-"
+      },
+      {
+        "kind": "js-expression",
+        "line": 13,
+        "snippet": "disabled: !!js >-"
+      },
+      {
+        "kind": "overrides-config",
+        "line": 18,
+        "snippet": "config:"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 19,
+        "snippet": "- id: mnemon"
+      },
+      {
+        "kind": "overrides-config",
+        "line": 22,
+        "snippet": "config:"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 44,
+        "snippet": "- id: mnemon-source-runtime"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 46,
+        "snippet": "- id: mnemon-source-documents"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 48,
+        "snippet": "- id: mnemon-source-memory-spaces"
+      },
+      {
+        "kind": "overrides-config",
+        "line": 50,
+        "snippet": "config:"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 72,
+        "snippet": "- id: mnemon-strategy-default-three-tier"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 76,
+        "snippet": "- id: mnemon-strategy-general"
+      },
+      {
+        "kind": "disables-entry",
+        "line": 78,
+        "snippet": "disabled: true"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 81,
+        "snippet": "- id: mnemon-strategy-auto-capture"
+      },
+      {
+        "kind": "disables-entry",
+        "line": 83,
+        "snippet": "disabled: true"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 84,
+        "snippet": "- id: mnemon-strategy-light-context"
+      },
+      {
+        "kind": "disables-entry",
+        "line": 86,
+        "snippet": "disabled: true"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 87,
+        "snippet": "- id: mnemon-strategy-scoped"
+      },
+      {
+        "kind": "disables-entry",
+        "line": 89,
+        "snippet": "disabled: true"
+      }
+    ],
+    "notes": [
+      "!!js expressions are code carried in a configuration file, evaluated when the patch is applied",
+      "textual analysis: a line number is provided for review, not a YAML object model"
+    ]
+  },
+  "overhead": {
+    "method": "differential",
+    "status": "no-significant-delta",
+    "samples": 6,
+    "baseline": {
+      "atMs": 8040,
+      "rss": 199122944,
+      "heapUsed": 68590120,
+      "external": 5188103,
+      "activeTotal": 10,
+      "watchers": 7,
+      "timers": 0,
+      "libuvHandles": 22,
+      "libuvActiveHandles": 17,
+      "fds": 20
+    },
+    "activated": {
+      "atMs": 8039,
+      "rss": 219471872,
+      "heapUsed": 95159832,
+      "external": 4704038,
+      "activeTotal": 11,
+      "watchers": 8,
+      "timers": 0,
+      "libuvHandles": 23,
+      "libuvActiveHandles": 18,
+      "fds": 20
+    },
+    "delta": {
+      "atMs": -1,
+      "rss": 20348928,
+      "heapUsed": 26569712,
+      "external": -484065,
+      "activeTotal": 1,
+      "watchers": 1,
+      "timers": 0,
+      "libuvHandles": 1,
+      "libuvActiveHandles": 1,
+      "fds": 0
+    },
+    "significant": [],
+    "resourceKinds": {
+      "baseline": {
+        "PipeWrap": 3,
+        "FSEventWrap": 7,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 7,
+        "loop": 1
+      },
+      "activated": {
+        "PipeWrap": 3,
+        "FSEventWrap": 8,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 8,
+        "loop": 1
+      }
+    }
+  }
+}

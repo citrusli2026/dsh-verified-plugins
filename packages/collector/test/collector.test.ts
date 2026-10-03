@@ -17,6 +17,8 @@ import { scanCapabilities, classifyAttribution } from '../src/capability.ts';
 import { analyseBundlePatch } from '../src/bundle-patch.ts';
 import { qualify, readDeclaredManifest } from '../src/qualify.ts';
 import { parseSpec, selectVersion, RegistryError } from '../src/registry.ts';
+import { rowFromManifest } from '../src/survey.ts';
+import { compareVersions, evaluateDshPeers, parseVersion, satisfies } from '../src/semver.ts';
 
 /* --------------------------------------------------------------- tar helper */
 
@@ -255,4 +257,103 @@ test('version selection picks the newest match and refuses an impossible range',
   assert.equal(selectVersion(versions, '0.2.0'), '0.2.0');
   assert.equal(selectVersion(versions, '^0.2.0'), '0.2.0');
   assert.throws(() => selectVersion(versions, '9.9.9'), RegistryError);
+});
+
+/* ------------------------------------------------------------------- survey */
+
+test('survey: a declared bundle patch marks a package as composable', () => {
+  const manifest = {
+    name: 'example',
+    version: '1.2.3',
+    dsh: { bundle: { patch: './cordis.patch.yml' }, client: { platform: 'web' } },
+    engines: { dsh: '^0.2.0' },
+    peerDependencies: { '@deepseek-ai/dsh-llm': '^0.2.0-rc.1', chalk: '*' },
+  };
+  const row = rowFromManifest('example', manifest);
+  assert.equal(row.declaresBundle, true);
+  assert.deepEqual(row.bundlePatch, ['./cordis.patch.yml']);
+  assert.equal(row.clientPlatform, 'web');
+  assert.equal(row.enginesDsh, '^0.2.0');
+  assert.deepEqual(row.dshPeers, { '@deepseek-ai/dsh-llm': '^0.2.0-rc.1' }, 'non-dsh peers are dropped');
+});
+
+test('survey: an ordered patch list is accepted', () => {
+  const manifest = { name: 'example', version: '1.0.0', dsh: { bundle: { patch: ['./a.yml', './b.yml'] } } };
+  const row = rowFromManifest('example', manifest);
+  assert.equal(row.declaresBundle, true);
+  assert.equal(row.bundlePatch?.length, 2);
+});
+
+test('survey: a package with no dsh field is not a bundle', () => {
+  // This is also what npm's ABBREVIATED metadata looks like, which is why the
+  // survey must read the full packument: the abbreviated form strips `dsh`.
+  const manifest = { name: 'example', version: '1.0.0' };
+  const row = rowFromManifest('example', manifest);
+  assert.equal(row.declaresBundle, false);
+  assert.equal(row.bundlePatch, null);
+  assert.equal(row.reachable, true);
+});
+
+test('survey: a malformed manifest is recorded, not thrown', () => {
+  const row = rowFromManifest('example', {});
+  assert.equal(row.reachable, false);
+  assert.equal(row.error, 'manifest carries no version');
+});
+
+/* ------------------------------------------------------------------- semver */
+
+test('semver: versions compare with prereleases below their release', () => {
+  assert.equal(compareVersions(parseVersion('0.2.0')!, parseVersion('0.2.0-rc.2')!), 1);
+  assert.equal(compareVersions(parseVersion('0.2.0-rc.2')!, parseVersion('0.2.0-rc.1')!), 1);
+  assert.equal(compareVersions(parseVersion('1.0.0')!, parseVersion('1.0.0')!), 0);
+  assert.equal(compareVersions(parseVersion('0.1.7')!, parseVersion('0.2.0')!), -1);
+});
+
+test('semver: caret on 0.0.x pins the patch', () => {
+  // This is why `^0.0.1-rc.1` can never reach 0.2.x — the trap that produced a
+  // wrong "L3 is blocked" conclusion at three levels of this repo.
+  assert.equal(satisfies('0.0.1-rc.1', '^0.0.1-rc.1'), true);
+  assert.equal(satisfies('0.0.2', '^0.0.1-rc.1'), false);
+  assert.equal(satisfies('0.2.0-rc.2', '^0.0.1-rc.1'), false);
+});
+
+test('semver: caret on 0.x pins the minor, on 1.x the major', () => {
+  assert.equal(satisfies('0.2.0-rc.2', '^0.2.0-rc.1'), true);
+  assert.equal(satisfies('0.3.0', '^0.2.0-rc.1'), false);
+  assert.equal(satisfies('1.5.0', '^1.2.3'), true);
+  assert.equal(satisfies('2.0.0', '^1.2.3'), false);
+});
+
+test('semver: a prerelease only matches a range that names one on the same tuple', () => {
+  assert.equal(satisfies('0.2.0-rc.2', '>=0.1.0'), false, 'npm does not let a prerelease into this range');
+  assert.equal(satisfies('0.2.0-rc.2', '>=0.2.0-rc.1'), true);
+  assert.equal(satisfies('0.2.0', '>=0.1.0'), true);
+});
+
+test('semver: the observed peer sets evaluate exactly as DSH decided', () => {
+  // Ground truth from the container: find-plugin was REFUSED.
+  const findPlugin = {
+    '@deepseek-ai/dsh-tools':
+      '^0.1.0-rc.6 || ^0.1.1-rc.1 || ^0.1.2-alpha.2 || ^0.1.3-alpha.2 || ^0.1.5-alpha.1 || ^0.1.6-alpha.1 || ^0.1.7-alpha.1',
+  };
+  const refused = evaluateDshPeers(findPlugin, '0.2.0-rc.2');
+  assert.equal(refused.compatible, false);
+  assert.equal(refused.unsatisfied.length, 1);
+
+  // Ground truth: cost-meter INSTALLED.
+  const costMeter = {
+    '@deepseek-ai/dsh-home-paths': '^0.1.0-rc.6 || ^0.1.1-0 || ^0.1.2-0 || ^0.1.3-0 || ^0.1.5-0 || >=0.2.0-rc.1',
+    '@deepseek-ai/dsh-credentials': '^0.1.0-rc.6 || ^0.1.1-0 || ^0.1.2-0 || ^0.1.3-0 || ^0.1.5-0 || >=0.2.0-rc.1',
+  };
+  assert.equal(evaluateDshPeers(costMeter, '0.2.0-rc.2').compatible, true, 'cost-meter installed, so its peers matched');
+
+  // Ground truth: the replay adapter's old version was refused, its matching one installed.
+  assert.equal(evaluateDshPeers({ '@deepseek-ai/dsh-llm': '^0.0.1-rc.1' }, '0.2.0-rc.2').compatible, false);
+  assert.equal(evaluateDshPeers({ '@deepseek-ai/dsh-llm': '0.2.0-rc.2' }, '0.2.0-rc.2').compatible, true);
+});
+
+test('semver: an unsupported range is reported, not guessed at', () => {
+  const verdict = evaluateDshPeers({ '@deepseek-ai/dsh-llm': 'workspace:^' }, '0.2.0-rc.2');
+  assert.equal(verdict.compatible, false);
+  assert.equal(verdict.unsupported.length, 1, 'a range we cannot evaluate must not read as compatible');
 });
