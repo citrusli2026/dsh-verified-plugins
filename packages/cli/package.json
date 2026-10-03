@@ -1,0 +1,27 @@
+{
+  "name": "dsh-verified",
+  "version": "0.1.0",
+  "description": "Execution-verified plugin reports for DeepSeek Harness — install it, load it, run it, measure it.",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "dsh-verified": "./src/main.ts"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/citrusli2026/dsh-verified-plugins.git",
+    "directory": "packages/cli"
+  },
+  "//": [
+    "Zero dependencies, on purpose: the CLI runs straight from TypeScript via",
+    "Node 24's native type stripping, so there is no build step and no",
+    "node_modules. `private` is deliberate — publishing to npm is a maintainer",
+    "decision, not something this project does on its own. Until then the",
+    "command runs from a checkout: `npm exec -- dsh-verified static <spec>`,",
+    "or simply `node packages/cli/src/main.ts static <spec>`."
+  ]
+}
