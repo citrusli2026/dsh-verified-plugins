@@ -168,3 +168,10 @@ test('index page: every entry is listed with a link and an inline badge', () => 
   assert.ok(html.includes('<svg'), 'the badge is inlined so the page needs no image host');
   assert.ok(html.includes('a slice, not a census'));
 });
+
+test('report page: a reader who disagrees can find the appeal process', () => {
+  // The page most likely to be disputed is the one that should say how.
+  const html = renderReportPage(report(), 'example');
+  assert.match(html, /dispute this report/);
+  assert.match(html, /docs\/appeals\.md/);
+});

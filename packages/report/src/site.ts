@@ -272,7 +272,7 @@ ${evidenceRows}
 <h2>Disclaimers</h2>
 <ul>${disclaimers.map((d) => `<li>${escapeHtml(d)}</li>`).join('')}</ul>
 
-<p class="note"><a href="./${escapeHtml(slug)}.json">raw report JSON</a> · <a href="./badge/${escapeHtml(slug)}.svg">badge</a></p>`,
+<p class="note"><a href="./${escapeHtml(slug)}.json">raw report JSON</a> · <a href="./badge/${escapeHtml(slug)}.svg">badge</a> · <a href="https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/appeals.md">dispute this report</a></p>`,
   );
 }
 
