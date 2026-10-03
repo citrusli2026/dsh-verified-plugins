@@ -26,6 +26,8 @@ import { loadSchema, validateReport } from '../../report/src/validate.ts';
 import { buildCatalogIndex, INDEX_SCHEMA, summariseReport } from '../../report/src/catalog.ts';
 import { mergeExecution, type ExecutionResult } from '../../report/src/merge.ts';
 import { searchPackageNames, survey } from '../../collector/src/survey.ts';
+import { buildSite, renderSurveyPage, slugFor } from '../../report/src/site.ts';
+import { renderBadge } from '../../report/src/badge.ts';
 import { RegistryError } from '../../collector/src/registry.ts';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -43,6 +45,8 @@ function usage(): void {
       '  dsh-verified catalog [catalog-dir]',
       '  dsh-verified merge <static.json> <execution.json> [--out <file>]',
       '  dsh-verified survey (--query <text> | --list <a,b>) [--limit N] [--out <file>]',
+      '  dsh-verified site [--out <dir>] [--survey <file>]',
+      '  dsh-verified badge <report.json> [--out <file>]',
       '',
       '  static    L0 qualification + L4 capability scan. Runs no plugin code.',
       '  validate  Check report(s) against the schema and the verdict rules.',
@@ -50,6 +54,8 @@ function usage(): void {
       '  merge     Combine a static report (L0+L4) with execution results (L1+L2+L6).',
       '  survey    Registry metadata only: how many packages that claim to be DSH',
       '            plugins actually declare an installable bundle. Runs no plugin code.',
+      '  site      Render catalog/ into static HTML, with badges and evidence links.',
+      '  badge     Render one report as an SVG badge.',
       '',
       'Specs are exact: name@1.2.3 or a bare name (resolves to latest).',
       '',
@@ -153,6 +159,66 @@ function commandValidate(args: ParsedArgs): number {
   }
 
   return failed > 0 ? 1 : 0;
+}
+
+/**
+ * Renders `catalog/` into static HTML. No framework, no client JavaScript, no
+ * network: every conclusion on a report page links to the evidence entry it
+ * rests on, which is the property the pages exist to demonstrate.
+ */
+function commandSite(args: ParsedArgs): number {
+  const dir = join(REPO_ROOT, 'catalog');
+  const out = args.flags.get('out') ?? join(REPO_ROOT, '.verify', 'site');
+
+  if (!existsSync(join(dir, 'index.json'))) {
+    process.stderr.write('error: catalog/index.json is missing; run `catalog` first\n');
+    return 2;
+  }
+
+  const index = JSON.parse(readFileSync(join(dir, 'index.json'), 'utf8')) as { entries: Array<{ path: string; repoPath: string }> };
+  const reports: Array<{ slug: string; report: Record<string, any> }> = [];
+
+  for (const entry of index.entries) {
+    const file = join(REPO_ROOT, entry.path);
+    if (!existsSync(file)) {
+      process.stderr.write(`error: ${entry.path} is listed in the index but missing\n`);
+      return 1;
+    }
+    const report = JSON.parse(readFileSync(file, 'utf8')) as Record<string, any>;
+    reports.push({ slug: slugFor(String(report.subject?.name ?? entry.repoPath)), report });
+  }
+
+  const built = buildSite({ index: index as never, reports }, { outDir: out });
+
+  const surveyPath = args.flags.get('survey') ?? join(REPO_ROOT, 'docs', 'survey', 'npm-dsh-plugin-250.json');
+  if (existsSync(surveyPath)) {
+    const summary = JSON.parse(readFileSync(surveyPath, 'utf8')) as Record<string, any>;
+    mkdirSync(join(out, 'survey'), { recursive: true });
+    writeFileSync(join(out, 'survey', 'index.html'), renderSurveyPage(summary));
+    writeFileSync(join(out, 'survey', 'summary.json'), `${JSON.stringify(summary, null, 2)}\n`);
+  }
+
+  process.stdout.write(`site: ${built.pages} page(s), ${built.badges} badge(s) -> ${out}\n`);
+  return 0;
+}
+
+function commandBadge(args: ParsedArgs): number {
+  const file = args.positional[0];
+  if (!file) {
+    process.stderr.write('error: badge requires a report path\n');
+    return 2;
+  }
+  const report = JSON.parse(readFileSync(file, 'utf8')) as Record<string, any>;
+  const svg = renderBadge(String(report.verdict), { subject: String(report.reportId ?? '') });
+  const out = args.flags.get('out');
+  if (out) {
+    mkdirSync(dirname(out), { recursive: true });
+    writeFileSync(out, svg);
+    process.stderr.write(`wrote ${out}\n`);
+  } else {
+    process.stdout.write(svg);
+  }
+  return 0;
 }
 
 /**
@@ -367,6 +433,12 @@ async function main(): Promise<void> {
         break;
       case 'survey':
         code = await commandSurvey(args);
+        break;
+      case 'site':
+        code = commandSite(args);
+        break;
+      case 'badge':
+        code = commandBadge(args);
         break;
       default:
         process.stderr.write(`error: unknown command "${args.command}"\n\n`);

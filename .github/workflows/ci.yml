@@ -54,5 +54,18 @@ jobs:
         run: node --test packages/report/test/*.test.ts packages/collector/test/*.test.ts
       - name: Overhead detector acceptance (the watcher anomaly must be caught)
         run: node tools/acceptance/watcher.mjs
+      # The publish surface is built read-only here: this job verifies it
+      # renders, and never deploys. Deployment is a maintainer step, so no
+      # workflow needs a write permission or an OIDC token. See docs/security.md.
+      - name: The publish surface builds (no deploy)
+        run: |
+          set -euo pipefail
+          node packages/cli/src/main.ts site --out .verify/site
+          test -s .verify/site/index.html
+          test -s .verify/site/survey/index.html
+          reports="$(ls catalog/npm/*.json | wc -l | tr -d ' ')"
+          badges="$(ls .verify/site/badge/*.svg | wc -l | tr -d ' ')"
+          echo "reports=$reports badges=$badges"
+          test "$reports" = "$badges"
       - name: Report contract and catalog index freshness
         run: node packages/cli/src/main.ts catalog --check

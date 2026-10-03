@@ -5,12 +5,11 @@ Evidence-linked, reproducible, not another star list.
 
 [Method](docs/method.md) · [Report schema](docs/schema.md) · [Security](docs/security.md) · [Catalog](catalog/index.json)
 
-> **Status: V0–V4 done.** All seven dimensions run end to end, batches are
-> supported, and the catalogue holds **24 reports — 19 `verified`** from a
-> 20-subject acceptance run plus the four earliest. Sessions run against a
-> replayed transcript, never a credential, and every report says so. See
-> [docs/evidence/V4.md](docs/evidence/V4.md) and
-> [the survey](docs/survey/README.md). Read
+> **Status: V0–V5 done.** All seven dimensions run end to end, batches are
+> supported, and the reports are published — **[browse the
+> site](https://citrusli2026.github.io/dsh-verified-plugins/)**. 24 reports:
+> 19 `verified`, 4 `partial`, 1 `not-installable`. Sessions run against a
+> replayed transcript, never a credential, and every report says so. Read
 > [docs/security.md](docs/security.md) first.
 
 ---
@@ -137,6 +136,16 @@ All are dependency-free and run in CI. TypeScript is executed directly by Node
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Agents should read
 [AGENTS.md](AGENTS.md) — it carries binding stop conditions.
+
+## Badges
+
+```markdown
+[![dsh verified](https://citrusli2026.github.io/dsh-verified-plugins/badge/dsh-cost-meter.svg)](https://citrusli2026.github.io/dsh-verified-plugins/dsh-cost-meter.html)
+```
+
+Four states — `verified`, `partial`, `inconclusive`, `not-installable` — and
+**no score**. The state says how much ran, not how good a plugin is. Each badge
+links to the report, where every conclusion links to the evidence behind it.
 
 ## What a batch costs
 
