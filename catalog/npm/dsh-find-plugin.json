@@ -1,10 +1,11 @@
 {
   "schema": "dsh.plugin.report.v1",
   "reportId": "npm:dsh-find-plugin@0.4.0",
-  "generatedAt": "2026-10-03T15:20:23.829Z",
+  "generatedAt": "2026-10-03T15:57:40.152Z",
   "verifier": {
     "name": "dsh-verified",
-    "version": "0.1.0"
+    "version": "0.1.0",
+    "commit": "b07a7e8d009344208b960388aa24a9c5f8ec674c"
   },
   "subject": {
     "spec": "dsh-find-plugin@0.4.0",
@@ -59,7 +60,7 @@
       "status": "fail",
       "summary": "peer-incompatible with the pinned runtime",
       "metrics": {
-        "durationMs": 1445,
+        "durationMs": 1639,
         "exitCode": 1,
         "declaredPeers": {
           "@deepseek-ai/dsh-tools": "^0.1.0-rc.6 || ^0.1.1-rc.1 || ^0.1.2-alpha.2 || ^0.1.3-alpha.2 || ^0.1.5-alpha.1 || ^0.1.6-alpha.1 || ^0.1.7-alpha.1"
@@ -69,7 +70,7 @@
         ],
         "pendingBuildScripts": [],
         "buildScriptsApproved": 0,
-        "diagnosticsLog": "/work/dsh-home/profiles/verify/.plugin-manager/logs/operation-lP3rTZ/pnpm.log"
+        "diagnosticsLog": "/work/dsh-home/profiles/verify/.plugin-manager/logs/operation-jqcPJ1/pnpm.log"
       },
       "evidenceRefs": [
         "e-l1-install"
@@ -90,15 +91,11 @@
     },
     "L3_run": {
       "id": "L3",
-      "status": "blocked",
-      "summary": "not run: the sanctioned key-free model adapter is not installable against dsh 0.2.0-rc.2",
-      "evidenceRefs": [
-        "e-l3-blocked"
-      ],
+      "status": "skip",
+      "summary": "not run: the subject did not install",
+      "evidenceRefs": [],
       "notes": [
-        "@deepseek-ai/dsh-llm-replay declares peerDependencies on ^0.0.1-rc.1 packages, one of which (@deepseek-ai/dsh-compact) does not exist on npm, and DSH refuses peer-incompatible installs",
-        "a session therefore requires a real credential, which this project never injects",
-        "resolving L3 needs either a pinned older runtime whose peers match, or a recorded-transcript adapter"
+        "a session cannot be attributed to a subject that is not present"
       ]
     },
     "L4_capability": {
@@ -120,11 +117,14 @@
     },
     "L5_overhead": {
       "id": "L5",
-      "status": "skip",
-      "summary": "not run: differential overhead sampling is not implemented yet",
+      "status": "inconclusive",
+      "summary": "the subject did not install, so there was nothing to activate",
+      "metrics": {
+        "samples": 0
+      },
       "evidenceRefs": [],
       "notes": [
-        "reporting an overhead figure here would mean inventing one; the dimension stays visible as not having run"
+        "no overhead claim is made when the differential could not be completed"
       ]
     },
     "L6_uninstall": {
@@ -257,7 +257,7 @@
       "kind": "command",
       "command": "resolve dsh-find-plugin@0.4.0 -> dsh-find-plugin@0.4.0",
       "exitCode": 0,
-      "durationMs": 295,
+      "durationMs": 83,
       "excerpt": "{\n  \"name\": \"dsh-find-plugin\",\n  \"version\": \"0.4.0\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/dsh-find-plugin/-/dsh-find-plugin-0.4.0.tgz\",\n  \"advertisedIntegrity\": \"sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==\",\n  \"publishedAt\": \"2026-09-25T14:59:44.271Z\"\n}"
     },
     {
@@ -265,7 +265,7 @@
       "kind": "artifact",
       "command": "fetch https://registry.npmjs.org/dsh-find-plugin/-/dsh-find-plugin-0.4.0.tgz",
       "exitCode": 0,
-      "durationMs": 30,
+      "durationMs": 20,
       "excerpt": "{\n  \"bytes\": 45308,\n  \"resolvedIntegrity\": \"sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==\",\n  \"advertisedIntegrity\": \"sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"39fc2dfd519b53bc71c9d4fb8cb7faa678d2c14ffb77c6df38daf0eedf0b56a0\"\n}",
       "excerptBytes": 382,
       "sha256": "39fc2dfd519b53bc71c9d4fb8cb7faa678d2c14ffb77c6df38daf0eedf0b56a0"
@@ -297,18 +297,11 @@
       "kind": "command",
       "command": "dsh plugin --profile verify add dsh-find-plugin@0.4.0",
       "exitCode": 1,
-      "durationMs": 1445,
-      "excerpt": "dsh: initialized profile verify at /work/dsh-home/profiles/verify\n\ndsh: installation rejected: Plugin dsh-find-plugin@0.4.0 is incompatible with dsh 0.2.0-rc.2: peerDependencies {\"@deepseek-ai/dsh-tools\":\"^0.1.0-rc.6 || ^0.1.1-rc.1 || ^0.1.2-alpha.2 || ^0.1.3-alpha.2 || ^0.1.5-alpha.1 || ^0.1.6-alpha.1 || ^0.1.7-alpha.1\"}. Running it may cause crashes or data loss. Update the plugin or install a plugin version compatible with this dsh runtime. To accept this risk explicitly, grant the exact-version exemption for dsh-find-plugin@0.4.0 on dsh 0.2.0-rc.2 with `dsh plugin allow-version` or the plugin manager, then retry the installation or restart dsh. Exact-version exemption: not active.\ndsh: nothing was installed.\ndsh: to accept the risk, run: dsh plugin --profile verify allow-version dsh-find-plugin@0.4.0 --dsh-version 0.2.0-rc.2 --accept-risk\ndsh: plugin command failed; diagnostics: /work/dsh-home/profiles/verify/.plugin-manager/logs/operation-lP3rTZ/pnpm.log\n",
+      "durationMs": 1639,
+      "excerpt": "dsh: initialized profile verify at /work/dsh-home/profiles/verify\n\ndsh: installation rejected: Plugin dsh-find-plugin@0.4.0 is incompatible with dsh 0.2.0-rc.2: peerDependencies {\"@deepseek-ai/dsh-tools\":\"^0.1.0-rc.6 || ^0.1.1-rc.1 || ^0.1.2-alpha.2 || ^0.1.3-alpha.2 || ^0.1.5-alpha.1 || ^0.1.6-alpha.1 || ^0.1.7-alpha.1\"}. Running it may cause crashes or data loss. Update the plugin or install a plugin version compatible with this dsh runtime. To accept this risk explicitly, grant the exact-version exemption for dsh-find-plugin@0.4.0 on dsh 0.2.0-rc.2 with `dsh plugin allow-version` or the plugin manager, then retry the installation or restart dsh. Exact-version exemption: not active.\ndsh: nothing was installed.\ndsh: to accept the risk, run: dsh plugin --profile verify allow-version dsh-find-plugin@0.4.0 --dsh-version 0.2.0-rc.2 --accept-risk\ndsh: plugin command failed; diagnostics: /work/dsh-home/profiles/verify/.plugin-manager/logs/operation-jqcPJ1/pnpm.log\n",
       "excerptBytes": 974,
       "truncated": false,
-      "sha256": "b5357b788f41b288ff2222d29246eba0ab162b7269aba9ac59e253357c64e065"
-    },
-    {
-      "id": "e-l3-blocked",
-      "kind": "static",
-      "command": "dsh plugin --profile replay add @deepseek-ai/dsh-llm-replay",
-      "exitCode": 1,
-      "excerpt": "@deepseek-ai/dsh-llm-replay@0.0.1-rc.1 declares peerDependencies:\n  @deepseek-ai/dsh-llm ^0.0.1-rc.1, @deepseek-ai/dsh-compact ^0.0.1-rc.1,\n  @deepseek-ai/dsh-session ^0.0.1-rc.1, @deepseek-ai/dsh-invariants ^0.0.1-rc.1\nDSH 0.2.0-rc.2 refuses the install: caret ranges on 0.0.x cannot reach 0.2.x,\nand @deepseek-ai/dsh-compact does not exist on npm at any version.\nObserved in the container; see docs/evidence/V3.md."
+      "sha256": "82972622d72610273261a3e1dc292553e415e004df65c83917e6542646623912"
     }
   ],
   "redactions": [],
@@ -317,10 +310,11 @@
   ],
   "limits": [
     "static analysis cannot see dynamically constructed code or prove intent",
-    "L5 overhead sampling is not implemented, so no cost claim is made",
+    "L5 overhead sampling did not complete, so no cost claim is made",
     "the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase",
-    "L5 overhead sampling is not implemented; the dimension is reported as skip rather than estimated",
-    "no dependency build script was approved by this executor"
+    "no dependency build script was approved by this executor",
+    "overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta",
+    "sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test"
   ],
   "bundlePatch": {
     "path": "cordis.patch.yml",

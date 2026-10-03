@@ -300,3 +300,42 @@ test('merge: without execution overhead at all, L5 stays skipped', () => {
   assert.equal((merged.dimensions as Record<string, Dimension>).L5_overhead.status, 'skip');
   assert.equal(merged.overhead, undefined);
 });
+
+test('merge: a non-bundle cannot collect execution passes', () => {
+  // Regression: @morlay/session-branch@0.1.5 declares no dsh.bundle.patch, yet
+  // it installed as a plain dependency and every execution dimension reported a
+  // pass — a confident result about a subject that was never composed.
+  const staticNonBundle = staticReport();
+  staticNonBundle.dimensions.L0_qualification = {
+    id: 'L0',
+    status: 'fail',
+    summary: 'package.json declares no dsh.bundle.patch',
+    metrics: { patchPaths: [], fileCount: 15 },
+    evidenceRefs: ['e-l0'],
+  };
+  staticNonBundle.verdict = 'not-installable';
+
+  const merged = mergeExecution(staticNonBundle, execution());
+  const dims = merged.dimensions as Record<string, Dimension>;
+  for (const key of ['L1_install', 'L2_load', 'L3_run', 'L5_overhead', 'L6_uninstall']) {
+    assert.equal(dims[key].status, 'skip', `${key} must not claim a result for a non-bundle`);
+  }
+  assert.equal(dims.L4_capability.status, 'pass', 'static findings still apply');
+  assert.equal(merged.verdict, 'not-installable');
+  assert.equal(merged.overhead, undefined, 'no cost claim may survive for a non-bundle');
+  assert.deepEqual(validateReport(merged, SCHEMA), []);
+});
+
+test('declaresBundle: a bundle with a missing patch path is still a bundle', () => {
+  const staticBrokenBundle = staticReport();
+  staticBrokenBundle.dimensions.L0_qualification = {
+    id: 'L0',
+    status: 'fail',
+    summary: 'declared bundle patch paths not present in the tarball',
+    metrics: { patchPaths: ['./cordis.patch.yml'], missingPatchPaths: ['./cordis.patch.yml'] },
+    evidenceRefs: ['e-l0'],
+  };
+  const merged = mergeExecution(staticBrokenBundle, execution());
+  const dims = merged.dimensions as Record<string, Dimension>;
+  assert.equal(dims.L1_install.status, 'pass', 'execution still applies to a malformed bundle');
+});

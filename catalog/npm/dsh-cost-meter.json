@@ -1,11 +1,11 @@
 {
   "schema": "dsh.plugin.report.v1",
   "reportId": "npm:dsh-cost-meter@1.8.8",
-  "generatedAt": "2026-10-03T15:49:28.613Z",
+  "generatedAt": "2026-10-03T15:56:06.201Z",
   "verifier": {
     "name": "dsh-verified",
     "version": "0.1.0",
-    "commit": "b5df2a37a0793fd5c2f6cd78d03ae8241969ab35"
+    "commit": "b07a7e8d009344208b960388aa24a9c5f8ec674c"
   },
   "subject": {
     "spec": "dsh-cost-meter@1.8.8",
@@ -61,7 +61,7 @@
       "status": "pass",
       "summary": "installed",
       "metrics": {
-        "durationMs": 2057,
+        "durationMs": 2167,
         "exitCode": 0,
         "declaredPeers": null,
         "bundlesAfterInstall": [
@@ -86,7 +86,7 @@
       "summary": "booted, mounted and stayed alive",
       "metrics": {
         "bootBoundMs": 25000,
-        "durationMs": 25063,
+        "durationMs": 25076,
         "signal": null
       },
       "evidenceRefs": [
@@ -105,7 +105,7 @@
         "replayAdapter": "@deepseek-ai/dsh-llm-replay@0.2.0-rc.2",
         "probeTask": "reply with any text",
         "events": {
-          "session": "session-a842a995-d41e-4683-8918-14161ec00938",
+          "session": "session-14e766aa-eeda-41ea-8d02-9b3d64ed818d",
           "turnEndReason": {
             "kind": "completed"
           },
@@ -113,7 +113,7 @@
           "textEventCount": 1,
           "error": null,
           "exitCode": 0,
-          "durationMs": 1005,
+          "durationMs": 1350,
           "eventCount": 7
         }
       },
@@ -150,9 +150,9 @@
       "metrics": {
         "samples": 6,
         "baseline": {
-          "atMs": 8036,
-          "rss": 199618560,
-          "heapUsed": 68485688,
+          "atMs": 8037,
+          "rss": 199241728,
+          "heapUsed": 68563264,
           "external": 5188103,
           "activeTotal": 10,
           "watchers": 7,
@@ -162,28 +162,28 @@
           "fds": 20
         },
         "activated": {
-          "atMs": 8056,
-          "rss": 231841792,
-          "heapUsed": 85015008,
-          "external": 7738009,
+          "atMs": 8052,
+          "rss": 231596032,
+          "heapUsed": 84778808,
+          "external": 7737982,
           "activeTotal": 11,
           "watchers": 8,
           "timers": 0,
-          "libuvHandles": 23,
-          "libuvActiveHandles": 19,
-          "fds": 20
+          "libuvHandles": 24,
+          "libuvActiveHandles": 20,
+          "fds": 21
         },
         "delta": {
-          "atMs": 20,
-          "rss": 32223232,
-          "heapUsed": 16529320,
-          "external": 2549906,
+          "atMs": 15,
+          "rss": 32354304,
+          "heapUsed": 16215544,
+          "external": 2549879,
           "activeTotal": 1,
           "watchers": 1,
           "timers": 0,
-          "libuvHandles": 1,
-          "libuvActiveHandles": 2,
-          "fds": 0
+          "libuvHandles": 2,
+          "libuvActiveHandles": 3,
+          "fds": 1
         }
       },
       "evidenceRefs": [
@@ -201,7 +201,7 @@
       "summary": "removed without residue",
       "metrics": {
         "residue": [],
-        "durationMs": 212
+        "durationMs": 294
       },
       "evidenceRefs": [
         "e-l6-remove"
@@ -328,7 +328,7 @@
       "kind": "command",
       "command": "resolve dsh-cost-meter@1.8.8 -> dsh-cost-meter@1.8.8",
       "exitCode": 0,
-      "durationMs": 155,
+      "durationMs": 128,
       "excerpt": "{\n  \"name\": \"dsh-cost-meter\",\n  \"version\": \"1.8.8\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/dsh-cost-meter/-/dsh-cost-meter-1.8.8.tgz\",\n  \"advertisedIntegrity\": \"sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==\",\n  \"publishedAt\": \"2026-10-03T10:59:09.474Z\"\n}"
     },
     {
@@ -336,7 +336,7 @@
       "kind": "artifact",
       "command": "fetch https://registry.npmjs.org/dsh-cost-meter/-/dsh-cost-meter-1.8.8.tgz",
       "exitCode": 0,
-      "durationMs": 47,
+      "durationMs": 27,
       "excerpt": "{\n  \"bytes\": 411843,\n  \"resolvedIntegrity\": \"sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==\",\n  \"advertisedIntegrity\": \"sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"21e4fd0d9655707fddb328ce8cb93cc49a8d21f304f946ae7674b336bba51080\"\n}",
       "excerptBytes": 383,
       "sha256": "21e4fd0d9655707fddb328ce8cb93cc49a8d21f304f946ae7674b336bba51080"
@@ -368,18 +368,18 @@
       "kind": "command",
       "command": "dsh plugin --profile verify add dsh-cost-meter@1.8.8",
       "exitCode": 0,
-      "durationMs": 2057,
-      "excerpt": "Progress: resolved 0, reused 0, downloaded 1, added 0\nAdded 1 entry to minimumReleaseAgeExclude in pnpm-workspace.yaml (set minimumReleaseAgeStrict to true to gate these updates with a prompt):\n  dsh-cost-meter@1.8.8\nPackages are hard linked from the content-addressable store to the virtual store.\n  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nPackages: +2\n++\nProgress: resolved 2, reused 0, downloaded 2, added 2, done\n[WARN] Issues with peer dependencies found. Run \"pnpm peers check\" to list them.\n\ndependencies:\n+ dsh-cost-meter 1.8.8\n\nDone in 531ms using pnpm v12.8.1\ndsh: initialized profile verify at /work/dsh-home/profiles/verify\n",
+      "durationMs": 2167,
+      "excerpt": "Progress: resolved 0, reused 0, downloaded 1, added 0\nAdded 1 entry to minimumReleaseAgeExclude in pnpm-workspace.yaml (set minimumReleaseAgeStrict to true to gate these updates with a prompt):\n  dsh-cost-meter@1.8.8\nPackages are hard linked from the content-addressable store to the virtual store.\n  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nPackages: +2\n++\nProgress: resolved 2, reused 0, downloaded 2, added 2, done\n[WARN] Issues with peer dependencies found. Run \"pnpm peers check\" to list them.\n\ndependencies:\n+ dsh-cost-meter 1.8.8\n\nDone in 442ms using pnpm v12.8.1\ndsh: initialized profile verify at /work/dsh-home/profiles/verify\n",
       "excerptBytes": 726,
       "truncated": false,
-      "sha256": "e557cf2572735b125f24e3100d2b285231df563c14fc73234e301e33c8ea750f"
+      "sha256": "c262ce8b45f2933805a27888b4411429a860a37f82c044b5c696676100aec627"
     },
     {
       "id": "e-l2-boot",
       "kind": "command",
       "command": "dsh --profile verify",
       "exitCode": 0,
-      "durationMs": 25063,
+      "durationMs": 25076,
       "excerpt": "[dsh-cost-meter] 已加载,账本:/work/dsh-home/storages/cost-meter/ledger.json\n",
       "excerptBytes": 81,
       "truncated": false,
@@ -390,28 +390,28 @@
       "kind": "command",
       "command": "dsh plugin --profile verify remove dsh-cost-meter",
       "exitCode": 0,
-      "durationMs": 212,
-      "excerpt": "Packages: -2\n--\n\ndependencies:\n- dsh-cost-meter 1.8.8\n\nDone in 20ms using pnpm v12.8.1\n",
+      "durationMs": 294,
+      "excerpt": "Packages: -2\n--\n\ndependencies:\n- dsh-cost-meter 1.8.8\n\nDone in 21ms using pnpm v12.8.1\n",
       "excerptBytes": 87,
       "truncated": false,
-      "sha256": "05fde92376c1f8506e09f5b093eff4a323ba46700429bda740492067886b0ac4"
+      "sha256": "b1134264fce6b02f48594f99b38db6a26c7eaaceb4c1b7e25e06f20559ea77e8"
     },
     {
       "id": "e-l5-overhead",
       "kind": "sample",
       "command": "dsh --profile <baseline|activated> with the host sampler injected via NODE_OPTIONS=--import",
-      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8036,\n    \"rss\": 199618560,\n    \"heapUsed\": 68485688,\n    \"external\": 5188103,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8056,\n    \"rss\": 231841792,\n    \"heapUsed\": 85015008,\n    \"external\": 7738009,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 23,\n    \"libuvActiveHandles\": 19,\n    \"fds\": 20\n  },\n  \"delta\": {\n    \"atMs\": 20,\n    \"rss\": 32223232,\n    \"heapUsed\": 16529320,\n    \"external\": 2549906,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 1,\n    \"libuvActiveHandles\": 2,\n    \"fds\": 0\n  },\n  \"significant\": []\n}"
+      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8037,\n    \"rss\": 199241728,\n    \"heapUsed\": 68563264,\n    \"external\": 5188103,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8052,\n    \"rss\": 231596032,\n    \"heapUsed\": 84778808,\n    \"external\": 7737982,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 24,\n    \"libuvActiveHandles\": 20,\n    \"fds\": 21\n  },\n  \"delta\": {\n    \"atMs\": 15,\n    \"rss\": 32354304,\n    \"heapUsed\": 16215544,\n    \"external\": 2549879,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 2,\n    \"libuvActiveHandles\": 3,\n    \"fds\": 1\n  },\n  \"significant\": []\n}"
     },
     {
       "id": "e-l3-session",
       "kind": "command",
       "command": "dsh --profile l3 --patch /work/fixtures/replay/l3-overlay.yml --json reply with any text",
       "exitCode": 0,
-      "durationMs": 1005,
-      "excerpt": "[dsh-cost-meter] 已加载,账本:/work/dsh-home/storages/cost-meter/ledger.json\n{\"type\":\"session\",\"sessionId\":\"session-a842a995-d41e-4683-8918-14161ec00938\",\"cwd\":\"/work\"}\n{\"type\":\"status\",\"phase\":\"turn_start\",\"turn\":1}\n{\"type\":\"status\",\"phase\":\"step_start\",\"turn\":1,\"step\":1}\n{\"type\":\"text\",\"text\":\"Replay fixture: no provider was called.\"}\n{\"type\":\"status\",\"phase\":\"step_end\",\"turn\":1,\"step\":1}\n{\"type\":\"status\",\"phase\":\"turn_end\",\"turn\":1,\"reason\":{\"kind\":\"completed\"}}\n{\"type\":\"final\",\"text\":\"Replay fixture: no provider was called.\"}\n",
+      "durationMs": 1350,
+      "excerpt": "[dsh-cost-meter] 已加载,账本:/work/dsh-home/storages/cost-meter/ledger.json\n{\"type\":\"session\",\"sessionId\":\"session-14e766aa-eeda-41ea-8d02-9b3d64ed818d\",\"cwd\":\"/work\"}\n{\"type\":\"status\",\"phase\":\"turn_start\",\"turn\":1}\n{\"type\":\"status\",\"phase\":\"step_start\",\"turn\":1,\"step\":1}\n{\"type\":\"text\",\"text\":\"Replay fixture: no provider was called.\"}\n{\"type\":\"status\",\"phase\":\"step_end\",\"turn\":1,\"step\":1}\n{\"type\":\"status\",\"phase\":\"turn_end\",\"turn\":1,\"reason\":{\"kind\":\"completed\"}}\n{\"type\":\"final\",\"text\":\"Replay fixture: no provider was called.\"}\n",
       "excerptBytes": 540,
       "truncated": false,
-      "sha256": "9ffa4ff478bf78be757ca75100a9144fb0151786f245cc5851e701377bb41d37"
+      "sha256": "45c022952c9db8495dda6d20236631c20ca877eb280301d9425af11c7fdbd465"
     }
   ],
   "redactions": [],
@@ -457,9 +457,9 @@
     "status": "no-significant-delta",
     "samples": 6,
     "baseline": {
-      "atMs": 8036,
-      "rss": 199618560,
-      "heapUsed": 68485688,
+      "atMs": 8037,
+      "rss": 199241728,
+      "heapUsed": 68563264,
       "external": 5188103,
       "activeTotal": 10,
       "watchers": 7,
@@ -469,28 +469,28 @@
       "fds": 20
     },
     "activated": {
-      "atMs": 8056,
-      "rss": 231841792,
-      "heapUsed": 85015008,
-      "external": 7738009,
+      "atMs": 8052,
+      "rss": 231596032,
+      "heapUsed": 84778808,
+      "external": 7737982,
       "activeTotal": 11,
       "watchers": 8,
       "timers": 0,
-      "libuvHandles": 23,
-      "libuvActiveHandles": 19,
-      "fds": 20
+      "libuvHandles": 24,
+      "libuvActiveHandles": 20,
+      "fds": 21
     },
     "delta": {
-      "atMs": 20,
-      "rss": 32223232,
-      "heapUsed": 16529320,
-      "external": 2549906,
+      "atMs": 15,
+      "rss": 32354304,
+      "heapUsed": 16215544,
+      "external": 2549879,
       "activeTotal": 1,
       "watchers": 1,
       "timers": 0,
-      "libuvHandles": 1,
-      "libuvActiveHandles": 2,
-      "fds": 0
+      "libuvHandles": 2,
+      "libuvActiveHandles": 3,
+      "fds": 1
     },
     "significant": [],
     "resourceKinds": {
