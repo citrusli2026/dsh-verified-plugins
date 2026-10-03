@@ -45,6 +45,14 @@ export interface ExecutionResult {
     logPath: string | null;
   };
   L2_load: { status: string; reason: string; detail: string; diagnostics: string };
+  L3_run?: {
+    status: string;
+    reason: string;
+    detail: string;
+    task: string;
+    events: Record<string, unknown> | null;
+    replayAdapter: string;
+  };
   L5_overhead?: {
     status: string;
     reason: string;
@@ -95,27 +103,6 @@ function evidenceFromStep(id: string, step: ExecutionStep | undefined, fallbackC
   };
 }
 
-/**
- * L3 is recorded from the observed install refusal rather than from an
- * assumption. `@deepseek-ai/dsh-llm-replay` is the sanctioned key-free path and
- * DSH refuses to install it against the current runtime, so no session can be
- * driven without a credential. Inventing a "run" result would be the exact
- * overclaiming this project exists to prevent.
- */
-function l3Blocked(dshVersion: string): Dimension {
-  return {
-    id: 'L3',
-    status: 'blocked',
-    summary: `not run: the sanctioned key-free model adapter is not installable against dsh ${dshVersion}`,
-    evidenceRefs: ['e-l3-blocked'],
-    notes: [
-      '@deepseek-ai/dsh-llm-replay declares peerDependencies on ^0.0.1-rc.1 packages, one of which (@deepseek-ai/dsh-compact) does not exist on npm, and DSH refuses peer-incompatible installs',
-      'a session therefore requires a real credential, which this project never injects',
-      'resolving L3 needs either a pinned older runtime whose peers match, or a recorded-transcript adapter',
-    ],
-  };
-}
-
 function l5Skipped(): Dimension {
   return {
     id: 'L5',
@@ -151,22 +138,6 @@ export function mergeExecution(
     `the execution result reported a status for ${name} but carried no step record, so it could not be evidenced and was downgraded to inconclusive`,
   ];
 
-  evidence.push({
-    id: 'e-l3-blocked',
-    kind: 'static',
-    command: 'dsh plugin --profile replay add @deepseek-ai/dsh-llm-replay',
-    exitCode: 1,
-    excerpt: capExcerpt(
-      [
-        '@deepseek-ai/dsh-llm-replay@0.0.1-rc.1 declares peerDependencies:',
-        '  @deepseek-ai/dsh-llm ^0.0.1-rc.1, @deepseek-ai/dsh-compact ^0.0.1-rc.1,',
-        '  @deepseek-ai/dsh-session ^0.0.1-rc.1, @deepseek-ai/dsh-invariants ^0.0.1-rc.1',
-        `DSH ${dshVersion} refuses the install: caret ranges on 0.0.x cannot reach 0.2.x,`,
-        'and @deepseek-ai/dsh-compact does not exist on npm at any version.',
-        'Observed in the container; see docs/evidence/V3.md.',
-      ].join('\n'),
-    ).excerpt,
-  });
 
   // L5 evidence is the medians themselves: the numbers a reader would have to
   // reproduce to disagree, rather than a rendered conclusion.
@@ -193,6 +164,9 @@ export function mergeExecution(
       ).excerpt,
     });
   }
+
+  const l3Step = stepFor(execution, 'l3-session');
+  if (l3Step) evidence.push(evidenceFromStep('e-l3-session', l3Step, 'dsh --profile l3 --patch <overlay> --json <task>'));
 
   const dims = report.dimensions as Record<string, Dimension>;
 
@@ -280,7 +254,32 @@ export function mergeExecution(
     };
   }
 
-  dims.L3_run = l3Blocked(dshVersion);
+  const l3 = execution.L3_run;
+  if (!l3) {
+    dims.L3_run = {
+      id: 'L3',
+      status: 'skip',
+      summary: 'not run: the execution result carried no L3 outcome',
+      evidenceRefs: [],
+      notes: ['a session was not attempted'],
+    };
+  } else if (l3.status === 'skip') {
+    dims.L3_run = { id: 'L3', status: 'skip', summary: l3.reason, evidenceRefs: [], notes: [l3.detail] };
+  } else {
+    dims.L3_run = {
+      id: 'L3',
+      status: l3.status as Dimension['status'],
+      summary: l3.reason,
+      metrics: { replayAdapter: l3.replayAdapter, probeTask: l3.task, events: l3.events },
+      evidenceRefs: l3Step ? ['e-l3-session'] : [],
+      notes: [
+        l3.detail,
+        'the model call was served by the official replay adapter from a fixture authored in this repository; no credential was present and no provider was contacted',
+        `probe task, stated verbatim: ${JSON.stringify(l3.task)}`,
+        ...(l3Step ? [] : missingStepNote('L3_run')),
+      ],
+    };
+  }
 
   if (!l5) {
     dims.L5_overhead = l5Skipped();

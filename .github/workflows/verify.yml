@@ -203,6 +203,7 @@ jobs:
             -e "SAMPLER_PATH=/work/host-sampler.mjs" \
             -v "$PWD/packages/runner/src/execution-probe.ts:/work/execution-probe.ts:ro" \
             -v "$PWD/packages/runner/src/host-sampler.mjs:/work/host-sampler.mjs:ro" \
+            -v "$PWD/packages/runner/fixtures:/work/fixtures:ro" \
             "$IMAGE" /work/execution-probe.ts "$SPEC"
 
           mkdir -p .verify/report

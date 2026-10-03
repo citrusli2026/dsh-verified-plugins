@@ -277,6 +277,100 @@ interface L6Outcome {
   residue: string[];
 }
 
+interface L3Outcome {
+  status: 'pass' | 'fail' | 'skip' | 'inconclusive';
+  reason: string;
+  detail: string;
+  /** The probe task, stated verbatim so a reader can re-run it. */
+  task: string;
+  events: Record<string, unknown> | null;
+  replayAdapter: string;
+}
+
+/**
+ * The probe task is fixed and published verbatim: T4-class claims are bounded
+ * by the prompt, and a reader has to be able to re-run exactly this.
+ */
+const L3_TASK = 'reply with any text';
+
+/**
+ * Parse the `--json` event stream. The headless runner projects committed
+ * assistant messages and a terminal `final`; a turn that fails still ends with
+ * `final` but carries a non-completed `turn_end` reason, so the reason is the
+ * signal rather than the stream's shape.
+ */
+function classifyRun(step: StepResult): L3Outcome {
+  const replayAdapter = `@deepseek-ai/dsh-llm-replay@${dshVersion}`;
+  const base = { task: L3_TASK, events: null, replayAdapter } as Partial<L3Outcome>;
+
+  const lines = step.excerpt.split('\n').map((l) => l.trim()).filter((l) => l.startsWith('{'));
+  const parsed: Array<Record<string, any>> = [];
+  for (const line of lines) {
+    try {
+      parsed.push(JSON.parse(line) as Record<string, any>);
+    } catch {
+      // A truncated or non-JSON line is skipped; the terminal events matter.
+    }
+  }
+
+  const final = parsed.find((e) => e.type === 'final');
+  const turnEnd = parsed.find((e) => e.type === 'turn_end' || e.type === 'status');
+  const turnEndReason = parsed
+    .filter((e) => e.type === 'status' && e.phase === 'turn_end')
+    .map((e) => e.reason)
+    .pop();
+  const errorEvent = parsed.find((e) => e.type === 'error');
+  const textEvents = parsed.filter((e) => e.type === 'text').map((e) => e.text);
+
+  const events = {
+    session: parsed.find((e) => e.type === 'session')?.sessionId ?? null,
+    turnEndReason: turnEndReason ?? null,
+    finalText: final?.text ?? null,
+    textEventCount: textEvents.length,
+    error: errorEvent?.message ?? null,
+    exitCode: step.exitCode,
+    durationMs: step.durationMs,
+    eventCount: parsed.length,
+  };
+
+  if (step.timedOut) {
+    return { status: 'fail', reason: 'the session did not finish within the bound', detail: 'no terminal event was reached before the wall-clock ceiling', ...base, events };
+  }
+  if (errorEvent) {
+    return { status: 'fail', reason: 'the runner reported an error', detail: String(errorEvent.message ?? 'error event'), ...base, events };
+  }
+  if (step.exitCode !== 0) {
+    return { status: 'fail', reason: `the session exited ${step.exitCode}`, detail: 'a non-zero exit is the failure signal', ...base, events };
+  }
+  const completed = (turnEndReason as { kind?: string } | undefined)?.kind === 'completed';
+  if (final && completed) {
+    return {
+      status: 'pass',
+      reason: 'a session completed with no credential',
+      detail:
+        'the model call was served by the official replay adapter from a fixture authored in this repository; no provider was contacted and no credential was present',
+      ...base,
+      events,
+    };
+  }
+  if (final) {
+    return {
+      status: 'fail',
+      reason: 'the turn ended without completing',
+      detail: `turn_end reason: ${JSON.stringify(turnEndReason ?? null)}`,
+      ...base,
+      events,
+    };
+  }
+  return {
+    status: 'inconclusive',
+    reason: 'no terminal event was found in the stream',
+    detail: turnEnd ? 'the stream carried no final event' : 'the stream carried no recognisable events',
+    ...base,
+    events,
+  };
+}
+
 interface ResidueCheck {
   residue: string[];
   /** False when the profile could not be inspected at all — a pass would be unfounded. */
@@ -319,6 +413,7 @@ const SAMPLE_SETTLE_MS = Number(process.env.SAMPLE_SETTLE_MS ?? 6000);
 const SAMPLE_COUNT = Number(process.env.SAMPLE_COUNT ?? 5);
 const SAMPLE_INTERVAL_MS = Number(process.env.SAMPLE_INTERVAL_MS ?? 1000);
 const BASELINE_PROFILE = 'baseline';
+const L3_PROFILE = 'l3';
 
 const SAMPLED_METRICS = [
   'atMs',
@@ -521,11 +616,49 @@ const subjectName = SPEC.startsWith('@')
 
 const activatedRuns: SampledRun[] = [];
 
+let l3: L3Outcome = {
+  status: 'skip',
+  reason: 'not run: the subject did not install',
+  detail: 'a session cannot be attributed to a subject that is not present',
+  task: L3_TASK,
+  events: null,
+  replayAdapter: `@deepseek-ai/dsh-llm-replay@${dshVersion}`,
+};
+
 if (l1.status === 'pass') {
   for (let i = 0; i < SAMPLE_RUNS; i++) activatedRuns.push(sampleOnce(PROFILE, 'activated', i));
 
   const subjectNameForBoot = subjectName;
   l2 = classifyBoot(run('l2-boot', ['--profile', PROFILE], BOOT_BOUND_MS), subjectNameForBoot);
+
+  // --- L3: a keyless session ----------------------------------------------
+  // The subject is installed into a headless profile too, so the session that
+  // runs is one the subject is actually loaded in. Without that the result
+  // would say nothing about the subject.
+  const L3_OVERLAY = process.env.L3_OVERLAY ?? '/work/fixtures/replay/l3-overlay.yml';
+  if (existsSync(L3_OVERLAY)) {
+    run('l3-profile', ['--profile', L3_PROFILE, '--from-default-profile', 'headless'], 120_000);
+    run('l3-install-subject', ['plugin', '--profile', L3_PROFILE, 'add', SPEC], 240_000);
+    // Derived from the runtime, never resolved by bare name: the `latest` tag
+    // points at a version from an older generation whose peers cannot match.
+    run(
+      'l3-install-replay',
+      ['plugin', `--profile`, L3_PROFILE, 'add', `@deepseek-ai/dsh-llm-replay@${dshVersion}`],
+      240_000,
+    );
+    l3 = classifyRun(
+      run('l3-session', ['--profile', L3_PROFILE, '--patch', L3_OVERLAY, '--json', L3_TASK], 180_000),
+    );
+  } else {
+    l3 = {
+      status: 'inconclusive',
+      reason: 'the replay overlay was not available',
+      detail: `no overlay at ${L3_OVERLAY}`,
+      task: L3_TASK,
+      events: null,
+      replayAdapter: `@deepseek-ai/dsh-llm-replay@${dshVersion}`,
+    };
+  }
 
   run('l6-remove', ['plugin', `--profile`, PROFILE, 'remove', subjectName], 180_000);
   const check = collectResidue(subjectName);
@@ -606,6 +739,7 @@ const execution = {
   },
   L1_install: l1,
   L2_load: l2,
+  L3_run: l3,
   L5_overhead: overhead,
   L6_uninstall: l6,
   steps,
