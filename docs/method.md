@@ -189,6 +189,13 @@ best, because nothing was installed, loaded, or run.
 6. Corrections are **additive**. A wrong finding is superseded by a new dated
    entry and a bumped verdict, never quietly edited. Plugin authors have a
    standing right of reply.
+7. `verifier.commit` records the commit that **produced** the report, which is
+   the honest thing to record — but note that `main` is squash-merged, so that
+   commit is a pull-request head and is **not** an ancestor of `main`. It
+   resolves on GitHub and can be checked out, so a reader can still re-run the
+   exact code. Pinning reports to a `main` commit requires generating them on
+   `main` after the merge; that is an open item, recorded rather than assumed
+   away.
 
 ## 5. Known limits and open findings
 
