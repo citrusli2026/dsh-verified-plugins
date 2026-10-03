@@ -96,10 +96,18 @@ function activeResources() {
   }
 }
 
+/**
+ * `getActiveResourcesInfo()` names libuv handle wrappers, and a live filesystem
+ * watch is `FSEventWrap` — not `FSEvent` or `StatWatcher`. Getting this wrong
+ * reported zero watchers on a host that was holding seven open, which would
+ * have missed the exact failure the specification cites: a plugin watching the
+ * workspace recursively. Every known spelling is counted rather than the one
+ * that happened to appear first.
+ */
+const WATCHER_KINDS = ['FSEventWrap', 'FSEvent', 'StatWatcher', 'FSWatcher', 'FSWatcherWrap'];
+
 function watcherCount(kinds) {
-  // libuv filesystem watchers surface as FSEvent / StatWatcher depending on
-  // platform; both mean "the process is watching the filesystem".
-  return (kinds.FSEvent ?? 0) + (kinds.StatWatcher ?? 0);
+  return WATCHER_KINDS.reduce((total, kind) => total + (kinds[kind] ?? 0), 0);
 }
 
 function timerCount(kinds) {
