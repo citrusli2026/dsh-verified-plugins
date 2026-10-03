@@ -115,6 +115,12 @@ const report = {
   steps,
   profileDir: `${process.env.DSH_HOME ?? ''}/profiles/${PROFILE}`,
   profilePackageJson: readFileTrim(`${process.env.DSH_HOME ?? ''}/profiles/${PROFILE}/package.json`),
+  // Build-time facts about the first-party runtime. `install-scripts.txt`
+  // records which dependency build scripts npm gated, because the container
+  // deliberately allows them and a reader must be able to see that.
+  runtimeFacts: {
+    installScriptsSummary: readFileTrim('/opt/dsh-runtime-facts/install-scripts.txt'),
+  },
   notes,
   generatedAt: new Date().toISOString(),
 };

@@ -15,23 +15,51 @@ ARG DSH_VERSION=0.2.0-rc.2
 ARG PNPM_VERSION=10.33.2
 
 ENV DEBIAN_FRONTEND=noninteractive \
-    PNPM_HOME=/opt/pnpm \
-    PATH=/opt/pnpm:/usr/local/bin:/usr/bin:/bin \
     npm_config_cache=/tmp/npm-cache \
     DSH_HOME=/work/dsh-home \
     CI=1
 
-# Fetch phase. No plugin code executes here.
+# `passwd` is not in bookworm-slim and provides useradd; without it the
+# unprivileged-user step fails with exit 127.
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends passwd \
+ && rm -rf /var/lib/apt/lists/*
+
+# ---------------------------------------------------------------------------
+# First-party runtime fetch. No plugin code executes here.
+#
+# FINDING (recorded in docs/evidence/V0.md): npm's install-script gating blocks
+# install scripts by default. A plain `npm install -g @deepseek-ai/dsh` reports
+# five packages whose scripts did not run, two of them native modules
+# (node-pty, koffi). `dsh --version` still answers, so the gap is invisible
+# until a feature needing those natives is exercised.
+#
+# We allow them explicitly rather than silently: this is the FIRST-PARTY DSH
+# runtime, and a half-built runtime would make every later measurement wrong.
+# The decision is recorded, not absorbed. Third-party subject plugins never get
+# this treatment — their pending build scripts are a reportable finding.
+# ---------------------------------------------------------------------------
 RUN corepack enable \
- && corepack prepare "pnpm@${PNPM_VERSION}" --activate \
- && npm install --global "@deepseek-ai/dsh@${DSH_VERSION}" \
+ && corepack prepare "pnpm@${PNPM_VERSION}" --activate
+
+RUN mkdir -p /opt/dsh-runtime-facts \
+ && npm install --global \
+      --allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs \
+      "@deepseek-ai/dsh@${DSH_VERSION}" > /opt/dsh-runtime-facts/npm-install.log 2>&1 \
+ && node -e "
+      const fs = require('node:fs');
+      const log = fs.readFileSync('/opt/dsh-runtime-facts/npm-install.log', 'utf8');
+      const keep = log.split('\n').filter((l) => /install-scripts|added [0-9]+ packages|npm warn deprecated/i.test(l));
+      fs.writeFileSync('/opt/dsh-runtime-facts/install-scripts.txt', keep.join('\n') + '\n');
+    " \
  && npm cache clean --force \
  && rm -rf /tmp/npm-cache
 
 # Unprivileged execution. Nothing below runs as root.
-RUN useradd --create-home --uid 10001 --shell /usr/sbin/nologin verifier \
+RUN useradd --create-home --uid 10001 --shell /bin/false verifier \
  && mkdir -p /work /work/out \
- && chown -R verifier:verifier /work
+ && chown -R verifier:verifier /work \
+ && chmod -R a+rX /opt/dsh-runtime-facts
 
 COPY --chown=verifier:verifier baseline.ts /work/baseline.ts
 
