@@ -1,6 +1,6 @@
 {
   "schema": "dsh.plugin.catalog.v1",
-  "generatedAt": "2026-10-03T15:21:52.443Z",
+  "generatedAt": "2026-10-03T15:35:06.272Z",
   "counts": {
     "total": 4,
     "byVerdict": {
@@ -40,7 +40,7 @@
       "version": "1.8.8",
       "verdict": "partial",
       "path": "catalog/npm/dsh-cost-meter.json",
-      "generatedAt": "2026-10-03T15:17:51.090Z",
+      "generatedAt": "2026-10-03T15:32:25.531Z",
       "integrity": "sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==",
       "dshVersion": "0.2.0-rc.2",
       "dimensions": {
@@ -49,7 +49,7 @@
         "L2_load": "pass",
         "L3_run": "blocked",
         "L4_capability": "pass",
-        "L5_overhead": "skip",
+        "L5_overhead": "pass",
         "L6_uninstall": "pass"
       },
       "presentCapabilities": [
