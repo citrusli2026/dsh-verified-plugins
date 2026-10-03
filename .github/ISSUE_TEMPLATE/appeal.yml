@@ -1,0 +1,76 @@
+name: Report appeal
+description: Dispute a published verification report
+title: "[appeal] <reportId>"
+labels: ["appeal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this to dispute a published report. You do not need to be the
+        package author. Read [docs/appeals.md](https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/appeals.md) first —
+        it explains what is appealable and what is not.
+
+  - type: input
+    id: report
+    attributes:
+      label: Which report?
+      description: The `reportId`, as shown on the report page.
+      placeholder: npm:example@1.2.3
+    validations:
+      required: true
+
+  - type: dropdown
+    id: dimension
+    attributes:
+      label: Which dimension is wrong?
+      options:
+        - L0 qualification
+        - L1 install
+        - L2 load
+        - L3 run
+        - L4 capability
+        - L5 overhead
+        - L6 uninstall
+        - The verdict itself
+        - Something else (licence, metadata, environment)
+    validations:
+      required: true
+
+  - type: textarea
+    id: observed
+    attributes:
+      label: What did you observe instead?
+      description: State it as a fact with a command that shows it. A command is worth more than a description.
+      placeholder: |
+        `dsh plugin --profile p add example@1.2.3` exits 0 on my machine with
+        DSH 0.2.0-rc.2; the report says it is refused.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Commands and output. Paste raw output, not a summary.
+      render: shell
+    validations:
+      required: true
+
+  - type: input
+    id: relation
+    attributes:
+      label: Your relationship to the package
+      description: Author, maintainer, contributor, or unaffiliated.
+      placeholder: unaffiliated
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Before submitting
+      options:
+        - label: I understand that corrections are additive and that the original finding stays visible.
+          required: true
+        - label: I have not pasted any credential, token or private key into this issue.
+          required: true

@@ -33,6 +33,7 @@ const REQUIRED_FILES = [
   'docs/method.md',
   'docs/security.md',
   'docs/schema.md',
+  'docs/appeals.md',
   'schemas/dsh.plugin.report.v1.schema.json',
   '.github/workflows/ci.yml',
   '.github/workflows/verify.yml',

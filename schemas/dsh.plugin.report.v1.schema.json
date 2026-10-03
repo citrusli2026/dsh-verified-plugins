@@ -18,7 +18,9 @@
     "disclaimers"
   ],
   "properties": {
-    "schema": { "const": "dsh.plugin.report.v1" },
+    "schema": {
+      "const": "dsh.plugin.report.v1"
+    },
     "reportId": {
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9._:/@-]*$",
@@ -36,10 +38,17 @@
     "verifier": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "version"],
+      "required": [
+        "name",
+        "version"
+      ],
       "properties": {
-        "name": { "type": "string" },
-        "version": { "type": "string" },
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
         "commit": {
           "type": "string",
           "pattern": "^[0-9a-f]{40}$",
@@ -50,28 +59,51 @@
     "subject": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["spec", "name", "version"],
+      "required": [
+        "spec",
+        "name",
+        "version"
+      ],
       "properties": {
-        "spec": { "type": "string" },
-        "name": { "type": "string" },
+        "spec": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
         "version": {
           "type": "string",
           "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+",
           "description": "Exact resolved version. Never a range, tag or branch."
         },
-        "registry": { "type": "string" },
-        "tarball": { "type": "string" },
+        "registry": {
+          "type": "string"
+        },
+        "tarball": {
+          "type": "string"
+        },
         "integrity": {
           "type": "string",
           "pattern": "^sha(256|384|512)-[A-Za-z0-9+/=]+$",
           "description": "Integrity hash actually resolved, not the one the registry advertises."
         },
-        "shasum": { "type": "string" },
-        "repository": { "type": "string" },
-        "license": { "type": "string" },
-        "publishedAt": { "type": "string" },
+        "shasum": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "publishedAt": {
+          "type": "string"
+        },
         "dshBundlePatch": {
-          "type": ["string", "array"],
+          "type": [
+            "string",
+            "array"
+          ],
           "description": "Declared dsh.bundle.patch, quoted from package.json."
         },
         "declaredEnginesDsh": {
@@ -83,63 +115,128 @@
     "runtime": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["dshVersion", "nodeVersion"],
+      "required": [
+        "dshVersion",
+        "nodeVersion"
+      ],
       "properties": {
-        "dshVersion": { "type": "string" },
-        "nodeVersion": { "type": "string" },
-        "os": { "type": "string" },
-        "arch": { "type": "string" }
+        "dshVersion": {
+          "type": "string"
+        },
+        "nodeVersion": {
+          "type": "string"
+        },
+        "os": {
+          "type": "string"
+        },
+        "arch": {
+          "type": "string"
+        }
       }
     },
     "container": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["image"],
+      "required": [
+        "image"
+      ],
       "properties": {
-        "image": { "type": "string" },
+        "image": {
+          "type": "string"
+        },
         "imageDigest": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "sha256 digest when the image is published. null means the image is unaddressed by digest and the report is not fully reproducible."
         },
-        "dockerfileCommit": { "type": "string" },
-        "notes": { "type": "string" }
+        "dockerfileCommit": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
       }
     },
     "bundlePatch": {
       "type": "object",
       "description": "Analysis of the declared cordis.patch.yml. A DSH bundle patch can disable host entries, rewrite their configuration, and carry `!!js` expressions, none of which a lib/** scan can see.",
       "additionalProperties": false,
-      "required": ["path", "present"],
+      "required": [
+        "path",
+        "present"
+      ],
       "properties": {
-        "path": { "type": "string" },
-        "present": { "type": "boolean" },
-        "bytes": { "type": "integer", "minimum": 0 },
-        "entryCount": { "type": "integer", "minimum": 0 },
-        "disablesHostEntries": { "type": "boolean" },
-        "overridesConfig": { "type": "boolean" },
-        "usesJsExpressions": { "type": "boolean" },
+        "path": {
+          "type": "string"
+        },
+        "present": {
+          "type": "boolean"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "entryCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "disablesHostEntries": {
+          "type": "boolean"
+        },
+        "overridesConfig": {
+          "type": "boolean"
+        },
+        "usesJsExpressions": {
+          "type": "boolean"
+        },
         "findings": {
           "type": "array",
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["kind", "line", "snippet"],
+            "required": [
+              "kind",
+              "line",
+              "snippet"
+            ],
             "properties": {
               "kind": {
                 "type": "string",
-                "enum": ["disables-entry", "overrides-config", "js-expression", "inserts-entry"]
+                "enum": [
+                  "disables-entry",
+                  "overrides-config",
+                  "js-expression",
+                  "inserts-entry"
+                ]
               },
-              "line": { "type": "integer", "minimum": 1 },
-              "snippet": { "type": "string" }
+              "line": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "snippet": {
+                "type": "string"
+              }
             }
           }
         },
-        "notes": { "type": "array", "items": { "type": "string" } }
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
     "verdict": {
       "type": "string",
-      "enum": ["verified", "partial", "inconclusive", "not-installable"]
+      "enum": [
+        "verified",
+        "partial",
+        "inconclusive",
+        "not-installable"
+      ]
     },
     "dimensions": {
       "type": "object",
@@ -154,13 +251,27 @@
         "L6_uninstall"
       ],
       "properties": {
-        "L0_qualification": { "$ref": "#/$defs/dimension" },
-        "L1_install": { "$ref": "#/$defs/dimension" },
-        "L2_load": { "$ref": "#/$defs/dimension" },
-        "L3_run": { "$ref": "#/$defs/dimension" },
-        "L4_capability": { "$ref": "#/$defs/dimension" },
-        "L5_overhead": { "$ref": "#/$defs/dimension" },
-        "L6_uninstall": { "$ref": "#/$defs/dimension" }
+        "L0_qualification": {
+          "$ref": "#/$defs/dimension"
+        },
+        "L1_install": {
+          "$ref": "#/$defs/dimension"
+        },
+        "L2_load": {
+          "$ref": "#/$defs/dimension"
+        },
+        "L3_run": {
+          "$ref": "#/$defs/dimension"
+        },
+        "L4_capability": {
+          "$ref": "#/$defs/dimension"
+        },
+        "L5_overhead": {
+          "$ref": "#/$defs/dimension"
+        },
+        "L6_uninstall": {
+          "$ref": "#/$defs/dimension"
+        }
       }
     },
     "capabilities": {
@@ -169,7 +280,12 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "present", "confidence", "evidence"],
+        "required": [
+          "id",
+          "present",
+          "confidence",
+          "evidence"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -186,24 +302,49 @@
               "eval_or_dynamic_code"
             ]
           },
-          "present": { "type": "boolean" },
-          "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+          "present": {
+            "type": "boolean"
+          },
+          "confidence": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
           "attribution": {
             "type": "string",
-            "enum": ["author-source", "build-output", "dependency", "unknown"],
+            "enum": [
+              "author-source",
+              "build-output",
+              "dependency",
+              "unknown"
+            ],
             "description": "Whether the code is author-written, bundler output, or a vendored dependency. Misattributing build output to the author is a known failure mode of this class of tool."
           },
-          "notes": { "type": "string" },
+          "notes": {
+            "type": "string"
+          },
           "evidence": {
             "type": "array",
             "items": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["file"],
+              "required": [
+                "file"
+              ],
               "properties": {
-                "file": { "type": "string" },
-                "line": { "type": "integer", "minimum": 1 },
-                "snippet": { "type": "string" }
+                "file": {
+                  "type": "string"
+                },
+                "line": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "snippet": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -213,21 +354,36 @@
     "overhead": {
       "type": "object",
       "additionalProperties": true,
-      "required": ["method", "status"],
+      "required": [
+        "method",
+        "status"
+      ],
       "properties": {
-        "method": { "const": "differential" },
+        "method": {
+          "const": "differential"
+        },
         "status": {
           "type": "string",
-          "enum": ["measured", "no-significant-delta", "inconclusive", "timeout"]
+          "enum": [
+            "measured",
+            "no-significant-delta",
+            "inconclusive",
+            "timeout"
+          ]
         },
-        "samples": { "type": "integer", "minimum": 1 }
+        "samples": {
+          "type": "integer",
+          "minimum": 1
+        }
       }
     },
     "evidence": {
       "type": "array",
       "minItems": 1,
       "description": "Every conclusion in the report maps to an entry here.",
-      "items": { "$ref": "#/$defs/evidence" }
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
     },
     "redactions": {
       "type": "array",
@@ -235,22 +391,33 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["reason"],
+        "required": [
+          "reason"
+        ],
         "properties": {
-          "reason": { "type": "string" },
-          "count": { "type": "integer", "minimum": 0 }
+          "reason": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          }
         }
       }
     },
     "disclaimers": {
       "type": "array",
       "minItems": 1,
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "limits": {
       "type": "array",
       "description": "What this run could not establish, stated explicitly rather than left implicit.",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "changelog": {
       "type": "array",
@@ -258,11 +425,24 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["date", "change"],
+        "required": [
+          "date",
+          "change"
+        ],
         "properties": {
-          "date": { "type": "string" },
-          "change": { "type": "string" },
-          "supersedesVerdict": { "type": "string" }
+          "date": {
+            "type": "string"
+          },
+          "change": {
+            "type": "string"
+          },
+          "supersedesVerdict": {
+            "type": "string"
+          },
+          "changeDescription": {
+            "type": "string",
+            "description": "The computed diff, so a correction cannot be published with a changelog that misdescribes it."
+          }
         }
       }
     }
@@ -271,36 +451,94 @@
     "dimension": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "status", "summary", "evidenceRefs"],
+      "required": [
+        "id",
+        "status",
+        "summary",
+        "evidenceRefs"
+      ],
       "properties": {
-        "id": { "type": "string", "pattern": "^L[0-6]$" },
+        "id": {
+          "type": "string",
+          "pattern": "^L[0-6]$"
+        },
         "status": {
           "type": "string",
-          "enum": ["pass", "fail", "skip", "blocked", "inconclusive", "timeout"]
+          "enum": [
+            "pass",
+            "fail",
+            "skip",
+            "blocked",
+            "inconclusive",
+            "timeout"
+          ]
         },
-        "summary": { "type": "string" },
-        "metrics": { "type": "object" },
-        "evidenceRefs": { "type": "array", "items": { "type": "string" } },
-        "notes": { "type": "array", "items": { "type": "string" } }
+        "summary": {
+          "type": "string"
+        },
+        "metrics": {
+          "type": "object"
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     },
     "evidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "kind"],
+      "required": [
+        "id",
+        "kind"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "kind": { "type": "string", "enum": ["command", "log", "sample", "static", "artifact"] },
-        "command": { "type": "string" },
-        "exitCode": { "type": "integer" },
-        "durationMs": { "type": "number", "minimum": 0 },
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "command",
+            "log",
+            "sample",
+            "static",
+            "artifact"
+          ]
+        },
+        "command": {
+          "type": "string"
+        },
+        "exitCode": {
+          "type": "integer"
+        },
+        "durationMs": {
+          "type": "number",
+          "minimum": 0
+        },
         "excerpt": {
           "type": "string",
           "description": "Redacted excerpt, at most 2 KiB. Never a full command output dump."
         },
-        "excerptBytes": { "type": "integer", "minimum": 0 },
-        "truncated": { "type": "boolean" },
-        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        "excerptBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
       }
     }
   }

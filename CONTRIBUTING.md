@@ -16,6 +16,7 @@ outranks every feature — then [method.md](docs/method.md) and
 | **Author reply** | Maintainers may append to `changelog[]` and reply in the PR. Findings are never deleted. |
 | **Tooling** | Fix or extend `packages/`. Zero new runtime dependencies, please. |
 | **Method critique** | Open an issue. If the method is wrong, that outranks any report. |
+| **Dispute a report** | Use the *Report appeal* issue template. See [docs/appeals.md](docs/appeals.md) — no need to be the author. |
 
 ## What gets accepted
 
@@ -110,9 +111,13 @@ Run the whole gate before pushing — the list is in the [README](README.md#loca
 ## Right of reply and corrections
 
 Plugin authors may always reply, and a disputed finding is corrected in public:
-a new entry in `changelog[]`, a bumped verdict, and the reason. Findings are
-never quietly deleted or rewritten. If you believe a report about your plugin is
-wrong, open an issue with counter-evidence — that is a contribution.
+a new entry in `changelog[]`, a changed verdict, and the reason. Findings are
+never quietly deleted or rewritten, and the `amend` command **refuses** an
+amendment that drops evidence or that cannot be validated.
+
+If you believe a report about your plugin is wrong, open an appeal with
+counter-evidence — that is a contribution. The full process, including what is
+*not* appealable, is in [docs/appeals.md](docs/appeals.md).
 
 ## Conduct
 

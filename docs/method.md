@@ -300,7 +300,69 @@ hidden.
 suspicious. There is no ranking, because a ranking is what made the existing
 signal untrustworthy.
 
-## 6. Cost control
+## 6. False positives and false negatives, by incident
+
+Not hypothetical failure modes — every row is something this verifier actually
+did, with how it was found and whether it is fixed. A generic list of "static
+analysis has limits" would be worth nothing; this list is the argument that the
+tooling is checked against reality rather than against its own fixtures.
+
+### The dangerous class: false passes
+
+A false failure is annoying. A **false pass** is the thing that makes a
+verification product worse than useless, because it launders an absence of
+evidence into a claim.
+
+| # | What was claimed | Why it was wrong | Found by | Status |
+|---|---|---|---|---|
+| FP-1 | L6 "removed without residue" | the profile was read from `$DSH_HOME/<name>` instead of `$DSH_HOME/profiles/<name>`, so the directory it cleared was never the one it inspected | first execution run | **fixed** — L6 reports `inconclusive` when the profile cannot be read |
+| FP-2 | L1–L6 all `pass` on `@morlay/session-branch` | the package declares no bundle, installs as a plain dependency, is never composed; every dimension measured the subject's absence and called it success | first 4-subject batch | **fixed** — the L0 pre-filter forces `skip` in the merge *and* before a container starts |
+| FP-3 | L2 "booted, mounted and stayed alive" | inferred from the *absence* of failure diagnostics, not from a read fiber phase; a plugin can load and misbehave | by construction, on review | **open** — stated in every report's `limits[]` |
+
+The pattern in FP-1 and FP-2 is identical: **a pass derived from the absence of
+a failure rather than the presence of the subject.** Both were found by running
+on real subjects, and neither could have been found by a fixture that the author
+also wrote.
+
+### False positives
+
+| # | What was claimed | Why it was wrong | Found by | Status |
+|---|---|---|---|---|
+| FP-4 | `writes_outside_workspace` in `dsh-find-plugin` | the match was a **doc comment** mentioning `~/.dsh` | first live subject | **fixed** — comment lines are skipped before matching, line numbers preserved |
+| FP-5 | L2 failure on `dsh-cost-meter` | the "failure" was the plugin's own success line: `[dsh-cost-meter] 已加载,账本:…` | first execution run | **fixed** — classification keys on failure-shaped diagnostics, never on the presence of output |
+| FP-6 | `writes_outside_workspace` as "writes" | the detector matches path **resolution** (`os.homedir()`, `DSH_HOME`), which a regex cannot distinguish from a write; resolving `~/.dsh` is normal | probing six real packages | **fixed** — the label and note now state what actually matched |
+| FP-7 | "package manager error" | pnpm's `Ignored build scripts:` list was not parsed, discarding the finding the method says to report | the 20-subject batch | **fixed** — the block is rejoined (pnpm wraps inside a package name) and the four packages are named |
+| FP-8 | `dist/` files as build output | the branch existed but returned `unknown`, so the documented behaviour was dead code | probing real packages | **fixed** — the code now matches the documentation |
+
+### False negatives
+
+| # | What was missed | Why | Found by | Status |
+|---|---|---|---|---|
+| FN-1 | every filesystem watcher | `getActiveResourcesInfo()` names the handle `FSEventWrap`, not `FSEvent`; the counter reported **0 watchers on a host holding 7**, missing the exact failure the specification cites | publishing the resource *kinds* rather than only counts | **fixed**, with a mutation-tested acceptance test |
+| FN-2 | every libuv handle count | `process.report.getReport().libuv` is an **array**, not an object with `.handle.count`; the metric read as measured while carrying nothing | reading a published report's own numbers | **fixed** |
+| FN-3 | every package's `dsh` field | npm's abbreviated metadata strips it, so a survey reported that no package declares a bundle | cross-checking one package against its full document | **avoided by design** — the full packument or the per-version manifest is required |
+| FN-4 | any signal in an oversize file | a per-file ceiling skips them | by construction | **disclosed** — skipped files are counted in `limits[]` |
+
+### Limits that are not defects
+
+These cannot be fixed by better tooling, only stated:
+
+1. **Dynamically constructed code is invisible.** `eval` of a string built at
+   runtime has no signature to match.
+2. **Static analysis cannot prove intent.** A capability finding records what
+   code can reach for.
+3. **`engines.dsh` is unenforced**, so a declared range is never evidence of
+   compatibility — while `peerDependencies` on `@deepseek-ai/dsh*` are enforced
+   and produce an install refusal.
+4. **L3 runs against a replayed transcript.** It establishes that a session
+   completes without a credential, not that the subject behaves correctly
+   against a live model.
+5. **A subject that loads is not a subject that is correct.** Reaching `active`
+   is a floor.
+6. **Bundle attribution is best-effort.** Code inside a bundle cannot be
+   reliably split between the author and inlined dependencies.
+
+## 7. Cost control
 
 Verification is bounded (see [security.md](security.md) § S4). Exceeding a
 ceiling yields `timeout`/`inconclusive`, never a failure verdict — a plugin
