@@ -129,9 +129,28 @@ function classifyInstall(step: StepResult): L1Outcome {
   const bundles = (pkg?.dsh?.profile?.bundles ?? null) as string[] | null;
   const logPath = /diagnostics:\s*(\S+)/.exec(text)?.[1] ?? null;
 
-  // Pending build scripts: pnpm gates them and DSH reports the names. They are
-  // a finding, never something this executor approves.
-  const pending = [...text.matchAll(/^\s*([@\w./-]+)\s+\((?:pre|post)?install:/gm)].map((m) => m[1] as string);
+  // Pending build scripts: pnpm gates them, and they are a finding rather than
+  // something this executor ever approves. Two formats are seen in practice:
+  //
+  //   npm warn install-scripts  <pkg> (postinstall: ...)   -- one line each
+  //   Error: ERR_PNPM_IGNORED_BUILDS
+  //     Ignored build scripts: a@1.0.0, better-            -- one wrapped list
+  //         sqlite3@12.11.1, onnxruntime-node@1.30.0
+  //
+  // The second wraps *inside* a package name, so the block is rejoined before
+  // splitting rather than splitting on lines.
+  const pending: string[] = [...text.matchAll(/^\s*([@\w./-]+)\s+\((?:pre|post)?install:/gm)].map(
+    (m) => m[1] as string,
+  );
+
+  const ignoredBlock = /Ignored build scripts:\s*([\s\S]{0,900}?)(?:\n\s*help:|\n\s*$|$)/.exec(text);
+  if (ignoredBlock?.[1]) {
+    const joined = ignoredBlock[1].replace(/\s*\n\s*/g, '');
+    for (const part of joined.split(',')) {
+      const name = part.trim().replace(/\.$/, '');
+      if (name !== '' && name.includes('@')) pending.push(name);
+    }
+  }
 
   if (step.timedOut) {
     return {
@@ -159,17 +178,22 @@ function classifyInstall(step: StepResult): L1Outcome {
 
   const peerRejected = /installation rejected/i.test(text) && /incompatible with/i.test(text);
   const pnpmError = /ERR_PNPM_[A-Z_]+/.exec(text)?.[0] ?? null;
+  const buildsBlocked = pending.length > 0 && (pnpmError === 'ERR_PNPM_IGNORED_BUILDS' || /Ignored build scripts:/i.test(text));
 
   return {
     status: 'fail',
-    reason: peerRejected
-      ? 'peer-incompatible with the pinned runtime'
-      : pnpmError
-        ? `package manager error (${pnpmError})`
-        : 'install failed',
-    detail: peerRejected
-      ? `DSH refused the install: the plugin's declared peerDependencies on @deepseek-ai/dsh* do not match the runtime. An exact-version exemption would bypass this check; granting one is a user decision and is not done here.`
-      : `the CLI exited ${step.exitCode}`,
+    reason: buildsBlocked
+      ? 'installation blocked pending dependency build-script approval'
+      : peerRejected
+        ? 'peer-incompatible with the pinned runtime'
+        : pnpmError
+          ? `package manager error (${pnpmError})`
+          : 'install failed',
+    detail: buildsBlocked
+      ? `pnpm refused to run build scripts for ${pending.length} package(s) and the install did not complete. This verifier never approves them: approval permits commands with the host user's permissions, which is the user's decision and a finding rather than a chore. The requested scripts are listed in the metrics.`
+      : peerRejected
+        ? `DSH refused the install: the plugin's declared peerDependencies on @deepseek-ai/dsh* do not match the runtime. An exact-version exemption would bypass this check; granting one is a user decision and is not done here.`
+        : `the CLI exited ${step.exitCode}`,
     declaredPeers,
     bundlesAfter: bundles,
     pendingBuildScripts: [...new Set(pending)],
