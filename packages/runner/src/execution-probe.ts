@@ -40,6 +40,7 @@ interface StepResult {
   signal: string | null;
   durationMs: number;
   timedOut: boolean;
+  errorCode?: string | null;
   excerpt: string;
 }
 
@@ -63,22 +64,29 @@ function run(name: string, args: string[], timeoutMs: number): StepResult {
   });
   const durationMs = Math.round(performance.now() - started);
   const signal = result.signal ?? null;
+  const errorCode = (result.error as NodeJS.ErrnoException | undefined)?.code ?? null;
   const step: StepResult = {
     name,
     command: `dsh ${args.join(' ')}`,
     exitCode: result.status ?? null,
     signal,
     durationMs,
-    // A wall-clock bound that had to kill the process is not the same as the
-    // CLI deciding to stop, so it is recorded as its own fact.
-    timedOut: signal === 'SIGKILL' || signal === 'SIGTERM',
+    // The bound firing is its own fact, and it cannot be inferred from the exit
+    // code: DSH installs a SIGTERM handler that shuts down *gracefully with
+    // exit 0*. Reading a graceful shutdown as "the composition exited early"
+    // would report a healthy boot as a load failure.
+    timedOut: errorCode === 'ETIMEDOUT' || signal === 'SIGKILL' || signal === 'SIGTERM',
+    errorCode,
     excerpt: excerpt(`${result.stdout ?? ''}${result.stderr ?? ''}`),
   };
   steps.push(step);
   return step;
 }
 
-const profileDir = join(DSH_HOME, PROFILE);
+// DSH keeps profiles under $DSH_HOME/profiles/<name>. Getting this wrong made
+// every profile read return null, which silently turned "no residue found" into
+// a claim about a directory that was never inspected.
+const profileDir = join(DSH_HOME, 'profiles', PROFILE);
 
 function readProfilePackageJson(): Record<string, any> | null {
   const file = join(profileDir, 'package.json');
@@ -187,6 +195,10 @@ interface L2Outcome {
  */
 function classifyBoot(step: StepResult): L2Outcome {
   const text = step.excerpt.trim();
+
+  // The bound fired. DSH answers SIGTERM by shutting down gracefully with exit
+  // 0, so "still running when the bound arrived, and quiet" is the healthy
+  // outcome: the composition mounted and waited.
   if (step.timedOut && text === '') {
     return {
       status: 'pass',
@@ -196,42 +208,66 @@ function classifyBoot(step: StepResult): L2Outcome {
       diagnostics: '',
     };
   }
-  if (step.timedOut) {
+  if (step.timedOut && text !== '') {
     return {
       status: 'fail',
-      reason: 'exited only under the bound, but produced diagnostics',
-      detail: 'diagnostics were emitted before the bound; they may indicate a failed plugin',
+      reason: 'emitted diagnostics before the bound',
+      detail: 'a composition that loads cleanly has nothing to say on stderr',
       diagnostics: text,
+    };
+  }
+
+  // Exited before the bound, on its own. A clean exit with nothing on stderr
+  // means the composition ran and finished — not a load failure. Only a
+  // non-zero exit, or an error on the way out, is that.
+  const looksLikeFailure = step.exitCode !== 0 || /error|failed|cannot|refus/i.test(text);
+  if (!looksLikeFailure) {
+    return {
+      status: 'pass',
+      reason: 'the composition booted and exited cleanly',
+      detail: `exit code ${step.exitCode} with no error diagnostics, before the wall-clock bound`,
+      diagnostics: '',
     };
   }
   return {
     status: 'fail',
-    reason: `the composition exited early with code ${step.exitCode}`,
+    reason: `the composition exited with code ${step.exitCode}`,
     detail:
-      'a profile whose plugins fail to load exits before the agent runner mounts, so an early exit is the load-failure signal',
+      'a profile whose plugins fail to load exits before the agent runner mounts, so a non-zero exit with diagnostics is the load-failure signal',
     diagnostics: text,
   };
 }
 
 interface L6Outcome {
-  status: 'pass' | 'fail' | 'skip';
+  status: 'pass' | 'fail' | 'skip' | 'inconclusive';
   reason: string;
   detail: string;
   residue: string[];
 }
 
-function collectResidue(subjectName: string): string[] {
+interface ResidueCheck {
+  residue: string[];
+  /** False when the profile could not be inspected at all — a pass would be unfounded. */
+  inspectable: boolean;
+}
+
+function collectResidue(subjectName: string): ResidueCheck {
+  if (!existsSync(profileDir)) {
+    return { residue: [], inspectable: false };
+  }
   const residue: string[] = [];
   const pkg = readProfilePackageJson();
-  const bundles = (pkg?.dsh?.profile?.bundles ?? []) as string[];
+  if (pkg === null) return { residue: [], inspectable: false };
+
+  const bundles = (pkg.dsh?.profile?.bundles ?? []) as string[];
   if (bundles.some((b) => b === subjectName)) residue.push(`bundle still selected: ${subjectName}`);
-  const deps = Object.keys(pkg?.dependencies ?? {});
+  const deps = Object.keys(pkg.dependencies ?? {});
   if (deps.includes(subjectName)) residue.push(`dependency entry remains: ${subjectName}`);
   const nodeModules = join(profileDir, 'node_modules');
   if (existsSync(nodeModules) && existsSync(join(nodeModules, subjectName))) {
     residue.push(`files remain: node_modules/${subjectName}`);
   }
-  return residue;
+  return { residue, inspectable: true };
 }
 
 // --- L1 -------------------------------------------------------------------
@@ -265,16 +301,23 @@ if (l1.status === 'pass') {
     ? SPEC.slice(0, SPEC.lastIndexOf('@'))
     : (SPEC.split('@')[0] as string);
   run('l6-remove', ['plugin', `--profile`, PROFILE, 'remove', subjectName], 180_000);
-  const residue = collectResidue(subjectName);
-  l6 = {
-    status: residue.length === 0 ? 'pass' : 'fail',
-    reason: residue.length === 0 ? 'removed without residue' : 'residue after removal',
-    detail:
-      residue.length === 0
-        ? 'the profile retains no bundle selection, dependency entry or files for the subject'
-        : residue.join('; '),
-    residue,
-  };
+  const check = collectResidue(subjectName);
+  l6 = !check.inspectable
+    ? {
+        status: 'inconclusive',
+        reason: 'the profile could not be inspected after removal',
+        detail: `no profile manifest was readable at ${profileDir}, so "no residue" cannot be claimed`,
+        residue: [],
+      }
+    : {
+        status: check.residue.length === 0 ? 'pass' : 'fail',
+        reason: check.residue.length === 0 ? 'removed without residue' : 'residue after removal',
+        detail:
+          check.residue.length === 0
+            ? 'the profile retains no bundle selection, dependency entry or files for the subject'
+            : check.residue.join('; '),
+        residue: check.residue,
+      };
 }
 
 const execution = {
