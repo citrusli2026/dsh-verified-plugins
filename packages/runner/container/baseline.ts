@@ -71,7 +71,11 @@ function readFileTrim(path: string): string | null {
   }
 }
 
-mkdirSync(OUT_DIR, { recursive: true });
+try {
+  mkdirSync(OUT_DIR, { recursive: true });
+} catch {
+  // OUT_DIR is a convenience; stdout is the contract.
+}
 
 // 1. Cold start: how long does the pinned runtime take to answer at all?
 const versionStep = run('dsh-version', 'dsh', ['--version'], 60_000);
@@ -126,5 +130,11 @@ const report = {
 };
 
 const text = `${JSON.stringify(report, null, 2)}\n`;
-writeFileSync(`${OUT_DIR}/baseline.json`, text);
+// The file copy is a convenience for interactive runs. stdout is the contract,
+// so a write failure must never suppress it.
+try {
+  writeFileSync(`${OUT_DIR}/baseline.json`, text);
+} catch (error) {
+  process.stderr.write(`baseline: could not write ${OUT_DIR}/baseline.json: ${String(error)}\n`);
+}
 process.stdout.write(text);

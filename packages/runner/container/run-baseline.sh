@@ -46,14 +46,25 @@ done
 cat "$OUT/cold-start-ms.txt"
 
 echo "== offline baseline (network denied; install MUST fail) =="
+# Output travels on stdout rather than through a bind mount: the container runs
+# as uid 10001 and a host-owned mount is not writable by it, so a mounted
+# write would fail and suppress the very output we are collecting.
+# Exit codes are captured rather than propagated: a failed phase must still
+# leave evidence behind, not abort the run with nothing to show.
+set +e
 docker run --rm --network none \
-  -v "$OUT:/work/out" \
-  "$IMAGE" /work/baseline.ts --offline > "$OUT/offline.json"
+  "$IMAGE" /work/baseline.ts --offline > "$OUT/offline.json" 2> "$OUT/offline.stderr.txt"
+echo "$?" > "$OUT/offline-rc.txt"
+set -e
+echo "offline container rc=$(cat "$OUT/offline-rc.txt") stdout=$(wc -c < "$OUT/offline.json") bytes"
 
 echo "== online baseline (registry reachable; install is timed) =="
+set +e
 docker run --rm \
-  -v "$OUT:/work/out" \
-  "$IMAGE" /work/baseline.ts --online > "$OUT/online.json"
+  "$IMAGE" /work/baseline.ts --online > "$OUT/online.json" 2> "$OUT/online.stderr.txt"
+echo "$?" > "$OUT/online-rc.txt"
+set -e
+echo "online container rc=$(cat "$OUT/online-rc.txt") stdout=$(wc -c < "$OUT/online.json") bytes"
 
 echo "== assembling V0 report =="
 node - "$OUT" "$IMAGE" "$DSH_VERSION" "$IMAGE_SIZE_BYTES" "$IMAGE_ID" "$IMAGE_DIGESTS" <<'NODE'
@@ -69,6 +80,7 @@ const median = cold.length ? cold[Math.floor(cold.length / 2)] : null;
 
 const offline = readJson('offline.json');
 const online = readJson('online.json');
+const readRc = (f) => { try { return Number(fs.readFileSync(path.join(out, f), 'utf8').trim()); } catch { return null; } };
 
 const report = {
   schema: 'dsh.verifier.container-baseline.v1',
@@ -82,11 +94,18 @@ const report = {
     repoDigests: imageDigests ? imageDigests.split(',').filter(Boolean) : [],
   },
   coldStartMs: { samples: cold, median },
+  // Exit codes of the container runs themselves. A non-zero rc with empty
+  // stdout means the harness failed, which is distinct from a plugin failing.
+  containerExitCodes: { offline: readRc('offline-rc.txt'), online: readRc('online-rc.txt') },
   offline,
   online,
   acceptance: {
+    offlineHarnessRan: offline !== null,
+    onlineHarnessRan: online !== null,
     offlineSelfContained: offline?.measurements?.['dsh-version']?.exitCode === 0,
-    offlineInstallDenied: offline?.measurements?.['plugin-add-must-be-denied']?.exitCode !== 0,
+    offlineInstallDenied: offline
+      ? offline.measurements?.['plugin-add-must-be-denied']?.exitCode !== 0
+      : false,
     onlineInstallOk: online?.measurements?.['plugin-add-baseline']?.exitCode === 0,
     coldStartUnder10s: median !== null && median < 10_000,
   },
