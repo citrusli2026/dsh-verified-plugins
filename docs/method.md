@@ -142,13 +142,24 @@ The key-free path is `@deepseek-ai/dsh-llm-replay`, which "short-circuits
 `llm/stream` with model chunks reconstructed from a recorded session JSONL
 (keyless snapshot tests)".
 
-**This is blocked as published** (see § 5, F2): the replay plugin declares a
-peer, `@deepseek-ai/dsh-compact`, that does not exist on npm, and caret ranges
-on `0.0.x` cannot reach the current `0.2.x` runtime. A report therefore records
-`L3_run: blocked` with that reason unless the run used a pinned older runtime
-whose peers resolve, or a recorded-transcript adapter.
+**The adapter version is derived from the runtime, never resolved by name.**
+`@deepseek-ai/dsh-llm-replay` publishes 32 versions and its `latest` tag points
+at `0.0.1-rc.1`, whose peers no current runtime can satisfy; the matching
+version is on `next`. The verifier installs
+`@deepseek-ai/dsh-llm-replay@<discovered runtime>`, so the pairing cannot drift.
 
-A real API key is **never** used in CI, and never appears in a report.
+The plugin declares no `dsh.bundle`, so installing it does not compose it — DSH
+says so explicitly ("installed as a plain dependency, not a profile layer"). It
+is mounted as a loader entry through a `--patch` overlay, and the recorded
+script is a `ReplayEntry[]` sidecar. Naming the same path for `file` and
+`overrideFile` is what lets the sidecar replace a session log entirely, which
+matters because obtaining a real recording would need a provider credential.
+
+A report states the probe task **verbatim**, and every L3 pass carries the limit
+that it ran against a replayed transcript rather than a provider: it establishes
+that a session completes without a credential, not that the subject behaves
+correctly against a live model. A real API key is **never** used in CI and never
+appears in a report.
 
 ### L4 — Capability (static)
 

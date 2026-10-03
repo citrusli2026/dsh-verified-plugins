@@ -1,10 +1,11 @@
 {
   "schema": "dsh.plugin.catalog.v1",
-  "generatedAt": "2026-10-03T15:35:06.272Z",
+  "generatedAt": "2026-10-03T15:52:22.058Z",
   "counts": {
     "total": 4,
     "byVerdict": {
-      "partial": 3,
+      "verified": 1,
+      "partial": 2,
       "not-installable": 1
     }
   },
@@ -38,16 +39,16 @@
       "reportId": "npm:dsh-cost-meter@1.8.8",
       "name": "dsh-cost-meter",
       "version": "1.8.8",
-      "verdict": "partial",
+      "verdict": "verified",
       "path": "catalog/npm/dsh-cost-meter.json",
-      "generatedAt": "2026-10-03T15:32:25.531Z",
+      "generatedAt": "2026-10-03T15:49:28.613Z",
       "integrity": "sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==",
       "dshVersion": "0.2.0-rc.2",
       "dimensions": {
         "L0_qualification": "pass",
         "L1_install": "pass",
         "L2_load": "pass",
-        "L3_run": "blocked",
+        "L3_run": "pass",
         "L4_capability": "pass",
         "L5_overhead": "pass",
         "L6_uninstall": "pass"

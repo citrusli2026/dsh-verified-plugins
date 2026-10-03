@@ -139,13 +139,67 @@ test('merge: sampled peers and the approved-build-script count are recorded', ()
   assert.equal(metrics.buildScriptsApproved, 0, 'the verifier never approves build scripts');
 });
 
-test('merge: L3 is recorded as blocked, never as a pass', () => {
+test('merge: without an L3 outcome, the dimension is skipped rather than asserted', () => {
   const merged = mergeExecution(staticReport(), execution());
   const l3 = (merged.dimensions as Record<string, Dimension>).L3_run;
-  assert.equal(l3.status, 'blocked');
-  assert.match(l3.summary, /not installable against dsh 0.2.0-rc.2/);
-  // Because L3 cannot pass, `verified` is unreachable — the ladder is not softened.
+  assert.equal(l3.status, 'skip');
+  assert.match(l3.summary, /no L3 outcome/);
   assert.notEqual(merged.verdict, 'verified');
+});
+
+test('merge: a completed keyless session is an L3 pass with its probe task published', () => {
+  const exec = execution({
+    L3_run: {
+      status: 'pass',
+      reason: 'a session completed with no credential',
+      detail: 'the model call was served by the replay adapter',
+      task: 'reply with any text',
+      events: { turnEndReason: { kind: 'completed' }, finalText: 'fixture', exitCode: 0 },
+      replayAdapter: '@deepseek-ai/dsh-llm-replay@0.2.0-rc.2',
+    },
+    steps: [step('l1-install'), step('l2-boot', { signal: 'SIGKILL', timedOut: true, exitCode: null }), step('l3-session'), step('l6-remove')],
+  });
+  const merged = mergeExecution(staticReport(), exec);
+  const l3 = (merged.dimensions as Record<string, Dimension>).L3_run;
+  assert.equal(l3.status, 'pass');
+  assert.deepEqual(l3.evidenceRefs, ['e-l3-session']);
+  assert.equal(l3.metrics?.probeTask, 'reply with any text');
+  // The detailed claim lives once, in the dimension notes...
+  assert.ok(l3.notes?.some((n) => /served by the replay adapter/.test(n)));
+  // ...and the report says plainly what a replayed session does not establish.
+  assert.ok(
+    (merged.limits as string[]).some((l) => /not against a provider/.test(l)),
+    'a replayed L3 must carry its own limitation',
+  );
+  assert.deepEqual(validateReport(merged, SCHEMA), []);
+});
+
+test('merge: all seven dimensions passing reaches verified', () => {
+  // The first time the ladder can be satisfied: with L3 measured, nothing is
+  // skipped or blocked any more.
+  const exec = execution({
+    L3_run: {
+      status: 'pass',
+      reason: 'a session completed with no credential',
+      detail: 'served by the replay adapter',
+      task: 'reply with any text',
+      events: { turnEndReason: { kind: 'completed' } },
+      replayAdapter: '@deepseek-ai/dsh-llm-replay@0.2.0-rc.2',
+    },
+    L5_overhead: {
+      status: 'no-significant-delta',
+      reason: 'no metric moved beyond the significance thresholds; that is the finding',
+      samples: 6,
+      baseline: { rss: 100 },
+      activated: { rss: 101 },
+      delta: { rss: 1 },
+      significant: [],
+    },
+    steps: [step('l1-install'), step('l2-boot', { signal: 'SIGKILL', timedOut: true, exitCode: null }), step('l3-session'), step('l6-remove')],
+  });
+  const merged = mergeExecution(staticReport(), exec);
+  assert.equal(merged.verdict, 'verified');
+  assert.deepEqual(validateReport(merged, SCHEMA), []);
 });
 
 test('merge: a verdict may never exceed what executed', () => {

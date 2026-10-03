@@ -1,11 +1,11 @@
 {
   "schema": "dsh.plugin.report.v1",
   "reportId": "npm:dsh-cost-meter@1.8.8",
-  "generatedAt": "2026-10-03T15:32:25.531Z",
+  "generatedAt": "2026-10-03T15:49:28.613Z",
   "verifier": {
     "name": "dsh-verified",
     "version": "0.1.0",
-    "commit": "2bb349a13499247b762102ae193b0296c83b5865"
+    "commit": "b5df2a37a0793fd5c2f6cd78d03ae8241969ab35"
   },
   "subject": {
     "spec": "dsh-cost-meter@1.8.8",
@@ -31,7 +31,7 @@
     "imageDigest": null,
     "notes": "executed in a one-off container; the subject was installed, booted and removed there"
   },
-  "verdict": "partial",
+  "verdict": "verified",
   "dimensions": {
     "L0_qualification": {
       "id": "L0",
@@ -61,7 +61,7 @@
       "status": "pass",
       "summary": "installed",
       "metrics": {
-        "durationMs": 1950,
+        "durationMs": 2057,
         "exitCode": 0,
         "declaredPeers": null,
         "bundlesAfterInstall": [
@@ -86,7 +86,7 @@
       "summary": "booted, mounted and stayed alive",
       "metrics": {
         "bootBoundMs": 25000,
-        "durationMs": 25042,
+        "durationMs": 25063,
         "signal": null
       },
       "evidenceRefs": [
@@ -99,15 +99,30 @@
     },
     "L3_run": {
       "id": "L3",
-      "status": "blocked",
-      "summary": "not run: the sanctioned key-free model adapter is not installable against dsh 0.2.0-rc.2",
+      "status": "pass",
+      "summary": "a session completed with no credential",
+      "metrics": {
+        "replayAdapter": "@deepseek-ai/dsh-llm-replay@0.2.0-rc.2",
+        "probeTask": "reply with any text",
+        "events": {
+          "session": "session-a842a995-d41e-4683-8918-14161ec00938",
+          "turnEndReason": {
+            "kind": "completed"
+          },
+          "finalText": "Replay fixture: no provider was called.",
+          "textEventCount": 1,
+          "error": null,
+          "exitCode": 0,
+          "durationMs": 1005,
+          "eventCount": 7
+        }
+      },
       "evidenceRefs": [
-        "e-l3-blocked"
+        "e-l3-session"
       ],
       "notes": [
-        "@deepseek-ai/dsh-llm-replay declares peerDependencies on ^0.0.1-rc.1 packages, one of which (@deepseek-ai/dsh-compact) does not exist on npm, and DSH refuses peer-incompatible installs",
-        "a session therefore requires a real credential, which this project never injects",
-        "resolving L3 needs either a pinned older runtime whose peers match, or a recorded-transcript adapter"
+        "the model call was served by the official replay adapter from a fixture authored in this repository; no provider was contacted and no credential was present",
+        "probe task, stated verbatim: \"reply with any text\""
       ]
     },
     "L4_capability": {
@@ -135,9 +150,9 @@
       "metrics": {
         "samples": 6,
         "baseline": {
-          "atMs": 8032,
-          "rss": 199528448,
-          "heapUsed": 68433248,
+          "atMs": 8036,
+          "rss": 199618560,
+          "heapUsed": 68485688,
           "external": 5188103,
           "activeTotal": 10,
           "watchers": 7,
@@ -147,10 +162,10 @@
           "fds": 20
         },
         "activated": {
-          "atMs": 8048,
-          "rss": 231133184,
-          "heapUsed": 84459296,
-          "external": 7869397,
+          "atMs": 8056,
+          "rss": 231841792,
+          "heapUsed": 85015008,
+          "external": 7738009,
           "activeTotal": 11,
           "watchers": 8,
           "timers": 0,
@@ -159,10 +174,10 @@
           "fds": 20
         },
         "delta": {
-          "atMs": 16,
-          "rss": 31604736,
-          "heapUsed": 16026048,
-          "external": 2681294,
+          "atMs": 20,
+          "rss": 32223232,
+          "heapUsed": 16529320,
+          "external": 2549906,
           "activeTotal": 1,
           "watchers": 1,
           "timers": 0,
@@ -186,7 +201,7 @@
       "summary": "removed without residue",
       "metrics": {
         "residue": [],
-        "durationMs": 169
+        "durationMs": 212
       },
       "evidenceRefs": [
         "e-l6-remove"
@@ -313,7 +328,7 @@
       "kind": "command",
       "command": "resolve dsh-cost-meter@1.8.8 -> dsh-cost-meter@1.8.8",
       "exitCode": 0,
-      "durationMs": 126,
+      "durationMs": 155,
       "excerpt": "{\n  \"name\": \"dsh-cost-meter\",\n  \"version\": \"1.8.8\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/dsh-cost-meter/-/dsh-cost-meter-1.8.8.tgz\",\n  \"advertisedIntegrity\": \"sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==\",\n  \"publishedAt\": \"2026-10-03T10:59:09.474Z\"\n}"
     },
     {
@@ -321,7 +336,7 @@
       "kind": "artifact",
       "command": "fetch https://registry.npmjs.org/dsh-cost-meter/-/dsh-cost-meter-1.8.8.tgz",
       "exitCode": 0,
-      "durationMs": 56,
+      "durationMs": 47,
       "excerpt": "{\n  \"bytes\": 411843,\n  \"resolvedIntegrity\": \"sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==\",\n  \"advertisedIntegrity\": \"sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"21e4fd0d9655707fddb328ce8cb93cc49a8d21f304f946ae7674b336bba51080\"\n}",
       "excerptBytes": 383,
       "sha256": "21e4fd0d9655707fddb328ce8cb93cc49a8d21f304f946ae7674b336bba51080"
@@ -353,18 +368,18 @@
       "kind": "command",
       "command": "dsh plugin --profile verify add dsh-cost-meter@1.8.8",
       "exitCode": 0,
-      "durationMs": 1950,
-      "excerpt": "Progress: resolved 0, reused 0, downloaded 1, added 0\nAdded 1 entry to minimumReleaseAgeExclude in pnpm-workspace.yaml (set minimumReleaseAgeStrict to true to gate these updates with a prompt):\n  dsh-cost-meter@1.8.8\nPackages are hard linked from the content-addressable store to the virtual store.\n  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nPackages: +2\n++\nProgress: resolved 2, reused 0, downloaded 2, added 2, done\n[WARN] Issues with peer dependencies found. Run \"pnpm peers check\" to list them.\n\ndependencies:\n+ dsh-cost-meter 1.8.8\n\nDone in 606ms using pnpm v12.8.1\ndsh: initialized profile verify at /work/dsh-home/profiles/verify\n",
+      "durationMs": 2057,
+      "excerpt": "Progress: resolved 0, reused 0, downloaded 1, added 0\nAdded 1 entry to minimumReleaseAgeExclude in pnpm-workspace.yaml (set minimumReleaseAgeStrict to true to gate these updates with a prompt):\n  dsh-cost-meter@1.8.8\nPackages are hard linked from the content-addressable store to the virtual store.\n  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nPackages: +2\n++\nProgress: resolved 2, reused 0, downloaded 2, added 2, done\n[WARN] Issues with peer dependencies found. Run \"pnpm peers check\" to list them.\n\ndependencies:\n+ dsh-cost-meter 1.8.8\n\nDone in 531ms using pnpm v12.8.1\ndsh: initialized profile verify at /work/dsh-home/profiles/verify\n",
       "excerptBytes": 726,
       "truncated": false,
-      "sha256": "a2b8ddc59d7395bed37d08cd1e92bec776d340187af0ba8211a9f3b4a8393a44"
+      "sha256": "e557cf2572735b125f24e3100d2b285231df563c14fc73234e301e33c8ea750f"
     },
     {
       "id": "e-l2-boot",
       "kind": "command",
       "command": "dsh --profile verify",
       "exitCode": 0,
-      "durationMs": 25042,
+      "durationMs": 25063,
       "excerpt": "[dsh-cost-meter] 已加载,账本:/work/dsh-home/storages/cost-meter/ledger.json\n",
       "excerptBytes": 81,
       "truncated": false,
@@ -375,24 +390,28 @@
       "kind": "command",
       "command": "dsh plugin --profile verify remove dsh-cost-meter",
       "exitCode": 0,
-      "durationMs": 169,
-      "excerpt": "Packages: -2\n--\n\ndependencies:\n- dsh-cost-meter 1.8.8\n\nDone in 17ms using pnpm v12.8.1\n",
+      "durationMs": 212,
+      "excerpt": "Packages: -2\n--\n\ndependencies:\n- dsh-cost-meter 1.8.8\n\nDone in 20ms using pnpm v12.8.1\n",
       "excerptBytes": 87,
       "truncated": false,
-      "sha256": "6ebb3cfcf9b59277f26a8853dd90cf95fc221716f91e567b97b39fa7f453eb97"
-    },
-    {
-      "id": "e-l3-blocked",
-      "kind": "static",
-      "command": "dsh plugin --profile replay add @deepseek-ai/dsh-llm-replay",
-      "exitCode": 1,
-      "excerpt": "@deepseek-ai/dsh-llm-replay@0.0.1-rc.1 declares peerDependencies:\n  @deepseek-ai/dsh-llm ^0.0.1-rc.1, @deepseek-ai/dsh-compact ^0.0.1-rc.1,\n  @deepseek-ai/dsh-session ^0.0.1-rc.1, @deepseek-ai/dsh-invariants ^0.0.1-rc.1\nDSH 0.2.0-rc.2 refuses the install: caret ranges on 0.0.x cannot reach 0.2.x,\nand @deepseek-ai/dsh-compact does not exist on npm at any version.\nObserved in the container; see docs/evidence/V3.md."
+      "sha256": "05fde92376c1f8506e09f5b093eff4a323ba46700429bda740492067886b0ac4"
     },
     {
       "id": "e-l5-overhead",
       "kind": "sample",
       "command": "dsh --profile <baseline|activated> with the host sampler injected via NODE_OPTIONS=--import",
-      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8032,\n    \"rss\": 199528448,\n    \"heapUsed\": 68433248,\n    \"external\": 5188103,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8048,\n    \"rss\": 231133184,\n    \"heapUsed\": 84459296,\n    \"external\": 7869397,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 23,\n    \"libuvActiveHandles\": 19,\n    \"fds\": 20\n  },\n  \"delta\": {\n    \"atMs\": 16,\n    \"rss\": 31604736,\n    \"heapUsed\": 16026048,\n    \"external\": 2681294,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 1,\n    \"libuvActiveHandles\": 2,\n    \"fds\": 0\n  },\n  \"significant\": []\n}"
+      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8036,\n    \"rss\": 199618560,\n    \"heapUsed\": 68485688,\n    \"external\": 5188103,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8056,\n    \"rss\": 231841792,\n    \"heapUsed\": 85015008,\n    \"external\": 7738009,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 23,\n    \"libuvActiveHandles\": 19,\n    \"fds\": 20\n  },\n  \"delta\": {\n    \"atMs\": 20,\n    \"rss\": 32223232,\n    \"heapUsed\": 16529320,\n    \"external\": 2549906,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 1,\n    \"libuvActiveHandles\": 2,\n    \"fds\": 0\n  },\n  \"significant\": []\n}"
+    },
+    {
+      "id": "e-l3-session",
+      "kind": "command",
+      "command": "dsh --profile l3 --patch /work/fixtures/replay/l3-overlay.yml --json reply with any text",
+      "exitCode": 0,
+      "durationMs": 1005,
+      "excerpt": "[dsh-cost-meter] 已加载,账本:/work/dsh-home/storages/cost-meter/ledger.json\n{\"type\":\"session\",\"sessionId\":\"session-a842a995-d41e-4683-8918-14161ec00938\",\"cwd\":\"/work\"}\n{\"type\":\"status\",\"phase\":\"turn_start\",\"turn\":1}\n{\"type\":\"status\",\"phase\":\"step_start\",\"turn\":1,\"step\":1}\n{\"type\":\"text\",\"text\":\"Replay fixture: no provider was called.\"}\n{\"type\":\"status\",\"phase\":\"step_end\",\"turn\":1,\"step\":1}\n{\"type\":\"status\",\"phase\":\"turn_end\",\"turn\":1,\"reason\":{\"kind\":\"completed\"}}\n{\"type\":\"final\",\"text\":\"Replay fixture: no provider was called.\"}\n",
+      "excerptBytes": 540,
+      "truncated": false,
+      "sha256": "9ffa4ff478bf78be757ca75100a9144fb0151786f245cc5851e701377bb41d37"
     }
   ],
   "redactions": [],
@@ -403,6 +422,7 @@
     "the artifact ships no source paths, so capability findings describe build output only; code-level attribution between the author and inlined dependencies is not resolvable from this artifact",
     "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
     "static analysis cannot see dynamically constructed code or prove intent",
+    "L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model",
     "the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase",
     "no dependency build script was approved by this executor",
     "overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta",
@@ -437,9 +457,9 @@
     "status": "no-significant-delta",
     "samples": 6,
     "baseline": {
-      "atMs": 8032,
-      "rss": 199528448,
-      "heapUsed": 68433248,
+      "atMs": 8036,
+      "rss": 199618560,
+      "heapUsed": 68485688,
       "external": 5188103,
       "activeTotal": 10,
       "watchers": 7,
@@ -449,10 +469,10 @@
       "fds": 20
     },
     "activated": {
-      "atMs": 8048,
-      "rss": 231133184,
-      "heapUsed": 84459296,
-      "external": 7869397,
+      "atMs": 8056,
+      "rss": 231841792,
+      "heapUsed": 85015008,
+      "external": 7738009,
       "activeTotal": 11,
       "watchers": 8,
       "timers": 0,
@@ -461,10 +481,10 @@
       "fds": 20
     },
     "delta": {
-      "atMs": 16,
-      "rss": 31604736,
-      "heapUsed": 16026048,
-      "external": 2681294,
+      "atMs": 20,
+      "rss": 32223232,
+      "heapUsed": 16529320,
+      "external": 2549906,
       "activeTotal": 1,
       "watchers": 1,
       "timers": 0,
