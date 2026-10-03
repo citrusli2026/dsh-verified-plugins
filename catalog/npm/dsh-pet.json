@@ -1,11 +1,11 @@
 {
   "schema": "dsh.plugin.report.v1",
   "reportId": "npm:dsh-pet@0.3.1",
-  "generatedAt": "2026-10-03T14:54:58.676Z",
+  "generatedAt": "2026-10-03T14:59:18.735Z",
   "verifier": {
     "name": "dsh-verified",
     "version": "0.1.0",
-    "commit": "9c7ff94c515320018111c26c3f1ae139e555f593"
+    "commit": "164438713684a0d1bcaae32053aa1c41a7658a06"
   },
   "subject": {
     "spec": "dsh-pet@0.3.1",
@@ -201,12 +201,12 @@
       "present": true,
       "confidence": "low",
       "attribution": "author-source",
-      "notes": "writes or resolves paths that can fall outside the workspace; heuristic, expect false positives",
+      "notes": "resolves a path outside the workspace (e.g. os.homedir(), DSH_HOME), which is normal for DSH profile handling; static analysis cannot determine whether it also writes there",
       "evidence": [
         {
           "file": "package/src/host/helper-process.test.ts",
-          "line": 61,
-          "snippet": "const userProfile = process.env.USERPROFILE || process.env.HOME || '';"
+          "line": 35,
+          "snippet": "const savedHome = process.env.DSH_HOME;"
         },
         {
           "file": "package/src/host/helper-process.ts",
@@ -214,14 +214,19 @@
           "snippet": "const userProfile = process.env.USERPROFILE || process.env.HOME || '';"
         },
         {
+          "file": "package/src/host/routes.test.ts",
+          "line": 72,
+          "snippet": "savedHome = process.env.DSH_HOME;"
+        },
+        {
+          "file": "package/src/host/work-status-lifecycle.test.ts",
+          "line": 110,
+          "snippet": "savedHome = process.env.DSH_HOME;"
+        },
+        {
           "file": "package/lib/index.js",
           "line": 1053,
           "snippet": "const userProfile = process.env.USERPROFILE || process.env.HOME || \"\";"
-        },
-        {
-          "file": "package/scripts/ensure-electron.mjs",
-          "line": 26,
-          "snippet": "const HOME = process.env.DSH_HOME || join(process.env.USERPROFILE || process.env.HOME || '', '.dsh');"
         }
       ]
     },
@@ -280,7 +285,7 @@
       "kind": "command",
       "command": "resolve dsh-pet@0.3.1 -> dsh-pet@0.3.1",
       "exitCode": 0,
-      "durationMs": 3018,
+      "durationMs": 1179,
       "excerpt": "{\n  \"name\": \"dsh-pet\",\n  \"version\": \"0.3.1\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/dsh-pet/-/dsh-pet-0.3.1.tgz\",\n  \"advertisedIntegrity\": \"sha512-7K8jDdoIT9nCX6HN0xhdcdOVAtSygSArE+zAWSBUfivC+gs6k9Szl7T8ozHfPs/QzOg45YRLLWvZVNZZfewcyQ==\",\n  \"publishedAt\": \"2026-09-30T07:04:19.661Z\"\n}"
     },
     {
@@ -288,7 +293,7 @@
       "kind": "artifact",
       "command": "fetch https://registry.npmjs.org/dsh-pet/-/dsh-pet-0.3.1.tgz",
       "exitCode": 0,
-      "durationMs": 98316,
+      "durationMs": 38484,
       "excerpt": "{\n  \"bytes\": 62222739,\n  \"resolvedIntegrity\": \"sha512-7K8jDdoIT9nCX6HN0xhdcdOVAtSygSArE+zAWSBUfivC+gs6k9Szl7T8ozHfPs/QzOg45YRLLWvZVNZZfewcyQ==\",\n  \"advertisedIntegrity\": \"sha512-7K8jDdoIT9nCX6HN0xhdcdOVAtSygSArE+zAWSBUfivC+gs6k9Szl7T8ozHfPs/QzOg45YRLLWvZVNZZfewcyQ==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"c54409ea3d67f582de7dc7bb3d110198ae667a14bca7e27837bbb59690722f35\"\n}",
       "excerptBytes": 385,
       "sha256": "c54409ea3d67f582de7dc7bb3d110198ae667a14bca7e27837bbb59690722f35"
@@ -312,8 +317,8 @@
       "id": "e-l4",
       "kind": "static",
       "command": "scan 95 shipped source file(s) for capability signatures",
-      "excerpt": "{\n  \"present\": [\n    {\n      \"id\": \"listens_on_port\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/runtime/electron-helper/main.js\",\n        \"line\": 554,\n        \"snippet\": \"const server = http.createServer((req, res) => {\"\n      }\n    },\n    {\n      \"id\": \"network_egress\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/host/balance.ts\",\n        \"line\": 63,\n        \"snippet\": \"return fetch(url, {\"\n      }\n    },\n    {\n      \"id\": \"spawns_process\",\n      \"confidence\": \"high\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/host/helper-process.ts\",\n        \"line\": 14,\n        \"snippet\": \"import { spawn } from 'node:child_process';\"\n      }\n    },\n    {\n      \"id\": \"writes_outside_workspace\",\n      \"confidence\": \"low\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/host/helper-process.test.ts\",\n        \"line\": 61,\n        \"snippet\": \"const userProfile = process.env.USERPROFILE || process.env.HOME || '';\"\n      }\n    }\n  ],\n  \"scannedFiles\": 95,\n  \"skippedFiles\": 0,\n  \"limits\": [\n    \"static analysis cannot see dynamically constructed code or prove intent\"\n  ]\n}",
-      "excerptBytes": 1305
+      "excerpt": "{\n  \"present\": [\n    {\n      \"id\": \"listens_on_port\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/runtime/electron-helper/main.js\",\n        \"line\": 554,\n        \"snippet\": \"const server = http.createServer((req, res) => {\"\n      }\n    },\n    {\n      \"id\": \"network_egress\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/host/balance.ts\",\n        \"line\": 63,\n        \"snippet\": \"return fetch(url, {\"\n      }\n    },\n    {\n      \"id\": \"spawns_process\",\n      \"confidence\": \"high\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/host/helper-process.ts\",\n        \"line\": 14,\n        \"snippet\": \"import { spawn } from 'node:child_process';\"\n      }\n    },\n    {\n      \"id\": \"writes_outside_workspace\",\n      \"confidence\": \"low\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/host/helper-process.test.ts\",\n        \"line\": 35,\n        \"snippet\": \"const savedHome = process.env.DSH_HOME;\"\n      }\n    }\n  ],\n  \"scannedFiles\": 95,\n  \"skippedFiles\": 0,\n  \"limits\": [\n    \"static analysis cannot see dynamically constructed code or prove intent\"\n  ]\n}",
+      "excerptBytes": 1274
     }
   ],
   "redactions": [],
