@@ -1,0 +1,310 @@
+/**
+ * execution-probe.ts — L1, L2 and L6, run INSIDE the verification container.
+ *
+ * It emits `dsh.verifier.execution.v1`, which the host-side merge step turns
+ * into the published `dsh.plugin.report.v1`. Keeping execution results separate
+ * from the report means the runner can be tested against a fixture, and the
+ * merge, validation and publication path can be tested without a container.
+ *
+ * Every behaviour here was established by running the real CLI in the real
+ * container first (see packages/runner/container/probe.sh and the captured
+ * evidence in docs/evidence/V3.md). Nothing is assumed about a pre-1.0 internal
+ * API — the executor drives the published CLI and reads what it prints.
+ *
+ * L5 (overhead sampling) is deliberately NOT implemented here yet: it is V3's
+ * subject, and reporting a number this round would mean inventing one.
+ */
+
+import { spawnSync } from 'node:child_process';
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { platform, arch, release } from 'node:os';
+import { join } from 'node:path';
+import { performance } from 'node:perf_hooks';
+
+const SPEC = process.argv[2] ?? process.env.PROBE_SPEC ?? '';
+const OUT_DIR = process.env.OUT_DIR ?? '/work/out';
+const DSH_HOME = process.env.DSH_HOME ?? '/tmp/verify-home';
+const PROFILE = 'verify';
+const BOOT_BOUND_MS = Number(process.env.BOOT_BOUND_MS ?? 25_000);
+const MAX_EXCERPT = 2048;
+
+if (SPEC === '') {
+  process.stderr.write('execution-probe: no spec given\n');
+  process.exit(2);
+}
+
+interface StepResult {
+  name: string;
+  command: string;
+  exitCode: number | null;
+  signal: string | null;
+  durationMs: number;
+  timedOut: boolean;
+  excerpt: string;
+}
+
+const steps: StepResult[] = [];
+
+/** Truncates from the front: the tail of a diagnostic carries the reason. */
+function excerpt(text: string, max = MAX_EXCERPT): string {
+  const clean = text.replace(/\u001b\[[0-9;]*m/g, '');
+  if (Buffer.byteLength(clean, 'utf8') <= max) return clean;
+  const buf = Buffer.from(clean, 'utf8').subarray(-max);
+  return `…(trimmed)…\n${new TextDecoder('utf-8', { fatal: false }).decode(buf)}`;
+}
+
+function run(name: string, args: string[], timeoutMs: number): StepResult {
+  const started = performance.now();
+  const result = spawnSync('dsh', args, {
+    encoding: 'utf8',
+    timeout: timeoutMs,
+    maxBuffer: 32 * 1024 * 1024,
+    env: { ...process.env, DSH_HOME, CI: '1' },
+  });
+  const durationMs = Math.round(performance.now() - started);
+  const signal = result.signal ?? null;
+  const step: StepResult = {
+    name,
+    command: `dsh ${args.join(' ')}`,
+    exitCode: result.status ?? null,
+    signal,
+    durationMs,
+    // A wall-clock bound that had to kill the process is not the same as the
+    // CLI deciding to stop, so it is recorded as its own fact.
+    timedOut: signal === 'SIGKILL' || signal === 'SIGTERM',
+    excerpt: excerpt(`${result.stdout ?? ''}${result.stderr ?? ''}`),
+  };
+  steps.push(step);
+  return step;
+}
+
+const profileDir = join(DSH_HOME, PROFILE);
+
+function readProfilePackageJson(): Record<string, any> | null {
+  const file = join(profileDir, 'package.json');
+  if (!existsSync(file)) return null;
+  try {
+    return JSON.parse(readFileSync(file, 'utf8')) as Record<string, any>;
+  } catch {
+    return null;
+  }
+}
+
+interface L1Outcome {
+  status: 'pass' | 'fail' | 'timeout';
+  reason: string;
+  detail: string;
+  declaredPeers: Record<string, string> | null;
+  bundlesAfter: string[] | null;
+  pendingBuildScripts: string[];
+  logPath: string | null;
+}
+
+/**
+ * Classifies the install result. The peer-incompatibility branch is not
+ * hypothetical: DSH refuses the install outright, which is the single most
+ * decision-relevant fact about a plugin that a static scan cannot see.
+ */
+function classifyInstall(step: StepResult): L1Outcome {
+  const text = step.excerpt;
+  const peers = /peerDependencies\s+(\{[^}]*\})/.exec(text);
+  let declaredPeers: Record<string, string> | null = null;
+  if (peers?.[1]) {
+    try {
+      declaredPeers = JSON.parse(peers[1]) as Record<string, string>;
+    } catch {
+      declaredPeers = null;
+    }
+  }
+
+  const pkg = readProfilePackageJson();
+  const bundles = (pkg?.dsh?.profile?.bundles ?? null) as string[] | null;
+  const logPath = /diagnostics:\s*(\S+)/.exec(text)?.[1] ?? null;
+
+  // Pending build scripts: pnpm gates them and DSH reports the names. They are
+  // a finding, never something this executor approves.
+  const pending = [...text.matchAll(/^\s*([@\w./-]+)\s+\((?:pre|post)?install:/gm)].map((m) => m[1] as string);
+
+  if (step.timedOut) {
+    return {
+      status: 'timeout',
+      reason: 'wall-clock ceiling reached during install',
+      detail: `the install did not finish within the bound`,
+      declaredPeers,
+      bundlesAfter: bundles,
+      pendingBuildScripts: [...new Set(pending)],
+      logPath,
+    };
+  }
+
+  if (step.exitCode === 0) {
+    return {
+      status: 'pass',
+      reason: 'installed',
+      detail: 'the CLI completed the install with exit code 0',
+      declaredPeers,
+      bundlesAfter: bundles,
+      pendingBuildScripts: [...new Set(pending)],
+      logPath,
+    };
+  }
+
+  const peerRejected = /installation rejected/i.test(text) && /incompatible with/i.test(text);
+  const pnpmError = /ERR_PNPM_[A-Z_]+/.exec(text)?.[0] ?? null;
+
+  return {
+    status: 'fail',
+    reason: peerRejected
+      ? 'peer-incompatible with the pinned runtime'
+      : pnpmError
+        ? `package manager error (${pnpmError})`
+        : 'install failed',
+    detail: peerRejected
+      ? `DSH refused the install: the plugin's declared peerDependencies on @deepseek-ai/dsh* do not match the runtime. An exact-version exemption would bypass this check; granting one is a user decision and is not done here.`
+      : `the CLI exited ${step.exitCode}`,
+    declaredPeers,
+    bundlesAfter: bundles,
+    pendingBuildScripts: [...new Set(pending)],
+    logPath,
+  };
+}
+
+interface L2Outcome {
+  status: 'pass' | 'fail' | 'timeout' | 'skip';
+  reason: string;
+  detail: string;
+  diagnostics: string;
+}
+
+/**
+ * Load: boot the profile under a wall-clock bound.
+ *
+ * Observed behaviour (evidence in docs/evidence/V3.md): a healthy composition
+ * boots, has nothing to say, and waits — so the bound kills it and the process
+ * is reported as signalled. A composition whose plugins fail to load exits
+ * early with loader diagnostics, because DSH exits before the runner mounts.
+ * Those two are distinguishable, and that distinction is the whole test.
+ */
+function classifyBoot(step: StepResult): L2Outcome {
+  const text = step.excerpt.trim();
+  if (step.timedOut && text === '') {
+    return {
+      status: 'pass',
+      reason: 'booted and settled',
+      detail:
+        'the process was still running with no diagnostics when the wall-clock bound reached it, which is what a healthy composition does: it mounts and waits',
+      diagnostics: '',
+    };
+  }
+  if (step.timedOut) {
+    return {
+      status: 'fail',
+      reason: 'exited only under the bound, but produced diagnostics',
+      detail: 'diagnostics were emitted before the bound; they may indicate a failed plugin',
+      diagnostics: text,
+    };
+  }
+  return {
+    status: 'fail',
+    reason: `the composition exited early with code ${step.exitCode}`,
+    detail:
+      'a profile whose plugins fail to load exits before the agent runner mounts, so an early exit is the load-failure signal',
+    diagnostics: text,
+  };
+}
+
+interface L6Outcome {
+  status: 'pass' | 'fail' | 'skip';
+  reason: string;
+  detail: string;
+  residue: string[];
+}
+
+function collectResidue(subjectName: string): string[] {
+  const residue: string[] = [];
+  const pkg = readProfilePackageJson();
+  const bundles = (pkg?.dsh?.profile?.bundles ?? []) as string[];
+  if (bundles.some((b) => b === subjectName)) residue.push(`bundle still selected: ${subjectName}`);
+  const deps = Object.keys(pkg?.dependencies ?? {});
+  if (deps.includes(subjectName)) residue.push(`dependency entry remains: ${subjectName}`);
+  const nodeModules = join(profileDir, 'node_modules');
+  if (existsSync(nodeModules) && existsSync(join(nodeModules, subjectName))) {
+    residue.push(`files remain: node_modules/${subjectName}`);
+  }
+  return residue;
+}
+
+// --- L1 -------------------------------------------------------------------
+mkdirSync(DSH_HOME, { recursive: true });
+// The runtime version is a first-class fact: every finding is scoped to it, and
+// DSH behaviour moves between release candidates.
+const versionStep = run('dsh-version', ['--version'], 30_000);
+const dshVersion = versionStep.excerpt.trim().split('\n').pop()?.trim() ?? 'unknown';
+
+const l1Step = run('l1-install', ['plugin', `--profile`, PROFILE, 'add', SPEC], 240_000);
+const l1 = classifyInstall(l1Step);
+
+// --- L2 and L6 only make sense once something installed -------------------
+let l2: L2Outcome = {
+  status: 'skip',
+  reason: 'not run: the subject did not install',
+  detail: 'loading a plugin that is not present would measure nothing',
+  diagnostics: '',
+};
+let l6: L6Outcome = {
+  status: 'skip',
+  reason: 'not run: the subject did not install',
+  detail: 'removal was not attempted because nothing was installed',
+  residue: [],
+};
+
+if (l1.status === 'pass') {
+  l2 = classifyBoot(run('l2-boot', ['--profile', PROFILE], BOOT_BOUND_MS));
+
+  const subjectName = SPEC.startsWith('@')
+    ? SPEC.slice(0, SPEC.lastIndexOf('@'))
+    : (SPEC.split('@')[0] as string);
+  run('l6-remove', ['plugin', `--profile`, PROFILE, 'remove', subjectName], 180_000);
+  const residue = collectResidue(subjectName);
+  l6 = {
+    status: residue.length === 0 ? 'pass' : 'fail',
+    reason: residue.length === 0 ? 'removed without residue' : 'residue after removal',
+    detail:
+      residue.length === 0
+        ? 'the profile retains no bundle selection, dependency entry or files for the subject'
+        : residue.join('; '),
+    residue,
+  };
+}
+
+const execution = {
+  schema: 'dsh.verifier.execution.v1',
+  spec: SPEC,
+  generatedAt: new Date().toISOString(),
+  environment: {
+    dshVersion,
+    nodeVersion: process.version,
+    os: `${platform()} ${release()}`,
+    arch: arch(),
+    dshHome: DSH_HOME,
+    profile: PROFILE,
+    bootBoundMs: BOOT_BOUND_MS,
+  },
+  L1_install: l1,
+  L2_load: l2,
+  L6_uninstall: l6,
+  steps,
+  notes: [
+    'L5 overhead sampling is not implemented; the dimension is reported as skip rather than estimated',
+    'no dependency build script was approved by this executor',
+  ],
+};
+
+mkdirSync(OUT_DIR, { recursive: true });
+const text = `${JSON.stringify(execution, null, 2)}\n`;
+try {
+  writeFileSync(join(OUT_DIR, 'execution.json'), text);
+} catch (error) {
+  process.stderr.write(`execution-probe: could not write execution.json: ${String(error)}\n`);
+}
+process.stdout.write(text);
