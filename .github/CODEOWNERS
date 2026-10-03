@@ -1,0 +1,18 @@
+# CODEOWNERS
+#
+# The files that decide what CI is allowed to do are owned most strictly:
+# a change to the policy checker, the workflows, or the audit tooling can
+# silently weaken P0, so those changes need explicit review.
+
+# P0 surface: workflow policy, execution tier, and the external audit.
+/.github/workflows/    @citrusli2026
+/tools/policy/         @citrusli2026
+/tools/audit/          @citrusli2026
+/tools/check-hygiene.mjs @citrusli2026
+
+# The report contract itself.
+/schemas/              @citrusli2026
+/tools/validate-reports.mjs @citrusli2026
+
+# Everything else.
+*                      @citrusli2026

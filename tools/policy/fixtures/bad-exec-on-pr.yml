@@ -1,0 +1,14 @@
+# policy-expect: R5
+# Installing third-party plugin code on a pull_request trigger. This is the
+# headline P0 violation: any fork can cause it to run.
+name: bad-exec-on-pr
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify-plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - run: pnpm add some-dsh-plugin
+      - run: dsh plugin --profile tmp add some-dsh-plugin

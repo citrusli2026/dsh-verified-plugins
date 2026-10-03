@@ -1,0 +1,46 @@
+# Dependencies (this repo is deliberately dependency-free; see CONTRIBUTING.md)
+node_modules/
+.pnpm-store/
+
+# ---------------------------------------------------------------------------
+# Secrets — never commit any of these. This repo configures zero secrets, and
+# that is a product claim, not a preference. See docs/method.md § P0.
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+.credentials.yaml
+.credentials.yml
+credentials.json
+*.pem
+*.key
+*.p12
+.netrc
+
+# Local DSH state (profiles, sessions, credentials)
+.dsh/
+profiles/desktop/
+
+# ---------------------------------------------------------------------------
+# Verification scratch space.
+# Evidence that must be committed lives in reports/<plugin>/evidence/ and is
+# explicitly re-included below, so it survives the broad ignores above.
+# ---------------------------------------------------------------------------
+.verify/
+tmp/
+scratch/
+*.log
+*.tgz
+*.tar.gz
+
+!reports/**/evidence/*.log
+!reports/**/evidence/*.txt
+!reports/**/evidence/*.json
+!reports/**/evidence/*.ndjson
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

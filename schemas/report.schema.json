@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/citrusli2026/dsh-verified-plugins/schemas/report.schema.json",
+  "title": "dsh-verified-plugins report front-matter",
+  "description": "Flat YAML front-matter contract for reports/<plugin>/report.md. Deliberately flat so it can be validated by a zero-dependency validator. The body is free-form Markdown governed by docs/method.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "plugin",
+    "version",
+    "source",
+    "dsh_runtime",
+    "node",
+    "os",
+    "date",
+    "verdict",
+    "t0_static",
+    "t1_install",
+    "t2_load",
+    "t3_measure",
+    "t4_behaviour",
+    "reporter",
+    "author_disclosure"
+  ],
+  "properties": {
+    "plugin": {
+      "type": "string",
+      "pattern": "^(@[a-z0-9][a-z0-9._-]*/)?[a-z0-9][a-z0-9._-]*$",
+      "description": "Exact npm package name, including scope when present."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?(\\+[0-9A-Za-z.-]+)?$",
+      "description": "Exact resolved version. Never a range, tag, or branch."
+    },
+    "source": {
+      "type": "string",
+      "pattern": "^https://",
+      "description": "Where the audited artifact came from (registry page, repository, or tarball URL)."
+    },
+    "integrity": {
+      "type": "string",
+      "pattern": "^sha(256|384|512)-[A-Za-z0-9+/=]+$",
+      "description": "Integrity hash actually resolved at install time, not the value advertised by the registry."
+    },
+    "dsh_runtime": {
+      "type": "string",
+      "description": "Exact DSH runtime version the tiers ran against."
+    },
+    "node": {
+      "type": "string",
+      "description": "Node.js version used."
+    },
+    "os": {
+      "type": "string",
+      "description": "OS and architecture, e.g. macos-15-arm64 or ubuntu-24.04-x64."
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "Date the tiers were executed, ISO 8601."
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["L0", "L1", "L2", "L3", "L4", "X-FAILED", "BLOCKED", "REFUSED"],
+      "description": "Highest tier that actually executed, or an outcome code. See docs/method.md."
+    },
+    "t0_static": { "$ref": "#/$defs/tier" },
+    "t1_install": { "$ref": "#/$defs/tier" },
+    "t2_load": { "$ref": "#/$defs/tier" },
+    "t3_measure": { "$ref": "#/$defs/tier" },
+    "t4_behaviour": { "$ref": "#/$defs/tier" },
+    "reporter": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9-]*$",
+      "description": "GitHub handle of the reporter."
+    },
+    "author_disclosure": {
+      "type": "string",
+      "enum": ["true", "false"],
+      "description": "\"true\" when the reporter is an author or contributor of the plugin."
+    }
+  },
+  "$defs": {
+    "tier": {
+      "type": "string",
+      "enum": ["pass", "fail", "skip", "blocked"],
+      "description": "Outcome of one tier. A tier that did not execute is \"skip\", and the verdict may not exceed it."
+    }
+  }
+}

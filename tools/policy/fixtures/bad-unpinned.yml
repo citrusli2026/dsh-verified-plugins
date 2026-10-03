@@ -1,0 +1,14 @@
+# policy-expect: R4
+# A floating action tag. Tags are mutable, so a pinned tag is not a pin.
+name: bad-unpinned
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: some-org/some-action@v1

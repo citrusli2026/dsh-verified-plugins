@@ -1,0 +1,54 @@
+# ci.yml — the static gate. Runs on every pull request and on main.
+#
+# P0: this workflow NEVER installs, loads or executes plugin code, and it holds
+# no credentials. It validates the repository, the report contract, and the
+# workflow policy itself. All third-party execution lives in verify.yml, which
+# is workflow_dispatch-only.
+#
+# Actions are pinned to full commit SHAs; tools/policy/check-workflows.mjs
+# enforces that, along with the rest of the P0 rules.
+
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  policy:
+    name: policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - name: P0 workflow policy (with self-test fixtures)
+        run: node tools/policy/check-workflows.mjs
+      - name: Repository hygiene and secret-shaped content
+        run: node tools/check-hygiene.mjs
+
+  reports:
+    name: reports
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - name: Report contract (front-matter, tiers, evidence)
+        run: node tools/validate-reports.mjs

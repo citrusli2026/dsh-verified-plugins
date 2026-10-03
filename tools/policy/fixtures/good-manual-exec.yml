@@ -1,0 +1,20 @@
+# policy-expect: clean
+# The shape of verify.yml: the execution tier, manual-only, with an empty
+# permission set and no token reachable from the step that runs plugin code.
+name: good-manual-exec
+on:
+  workflow_dispatch:
+    inputs:
+      plugin:
+        description: Exact plugin spec to verify
+        required: true
+permissions: {}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - run: pnpm add "${{ inputs.plugin }}"
+      - run: dsh plugin --profile throwaway version-exemptions
