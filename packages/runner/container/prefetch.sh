@@ -19,7 +19,7 @@ node --input-type=module <<'NODE'
 import { readFileSync } from 'node:fs';
 const lock = readFileSync('pnpm-lock.yaml', 'utf8');
 const registryHost = new URL(process.env.npm_config_registry ?? 'https://registry.npmjs.org').host;
-const unsupported = /git\+|github:|file:|link:|workspace:/.test(lock);
+const unsupported = /(^|[\s'"({])(?:git\+|git:|github:|file:|link:|workspace:)/m.test(lock);
 const urls = [...lock.matchAll(/https?:\/\/[^\s,'"}\]]+/g)].map((match) => match[0]);
 const external = urls.filter((value) => {
   try { return new URL(value).host !== registryHost; }
