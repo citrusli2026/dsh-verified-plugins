@@ -38,6 +38,7 @@ for raw in "${LIST[@]}"; do
 done
 
 echo "suite: $TOTAL subject(s), image=$IMAGE, per-subject ceiling ${PER_SUBJECT_TIMEOUT_S}s"
+IMAGE_ID=$(docker image inspect "$IMAGE" --format '{{.Id}}') || exit 1
 FAILED=0
 DONE=0
 
@@ -154,7 +155,8 @@ for raw in "${LIST[@]}"; do
     continue
   fi
 
-  if ! VERIFIER_IMAGE="$IMAGE" node packages/cli/src/main.ts merge "$dir/static.json" "$dir/execution.json" \
+  if ! VERIFIER_IMAGE="$IMAGE" VERIFIER_IMAGE_DIGEST="$IMAGE_ID" \
+        node packages/cli/src/main.ts merge "$dir/static.json" "$dir/execution.json" \
         --out "$dir/report.json" >>"$dir/merge.log" 2>&1; then
     echo "   merge FAILED — see $dir/merge.log"
     FAILED=$((FAILED + 1))
