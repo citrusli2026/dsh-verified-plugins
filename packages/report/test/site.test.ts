@@ -56,6 +56,13 @@ test('badge: each verdict has its own colour and the disclaimer travels in the t
   assert.equal(seen.size, BADGE_VOCABULARY.length, 'the four states must be visually distinct');
 });
 
+test('badge: a historical execution carries its method limitation when shared alone', () => {
+  const svg = renderBadge('verified', { historicalMethod: true });
+  assert.match(svg, /Historical method limitation: this execution had network access/);
+  assert.match(svg, /aria-label="dsh plugin: verified; historical method limitation"/);
+  assert.doesNotMatch(renderBadge('verified'), /Historical method limitation/);
+});
+
 test('badge: interpolated values are escaped', () => {
   const svg = renderBadge('verified', { subject: '<script>alert(1)</script>' });
   assert.ok(!svg.includes('<script>'), 'a package name must not become markup');

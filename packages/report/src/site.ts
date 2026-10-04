@@ -15,7 +15,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { renderBadge, BADGE_VOCABULARY, escapeXml } from './badge.ts';
+import { renderBadge, BADGE_VOCABULARY, escapeXml, hasHistoricalMethod } from './badge.ts';
 import type { CatalogIndex } from './catalog.ts';
 
 /** Freshness is read from its own artifact; a report itself is never rewritten. */
@@ -71,10 +71,10 @@ ${body}
 `;
 }
 
-function verdictBadge(verdict: string, subject: string, href: string): string {
-  const svg = renderBadge(verdict, { subject });
+function verdictBadge(verdict: string, subject: string, href: string, historical: boolean): string {
+  const svg = renderBadge(verdict, { subject, historicalMethod: historical });
   // Inline the SVG so the page needs no extra request and no image hosting.
-  return `<a href="${escapeHtml(href)}" title="dsh-verified: ${escapeHtml(verdict)}">${svg}</a>`;
+  return `<a href="${escapeHtml(href)}">${svg}</a>`;
 }
 
 export function renderIndexPage(index: CatalogIndex, staleness?: StalenessView | null): string {
@@ -95,7 +95,7 @@ export function renderIndexPage(index: CatalogIndex, staleness?: StalenessView |
 
       return `<tr>
   <td><a href="./${escapeHtml(entry.repoPath)}.html">${escapeHtml(entry.reportId)}</a></td>
-  <td>${verdictBadge(entry.verdict, entry.reportId, `./${escapeHtml(entry.repoPath)}.html`)}</td>
+  <td>${verdictBadge(entry.verdict, entry.reportId, `./${escapeHtml(entry.repoPath)}.html`, hasHistoricalMethod(entry.generatedAt))}</td>
   <td class="muted">${escapeHtml(entry.dshVersion)}</td>
   <td>${freshnessCell}</td>
   <td>${dims}</td>
@@ -144,10 +144,8 @@ export function renderReportPage(
     freshness && freshness.status !== 'current'
       ? `<p><strong>${escapeHtml(freshness.status === 'stale' ? 'Stale' : 'Freshness unknown')}.</strong> ${escapeHtml(freshness.reasons.join(' '))}</p>`
       : '';
-  // Every report currently committed was produced before execution moved to
-  // a network-denied container. Keep the incident visible on those pages.
-  const networkIncident = typeof report.generatedAt === 'string' &&
-    report.generatedAt < '2026-10-04T00:00:00.000Z'
+  // Keep the incident visible on pages produced before network isolation.
+  const networkIncident = hasHistoricalMethod(report.generatedAt)
     ? '<p><strong>Method limitation.</strong> This historical execution used a container with network access and published container paths and replay fixture text. The no-egress and redaction conditions were not met. See <a href="https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/security.md#7-historical-network-incident">the security incident</a>.</p>'
     : '';
   const dims = report.dimensions as Record<string, any>;
@@ -227,7 +225,7 @@ ${capabilities
     report.reportId,
     `<p><a href="./index.html">← all reports</a></p>
 <h1>${escapeHtml(report.reportId)}</h1>
-<p>${verdictBadge(report.verdict, report.reportId, '#top')}</p>
+<p>${verdictBadge(report.verdict, report.reportId, '#top', hasHistoricalMethod(report.generatedAt))}</p>
 ${freshnessBanner}
 ${networkIncident}
 <p class="muted">${escapeHtml(subject.integrity ?? '')}</p>
@@ -364,7 +362,7 @@ export function buildSite(input: SiteInput, options: SiteOptions): SiteBuild {
     writeFileSync(join(out, `${slug}.json`), `${JSON.stringify(report, null, 2)}\n`);
     writeFileSync(
       join(out, 'badge', `${slug}.svg`),
-      renderBadge(report.verdict, { subject: report.reportId }),
+      renderBadge(report.verdict, { subject: report.reportId, historicalMethod: hasHistoricalMethod(report.generatedAt) }),
     );
     badges += 1;
   }

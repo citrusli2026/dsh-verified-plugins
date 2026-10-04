@@ -1,11 +1,11 @@
 {
   "schema": "dsh.plugin.report.v1",
   "reportId": "npm:@dingyi222666/dsh-session-notification@0.2.2",
-  "generatedAt": "2026-10-04T04:11:23.203Z",
+  "generatedAt": "2026-10-04T04:23:37.063Z",
   "verifier": {
     "name": "dsh-verified",
-    "version": "0.1.0",
-    "commit": "ab2bda32eb4278881b40ea9e6eccd6d2135607a4"
+    "version": "0.2.0",
+    "commit": "ebcdc3f5f302ea39a5f485742b3dbec8e8092c96"
   },
   "subject": {
     "spec": "@dingyi222666/dsh-session-notification@0.2.2",
@@ -28,8 +28,8 @@
   },
   "container": {
     "image": "dsh-verifier:0.2.0-rc.2",
-    "imageDigest": "sha256:b984c4a367059d1a48271f006a3b9cf9c8c581e7f96994fd890d767dd7b73295",
-    "notes": "network-denied execution container; install outcome: pass; later phases ran only where their dimensions say so"
+    "imageDigest": "sha256:0851dd733332d802c8f89aa34ead6662acc1c49309495d5ab0376150fd6670d0",
+    "notes": "network-denied execution container; install outcome: pass; fetch attempts: 1; execution attempts: 1; later phases ran only where their dimensions say so"
   },
   "verdict": "partial",
   "dimensions": {
@@ -61,7 +61,7 @@
       "status": "pass",
       "summary": "installed",
       "metrics": {
-        "durationMs": 1147,
+        "durationMs": 871,
         "exitCode": 0,
         "declaredPeers": null,
         "bundlesAfterInstall": [
@@ -86,7 +86,7 @@
       "summary": "Host loader rows active; browser client not observed",
       "metrics": {
         "bootBoundMs": 25000,
-        "durationMs": 25078,
+        "durationMs": 25059,
         "signal": null,
         "observedRows": 1,
         "activeRows": 1,
@@ -116,7 +116,7 @@
           "textEventCount": 1,
           "errorEventSeen": false,
           "exitCode": 0,
-          "durationMs": 1332,
+          "durationMs": 948,
           "eventCount": 7
         }
       },
@@ -153,9 +153,9 @@
       "metrics": {
         "samples": 6,
         "baseline": {
-          "atMs": 8044,
-          "rss": 199540736,
-          "heapUsed": 58393128,
+          "atMs": 8037,
+          "rss": 200040448,
+          "heapUsed": 58158840,
           "external": 4426614,
           "activeTotal": 10,
           "watchers": 7,
@@ -165,9 +165,9 @@
           "fds": 20
         },
         "activated": {
-          "atMs": 8043,
-          "rss": 200962048,
-          "heapUsed": 59216384,
+          "atMs": 8036,
+          "rss": 200212480,
+          "heapUsed": 58750152,
           "external": 4428342,
           "activeTotal": 11,
           "watchers": 8,
@@ -178,8 +178,8 @@
         },
         "delta": {
           "atMs": -1,
-          "rss": 1421312,
-          "heapUsed": 823256,
+          "rss": 172032,
+          "heapUsed": 591312,
           "external": 1728,
           "activeTotal": 1,
           "watchers": 1,
@@ -204,7 +204,7 @@
       "summary": "removed without residue",
       "metrics": {
         "residue": [],
-        "durationMs": 550
+        "durationMs": 388
       },
       "evidenceRefs": [
         "e-l6-remove"
@@ -302,7 +302,7 @@
       "kind": "command",
       "command": "resolve @dingyi222666/dsh-session-notification@0.2.2 -> @dingyi222666/dsh-session-notification@0.2.2",
       "exitCode": 0,
-      "durationMs": 486,
+      "durationMs": 335,
       "excerpt": "{\n  \"name\": \"@dingyi222666/dsh-session-notification\",\n  \"version\": \"0.2.2\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/@dingyi222666/dsh-session-notification/-/dsh-session-notification-0.2.2.tgz\",\n  \"advertisedIntegrity\": \"sha512-bD1QCZAq4I65qEaekN9LQNnW1mh3S1eHLfd1Cof3pduNcV3KuwoO05PT4nuuO9nCfSlEaUoxHOhSomaSR8r4pw==\",\n  \"publishedAt\": \"2026-09-30T05:58:28.966Z\"\n}"
     },
     {
@@ -310,7 +310,7 @@
       "kind": "artifact",
       "command": "fetch https://registry.npmjs.org/@dingyi222666/dsh-session-notification/-/dsh-session-notification-0.2.2.tgz",
       "exitCode": 0,
-      "durationMs": 117,
+      "durationMs": 26,
       "excerpt": "{\n  \"bytes\": 43504,\n  \"resolvedIntegrity\": \"sha512-bD1QCZAq4I65qEaekN9LQNnW1mh3S1eHLfd1Cof3pduNcV3KuwoO05PT4nuuO9nCfSlEaUoxHOhSomaSR8r4pw==\",\n  \"advertisedIntegrity\": \"sha512-bD1QCZAq4I65qEaekN9LQNnW1mh3S1eHLfd1Cof3pduNcV3KuwoO05PT4nuuO9nCfSlEaUoxHOhSomaSR8r4pw==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"c3dacb1daab82bc62548eb0b9c3af589ef2879c50e544a17bed0c82eba3a09bb\"\n}",
       "excerptBytes": 382,
       "sha256": "c3dacb1daab82bc62548eb0b9c3af589ef2879c50e544a17bed0c82eba3a09bb"
@@ -342,18 +342,18 @@
       "kind": "command",
       "command": "dsh plugin --profile verify add @dingyi222666/dsh-session-notification@0.2.2",
       "exitCode": 0,
-      "durationMs": 1147,
-      "excerpt": "Progress: resolved 1, reused 0, downloaded 0, added 0\n\ndependencies:\n+ @dingyi222666/dsh-session-notification 0.2.2\n\nPackages: +1\n+\nProgress: resolved 1, reused 1, downloaded 0, added 1, done\nDone in 404ms using pnpm v10.33.2\ndsh: initialized profile verify at <work>/dsh-home/profiles/verify\n",
+      "durationMs": 871,
+      "excerpt": "Progress: resolved 1, reused 0, downloaded 0, added 0\n\ndependencies:\n+ @dingyi222666/dsh-session-notification 0.2.2\n\nPackages: +1\n+\nProgress: resolved 1, reused 1, downloaded 0, added 1, done\nDone in 292ms using pnpm v10.33.2\ndsh: initialized profile verify at <work>/dsh-home/profiles/verify\n",
       "excerptBytes": 293,
       "truncated": false,
-      "sha256": "04a70238a7249768494f4da00a07e415b075a930a4b6d508ce21ddc2a41d39b1"
+      "sha256": "c9044a3e3357a2240ad098f96d6005f94f4b0b011c92a95563c5779f86b33121"
     },
     {
       "id": "e-l2-boot",
       "kind": "command",
       "command": "dsh --profile verify --patch <work>/fixtures/load/l2-overlay.yml",
       "exitCode": 0,
-      "durationMs": 25078,
+      "durationMs": 25059,
       "excerpt": "",
       "excerptBytes": 0,
       "truncated": false,
@@ -372,24 +372,24 @@
       "kind": "command",
       "command": "dsh plugin --profile verify remove @dingyi222666/dsh-session-notification",
       "exitCode": 0,
-      "durationMs": 550,
-      "excerpt": "\ndependencies:\n- @dingyi222666/dsh-session-notification 0.2.2\n\nAlready up to date\nDone in 341ms using pnpm v10.33.2\n",
+      "durationMs": 388,
+      "excerpt": "\ndependencies:\n- @dingyi222666/dsh-session-notification 0.2.2\n\nAlready up to date\nDone in 230ms using pnpm v10.33.2\n",
       "excerptBytes": 116,
       "truncated": false,
-      "sha256": "b262c4574d06f95f75eecc3b16ce6d4dad06bd4d7d6193b3bc9eec1885204348"
+      "sha256": "566901c58d6897d1ee5ab420c07370b942ddcfd519a3c64516a3b409f328bd02"
     },
     {
       "id": "e-l5-overhead",
       "kind": "sample",
       "command": "dsh --profile <baseline|activated> with the host sampler injected via NODE_OPTIONS=--import",
-      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8044,\n    \"rss\": 199540736,\n    \"heapUsed\": 58393128,\n    \"external\": 4426614,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8043,\n    \"rss\": 200962048,\n    \"heapUsed\": 59216384,\n    \"external\": 4428342,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 23,\n    \"libuvActiveHandles\": 18,\n    \"fds\": 20\n  },\n  \"delta\": {\n    \"atMs\": -1,\n    \"rss\": 1421312,\n    \"heapUsed\": 823256,\n    \"external\": 1728,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 1,\n    \"libuvActiveHandles\": 1,\n    \"fds\": 0\n  },\n  \"significant\": []\n}"
+      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8037,\n    \"rss\": 200040448,\n    \"heapUsed\": 58158840,\n    \"external\": 4426614,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8036,\n    \"rss\": 200212480,\n    \"heapUsed\": 58750152,\n    \"external\": 4428342,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 23,\n    \"libuvActiveHandles\": 18,\n    \"fds\": 20\n  },\n  \"delta\": {\n    \"atMs\": -1,\n    \"rss\": 172032,\n    \"heapUsed\": 591312,\n    \"external\": 1728,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 1,\n    \"libuvActiveHandles\": 1,\n    \"fds\": 0\n  },\n  \"significant\": []\n}"
     },
     {
       "id": "e-l3-session",
       "kind": "command",
       "command": "dsh --profile l3 --patch <work>/fixtures/replay/l3-overlay.yml --json reply with any text",
       "exitCode": 0,
-      "durationMs": 1332,
+      "durationMs": 948,
       "excerpt": "{\"type\":\"session\",\"sessionId\":\"[redacted:session-content]\",\"cwd\":\"<work>\"}\n{\"type\":\"status\",\"phase\":\"turn_start\",\"turn\":1}\n{\"type\":\"status\",\"phase\":\"step_start\",\"turn\":1,\"step\":1}\n{\"type\":\"text\",\"text\":\"[redacted:session-content]\"}\n{\"type\":\"status\",\"phase\":\"step_end\",\"turn\":1,\"step\":1}\n{\"type\":\"status\",\"phase\":\"turn_end\",\"turn\":1,\"reason\":{\"kind\":\"completed\"}}\n{\"type\":\"final\",\"text\":\"[redacted:session-content]\"}\n",
       "excerptBytes": 416,
       "truncated": false,
@@ -440,9 +440,9 @@
     "status": "no-significant-delta",
     "samples": 6,
     "baseline": {
-      "atMs": 8044,
-      "rss": 199540736,
-      "heapUsed": 58393128,
+      "atMs": 8037,
+      "rss": 200040448,
+      "heapUsed": 58158840,
       "external": 4426614,
       "activeTotal": 10,
       "watchers": 7,
@@ -452,9 +452,9 @@
       "fds": 20
     },
     "activated": {
-      "atMs": 8043,
-      "rss": 200962048,
-      "heapUsed": 59216384,
+      "atMs": 8036,
+      "rss": 200212480,
+      "heapUsed": 58750152,
       "external": 4428342,
       "activeTotal": 11,
       "watchers": 8,
@@ -465,8 +465,8 @@
     },
     "delta": {
       "atMs": -1,
-      "rss": 1421312,
-      "heapUsed": 823256,
+      "rss": 172032,
+      "heapUsed": 591312,
       "external": 1728,
       "activeTotal": 1,
       "watchers": 1,

@@ -1,7 +1,7 @@
 /**
  * catalog.ts — the published product shape.
  *
- * `catalog/` holds one report per verified subject plus a generated
+ * `catalog/` holds one report per reported subject plus a generated
  * `index.json`. The index is *derived* and never hand-edited: a stale index is
  * a lie about coverage, so it is rebuilt and validated in the same step.
  *

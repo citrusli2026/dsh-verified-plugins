@@ -1,6 +1,6 @@
 {
   "schema": "dsh.verifier.staleness.v1",
-  "generatedAt": "2026-10-04T04:14:54.489Z",
+  "generatedAt": "2026-10-04T04:27:02.841Z",
   "registry": "https://registry.npmjs.org",
   "runtimeVersion": "0.2.0-rc.2",
   "counts": {

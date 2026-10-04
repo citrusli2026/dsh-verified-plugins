@@ -27,7 +27,7 @@ import { buildCatalogIndex, INDEX_SCHEMA, summariseReport } from '../../report/s
 import { mergeExecution, type ExecutionResult } from '../../report/src/merge.ts';
 import { searchPackageNames, survey } from '../../collector/src/survey.ts';
 import { buildSite, renderSurveyPage, slugFor } from '../../report/src/site.ts';
-import { renderBadge } from '../../report/src/badge.ts';
+import { renderBadge, hasHistoricalMethod } from '../../report/src/badge.ts';
 import { assessStaleness, type StalenessInput } from '../../collector/src/staleness.ts';
 import { AmendmentError, amendReport, describeDiff } from '../../report/src/amend.ts';
 import { RegistryError } from '../../collector/src/registry.ts';
@@ -322,7 +322,10 @@ function commandBadge(args: ParsedArgs): number {
     return 2;
   }
   const report = JSON.parse(readFileSync(file, 'utf8')) as Record<string, any>;
-  const svg = renderBadge(String(report.verdict), { subject: String(report.reportId ?? '') });
+  const svg = renderBadge(String(report.verdict), {
+    subject: String(report.reportId ?? ''),
+    historicalMethod: hasHistoricalMethod(report.generatedAt),
+  });
   const out = args.flags.get('out');
   if (out) {
     mkdirSync(dirname(out), { recursive: true });

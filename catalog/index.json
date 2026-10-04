@@ -1,6 +1,6 @@
 {
   "schema": "dsh.plugin.catalog.v1",
-  "generatedAt": "2026-10-04T04:14:43.113Z",
+  "generatedAt": "2026-10-04T04:26:55.497Z",
   "counts": {
     "total": 25,
     "byVerdict": {
@@ -41,7 +41,7 @@
       "version": "0.2.2",
       "verdict": "partial",
       "path": "catalog/npm/dingyi222666__dsh-session-notification.json",
-      "generatedAt": "2026-10-04T04:11:23.203Z",
+      "generatedAt": "2026-10-04T04:23:37.063Z",
       "integrity": "sha512-bD1QCZAq4I65qEaekN9LQNnW1mh3S1eHLfd1Cof3pduNcV3KuwoO05PT4nuuO9nCfSlEaUoxHOhSomaSR8r4pw==",
       "dshVersion": "0.2.0-rc.2",
       "dimensions": {
