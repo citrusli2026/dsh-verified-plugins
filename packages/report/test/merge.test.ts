@@ -76,7 +76,7 @@ function execution(overrides: Partial<ExecutionResult> = {}): ExecutionResult {
     },
     L2_load: {
       status: 'pass', reason: 'one subject row active', detail: 'inventory read', diagnostics: '',
-      observation: { found: true, enabled: true, error: null, overrides: [],
+      observation: { found: true, enabled: true, error: null, overrides: [], browserClientDeclared: false,
         rows: [{ rowId: 'subject', entryId: 'subject', enabled: true, fiberPhase: 'active' }] },
     },
     L6_uninstall: { status: 'pass', reason: 'removed without residue', detail: 'clean', residue: [] },
@@ -103,6 +103,14 @@ test('merge: execution replaces the skipped dimensions with real statuses', () =
 test('merge: a load pass without active subject fiber evidence is downgraded', () => {
   const result = execution();
   delete result.L2_load.observation;
+  const merged = mergeExecution(staticReport(), result);
+  assert.equal(merged.dimensions.L2_load.status, 'inconclusive');
+  assert.deepEqual(validateReport(merged, SCHEMA), []);
+});
+
+test('merge: Host fibers cannot earn L2 pass for an unobserved browser client', () => {
+  const result = execution();
+  result.L2_load.observation!.browserClientDeclared = true;
   const merged = mergeExecution(staticReport(), result);
   assert.equal(merged.dimensions.L2_load.status, 'inconclusive');
   assert.deepEqual(validateReport(merged, SCHEMA), []);

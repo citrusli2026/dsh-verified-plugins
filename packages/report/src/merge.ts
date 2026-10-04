@@ -48,6 +48,7 @@ export interface ExecutionResult {
   L2_load: {
     status: string; reason: string; detail: string; diagnostics: string;
     observation?: { found?: boolean; enabled?: boolean; error?: string | null; overrides?: string[];
+      browserClientDeclared?: boolean | null;
       rows: Array<{ rowId: string; entryId: string | null; enabled: boolean; fiberPhase: string | null }> } | null;
   };
   L3_run?: {
@@ -133,10 +134,10 @@ function l5Skipped(): Dimension {
   return {
     id: 'L5',
     status: 'skip',
-    summary: 'not run: differential overhead sampling is not implemented yet',
+    summary: 'not run: the execution result carried no overhead samples',
     evidenceRefs: [],
     notes: [
-      'reporting an overhead figure here would mean inventing one; the dimension stays visible as not having run',
+      'reporting an overhead figure without samples would mean inventing one',
     ],
   };
 }
@@ -261,6 +262,7 @@ export function mergeExecution(
 
   const l2 = execution.L2_load;
   const observedLoadPass = l2.observation?.found && l2.observation.enabled && !l2.observation.error &&
+    l2.observation.browserClientDeclared === false &&
     l2.observation.rows.length > 0 && l2.observation.rows.every((row) =>
       row.entryId && row.enabled && row.fiberPhase === 'active');
   if (l2.status === 'skip') {
@@ -290,12 +292,13 @@ export function mergeExecution(
         signal: l2Step.signal,
         observedRows: l2.observation?.rows.length ?? null,
         activeRows: l2.observation?.rows.filter((row) => row.enabled && row.fiberPhase === 'active').length ?? null,
+        browserClientDeclared: l2.observation?.browserClientDeclared ?? null,
       },
       evidenceRefs: ['e-l2-boot', ...(l2.observation ? ['e-l2-inventory'] : [])],
       notes: [
         redactRunText(l2.detail),
         l2.observation
-          ? 'the subject bundle rows and their fiber phases were read from the running plugin manager'
+          ? 'Host bundle rows were read from the running plugin manager; browser client execution requires separate evidence'
           : 'the loader inventory was unavailable; process lifetime alone did not earn a load pass',
       ],
     };

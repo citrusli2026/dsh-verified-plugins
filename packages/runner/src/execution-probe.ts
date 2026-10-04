@@ -11,8 +11,7 @@
  * evidence in docs/evidence/V3.md). Nothing is assumed about a pre-1.0 internal
  * API — the executor drives the published CLI and reads what it prints.
  *
- * L5 (overhead sampling) is deliberately NOT implemented here yet: it is V3's
- * subject, and reporting a number this round would mean inventing one.
+ * L5 samples the running Host through the first-party sampler fixture.
  */
 
 import { spawnSync } from 'node:child_process';
@@ -219,6 +218,7 @@ interface L2Observation {
   found?: boolean;
   enabled?: boolean;
   error?: string | null;
+  browserClientDeclared?: boolean | null;
   overrides?: string[];
   rows: Array<{ rowId: string; entryId: string | null; enabled: boolean; fiberPhase: string | null }>;
 }
@@ -235,7 +235,8 @@ interface L2Observation {
  * optional fetch failure while loading successfully in the network-denied
  * container; matching any line containing the subject and "failed" made L2
  * falsely fail. DSH's skipped-bundle and failed-entry diagnostics are the
- * signals used here. The fiber phase remains unobserved directly.
+ * signals used here. A separate inventory fixture supplies direct Host fiber
+ * phases; diagnostics still catch startup errors outside the subject rows.
  */
 const FAILURE_SHAPES = [
   /failed to load/i,
@@ -259,11 +260,9 @@ function failureDiagnostics(text: string): string[] {
 /**
  * Load: boot the profile under a wall-clock bound.
  *
- * Observed behaviour (evidence in docs/evidence/V3.md): a healthy composition
- * boots, mounts and waits, so the bound reaches it and DSH shuts down
- * gracefully. A composition whose plugins fail to load reports them, and a
- * failed *required* entry exits non-zero. The classifier keys on failure-shaped
- * diagnostics, never on the mere presence of output.
+ * A healthy composition stays alive until the bound. Passing now also requires
+ * a direct active-fiber snapshot for every declared Host row. Missing browser
+ * execution keeps a dual-face plugin inconclusive.
  */
 function classifyBoot(step: StepResult, observation: L2Observation | null): L2Outcome {
   const text = step.excerpt.trim();
@@ -296,8 +295,9 @@ function classifyBoot(step: StepResult, observation: L2Observation | null): L2Ou
     };
   }
   if (!observation.found || observation.error) return {
-    status: 'fail', reason: observation.error ?? 'the subject bundle is absent from the inventory',
-    detail: 'the running plugin manager did not report a usable subject bundle', diagnostics: text, observation,
+    status: observation.error ? 'inconclusive' : 'fail',
+    reason: observation.error ? 'the loader inventory probe failed' : 'the subject bundle is absent from the inventory',
+    detail: observation.error ?? 'the running plugin manager did not report the subject bundle', diagnostics: text, observation,
   };
   if (!observation.enabled || observation.rows.length === 0 || observation.rows.some((row) => !row.enabled)) return {
     status: 'inconclusive', reason: 'no complete enabled subject row set was observed',
@@ -308,6 +308,11 @@ function classifyBoot(step: StepResult, observation: L2Observation | null): L2Ou
     status: inactive.some((row) => row.fiberPhase === 'failed' || !row.entryId) ? 'fail' : 'inconclusive',
     reason: `${inactive.length} subject loader row(s) did not reach active`,
     detail: 'each declared bundle row must map to a live Loader entry with an active fiber', diagnostics: text, observation,
+  };
+  if (observation.browserClientDeclared !== false) return {
+    status: 'inconclusive', reason: 'Host loader rows active; browser client not observed',
+    detail: 'the subject declares dsh.client or its manifest could not be read; no browser client fiber was measured',
+    diagnostics: text, observation,
   };
   return {
     status: 'pass', reason: `${observation.rows.length} subject loader row(s) active`,
@@ -688,6 +693,12 @@ if (l1.status === 'pass') {
   });
   let observation: L2Observation | null = null;
   try { observation = JSON.parse(readFileSync(l2Snapshot, 'utf8')) as L2Observation; } catch { /* no observation */ }
+  if (observation) {
+    try {
+      const manifest = JSON.parse(readFileSync(join(profileDir, 'node_modules', subjectName, 'package.json'), 'utf8'));
+      observation.browserClientDeclared = Boolean(manifest.dsh?.client);
+    } catch { observation.browserClientDeclared = null; }
+  }
   l2 = classifyBoot(l2Step, observation);
 
   // --- L3: a keyless session ----------------------------------------------

@@ -108,31 +108,39 @@ bypass the check; it is a user decision and the verifier never takes it.
 
 **Question:** do the Host and Client halves actually come up?
 
-Pass requires the loader entries for the subject to reach the `active` fiber
-phase with no error. The supporting fact, documented by DSH itself: **a profile
-whose own plugins fail to load exits before the agent runner mounts**, keeping
-only the loader's stderr diagnostics. Load failure is therefore observable in
-an exit status and a log, with no model call.
+Pass requires the loader entries declared by the subject's bundle to reach the
+`active` fiber phase with no error **and** no unobserved browser half. The verifier mounts its own read-only
+inventory fixture alongside the subject. Once the Loader settles, that fixture
+reads `pluginManager.listBundles()` for the subject's declared rows and
+`pluginManager.listPlugins()` for each row's live `fiberPhase`. The report links
+both the boot command and the inventory snapshot. A missing inventory is
+`inconclusive`; process lifetime by itself cannot earn a pass.
 
 `pluginInventory/list` gives the phase (`pending`, `loading`, `active`,
 `failed`, `unloading`, `null`). It is a point-in-time projection with **no
 history**, so an absent row is not evidence of a clean load.
 
-**How the current implementation observes it, and its limits.** The executor
-boots the profile under a wall-clock bound and classifies the outcome from
-failure-shaped diagnostics — DSH's own *failed to load*, skipped-bundle and
-entry-failure reports, `ERR_` codes, stack frames:
+The executor also checks failure-shaped diagnostics — DSH's own *failed to
+load*, skipped-bundle and entry-failure reports, `ERR_` codes, stack frames:
 
-- no failure diagnostics while the process stays alive to the bound → pass;
-- a failure diagnostic, or a non-zero exit → fail.
+- every enabled declared row has a live entry whose fiber is `active`, with no
+  failure diagnostic, and the package declares no browser client → pass;
+- an absent subject bundle, failed fiber, missing declared row, failure
+  diagnostic, or non-zero early exit → fail;
+- missing inventory, no directly observable enabled rows, a row still loading
+  when the Loader settles, or a declared `dsh.client` whose browser fiber was
+  not executed → `inconclusive`.
 
 Two traps this had to learn from real runs, both of which produced **false
 failures** before they were fixed: DSH installs a SIGTERM handler that shuts
 down gracefully with exit **0**, so hitting the bound is not an early exit; and
 plugins log on success (`[dsh-cost-meter] 已加载…`), so the presence of output
-is not an error. The fiber phase is therefore **not read directly**, and every
-report says so in `limits[]`. Reading it directly needs the plugin-inventory
-projection or a host-side loader probe, and remains open.
+is not an error. The 24 historical reports were produced by the older
+exit-and-diagnostics inference; see `docs/security.md` § 7. Rows contributed
+only through a later agent-preset composition are outside this boot snapshot,
+so a subject with no directly observable rows remains `inconclusive`. A browser
+client needs a separate isolated browser run; a Host row becoming active does
+not prove that its JavaScript registered in a browser.
 
 ### L3 — Run
 
@@ -317,7 +325,7 @@ evidence into a claim.
 |---|---|---|---|---|
 | FP-1 | L6 "removed without residue" | the profile was read from `$DSH_HOME/<name>` instead of `$DSH_HOME/profiles/<name>`, so the directory it cleared was never the one it inspected | first execution run | **fixed** — L6 reports `inconclusive` when the profile cannot be read |
 | FP-2 | L1–L6 all `pass` on `@morlay/session-branch` | the package declares no bundle, installs as a plain dependency, is never composed; every dimension measured the subject's absence and called it success | first 4-subject batch | **fixed** — the L0 pre-filter forces `skip` in the merge *and* before a container starts |
-| FP-3 | L2 "booted, mounted and stayed alive" | inferred from the *absence* of failure diagnostics, not from a read fiber phase; a plugin can load and misbehave | by construction, on review | **open** — stated in every report's `limits[]` |
+| FP-3 | L2 "booted, mounted and stayed alive" | inferred from the *absence* of failure diagnostics, not from a read fiber phase; a plugin can load and misbehave | by construction, on review | **corrected for new Host measurements** — the running plugin manager supplies fiber phases; declared browser clients remain `inconclusive` until an isolated browser observes them. Historical reports are unchanged. |
 
 The pattern in FP-1 and FP-2 is identical: **a pass derived from the absence of
 a failure rather than the presence of the subject.** Both were found by running
