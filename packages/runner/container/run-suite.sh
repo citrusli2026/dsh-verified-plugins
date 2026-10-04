@@ -112,9 +112,12 @@ for raw in "${LIST[@]}"; do
       exit 1
     }
   deadline=$((started + PER_SUBJECT_TIMEOUT_S))
-  remaining=$((deadline - $(date +%s)))
+  prefetch_attempts=0
   prefetch_rc=124
-  if [ "$remaining" -gt 0 ]; then
+  while [ "$prefetch_attempts" -lt 2 ]; do
+    remaining=$((deadline - $(date +%s)))
+    [ "$remaining" -gt 0 ] || break
+    prefetch_attempts=$((prefetch_attempts + 1))
     prefetch_rc=0
     prefetch_name="fetch-$DONE"
     docker rm -f "$prefetch_name" >/dev/null 2>&1 || true
@@ -129,13 +132,15 @@ for raw in "${LIST[@]}"; do
       "$IMAGE" /work/prefetch.sh "$exact_spec" "${DSH_VERSION:-0.2.0-rc.2}" \
       >"$dir/prefetch.log" 2>&1 || prefetch_rc=$?
     docker rm -f "$prefetch_name" >/dev/null 2>&1 || true
-  fi
+    # A policy refusal is deterministic; only operational fetch failures retry.
+    [ "$prefetch_rc" -ne 0 ] && [ "$prefetch_rc" -ne 4 ] || break
+  done
   if [ "$prefetch_rc" -ne 0 ]; then
     echo "   prefetch BLOCKED — see $dir/prefetch.log"
     [ -f "$dir/prefetch.log" ] && print_excerpt "$dir/prefetch.log"
     node packages/report/src/orchestration-failure.ts "$dir/static.json" "$dir/report.json" \
       prefetch "$prefetch_rc" "$(( ($(date +%s) - started) * 1000 ))" \
-      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}"
+      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}" "$prefetch_attempts"
     docker rm -f "$cacheholder" >/dev/null
     docker volume rm -f "$cachevol" >/dev/null
     FAILED=$((FAILED + 1))
@@ -148,7 +153,7 @@ for raw in "${LIST[@]}"; do
     echo "   subject ceiling reached before execution"
     node packages/report/src/orchestration-failure.ts "$dir/static.json" "$dir/report.json" \
       execution 124 "$(( ($(date +%s) - started) * 1000 ))" \
-      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}"
+      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}" 0
     docker rm -f "$cacheholder" >/dev/null
     docker volume rm -f "$cachevol" >/dev/null
     FAILED=$((FAILED + 1))
@@ -157,10 +162,16 @@ for raw in "${LIST[@]}"; do
   fi
 
   # The subject can execute only here, with Docker's network namespace absent.
-  cname="suite-$DONE"
-  docker rm -f "$cname" >/dev/null 2>&1 || true
+  execution_attempts=0
   execution_rc=0
-  timeout --signal=KILL "$remaining" docker run --name "$cname" --network none \
+  while [ "$execution_attempts" -lt 2 ]; do
+    remaining=$((deadline - $(date +%s)))
+    if [ "$remaining" -le 0 ]; then execution_rc=124; break; fi
+    execution_attempts=$((execution_attempts + 1))
+    cname="suite-$DONE-$execution_attempts"
+    docker rm -f "$cname" >/dev/null 2>&1 || true
+    execution_rc=0
+    timeout --signal=KILL "$remaining" docker run --name "$cname" --network none \
     --read-only --cpus 2 --memory 2g --memory-swap 2g --pids-limit 256 \
     --tmpfs /tmp:rw,size=256m,mode=1777 \
     --tmpfs /home/verifier:rw,size=256m,uid=10001,gid=10001 \
@@ -181,23 +192,28 @@ for raw in "${LIST[@]}"; do
     -v "$PWD/packages/runner/src/host-sampler.mjs:/work/host-sampler.mjs:ro" \
     -v "$PWD/packages/runner/fixtures:/work/fixtures:ro" \
     -v "$cachevol:/work/cache" \
-    "$IMAGE" /work/execution-probe.ts "$exact_spec" >"$dir/execution.json" 2>"$dir/execution.log" || execution_rc=$?
-  docker rm -f "$cname" >/dev/null 2>&1 || true
+      "$IMAGE" /work/execution-probe.ts "$exact_spec" >"$dir/execution.json" 2>"$dir/execution.log" || execution_rc=$?
+    docker rm -f "$cname" >/dev/null 2>&1 || true
+    if [ "$execution_rc" -eq 0 ] && node -e "JSON.parse(require('node:fs').readFileSync(process.argv[1], 'utf8'))" "$dir/execution.json" >/dev/null 2>&1; then
+      break
+    fi
+  done
   docker rm -f "$cacheholder" >/dev/null
   docker volume rm -f "$cachevol" >/dev/null
 
-  if ! node -e "JSON.parse(require('node:fs').readFileSync(process.argv[1], 'utf8'))" "$dir/execution.json" >/dev/null 2>&1; then
+  if [ "$execution_rc" -ne 0 ] || ! node -e "JSON.parse(require('node:fs').readFileSync(process.argv[1], 'utf8'))" "$dir/execution.json" >/dev/null 2>&1; then
     echo "   execution produced no result — see $dir/execution.log"
     print_excerpt "$dir/execution.log"
     node packages/report/src/orchestration-failure.ts "$dir/static.json" "$dir/report.json" \
       execution "$execution_rc" "$(( ($(date +%s) - started) * 1000 ))" \
-      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}"
+      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}" "$execution_attempts"
     FAILED=$((FAILED + 1))
     printf '%s\texecution-failed\t%s\n' "$spec" "$(( $(date +%s) - started ))" >> "$OUTROOT/timings.tsv"
     continue
   fi
 
   if ! VERIFIER_IMAGE="$IMAGE" VERIFIER_IMAGE_DIGEST="$IMAGE_ID" \
+        VERIFIER_PREFETCH_ATTEMPTS="$prefetch_attempts" VERIFIER_EXECUTION_ATTEMPTS="$execution_attempts" \
         node packages/cli/src/main.ts merge "$dir/static.json" "$dir/execution.json" \
         --out "$dir/report.json" >>"$dir/merge.log" 2>&1; then
     echo "   merge FAILED — see $dir/merge.log"

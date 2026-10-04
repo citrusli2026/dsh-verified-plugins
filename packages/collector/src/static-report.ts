@@ -23,7 +23,7 @@ import { deriveVerdict, DISCLAIMER, type Dimension, type EvidenceEntry } from '.
 import { makeExcerpt } from '../../report/src/redact.ts';
 
 export const VERIFIER_NAME = 'dsh-verified';
-export const VERIFIER_VERSION = '0.1.0';
+export const VERIFIER_VERSION = '0.2.0';
 
 /** Value used when no DSH runtime was executed. Never guess a version. */
 export const NOT_EXECUTED = 'not-executed';

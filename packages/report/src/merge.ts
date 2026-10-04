@@ -445,7 +445,7 @@ export function mergeExecution(
     ...report.container,
     image: process.env.VERIFIER_IMAGE ?? report.container?.image ?? 'unknown',
     imageDigest: process.env.VERIFIER_IMAGE_DIGEST ?? null,
-    notes: `network-denied execution container; install outcome: ${l1Status}; later phases ran only where their dimensions say so`,
+    notes: `network-denied execution container; install outcome: ${l1Status}; fetch attempts: ${process.env.VERIFIER_PREFETCH_ATTEMPTS ?? 1}; execution attempts: ${process.env.VERIFIER_EXECUTION_ATTEMPTS ?? 1}; later phases ran only where their dimensions say so`,
   };
 
   report.verdict = deriveVerdict(dims as Record<DimensionKey, Dimension>);

@@ -16,6 +16,7 @@ export function orchestrationFailure(
   image: string,
   imageDigest: string,
   dshVersion: string,
+  attempts = 1,
 ): Record<string, any> {
   const report = structuredClone(staticReport);
   const timedOut = exitCode === 124;
@@ -27,7 +28,7 @@ export function orchestrationFailure(
   report.runtime.dshVersion = dshVersion;
   report.container = {
     image, imageDigest,
-    notes: 'the failed attempt was isolated; no execution dimension is inferred from missing output',
+    notes: `${attempts} ${phase} attempt(s); the failed attempt was isolated; no execution dimension is inferred from missing output`,
   };
   report.evidence.push({
     id: 'e-orchestration', kind: 'command',
@@ -51,13 +52,13 @@ export function orchestrationFailure(
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const [staticPath, outPath, phase, rc, duration, image, digest, dshVersion] = process.argv.slice(2);
+  const [staticPath, outPath, phase, rc, duration, image, digest, dshVersion, attempts] = process.argv.slice(2);
   if (!staticPath || !outPath || !['prefetch', 'execution'].includes(phase) || !image || !digest || !dshVersion) {
-    throw new Error('usage: orchestration-failure.ts <static> <out> <prefetch|execution> <rc> <ms> <image> <digest> <dsh-version>');
+    throw new Error('usage: orchestration-failure.ts <static> <out> <prefetch|execution> <rc> <ms> <image> <digest> <dsh-version> [attempts]');
   }
   const report = orchestrationFailure(
     JSON.parse(readFileSync(staticPath, 'utf8')),
-    phase as 'prefetch' | 'execution', Number(rc), Number(duration), image, digest, dshVersion,
+    phase as 'prefetch' | 'execution', Number(rc), Number(duration), image, digest, dshVersion, Number(attempts ?? 1),
   );
   const issues = validateReport(report, loadSchema('schemas/dsh.plugin.report.v1.schema.json'));
   if (issues.length > 0) throw new Error(JSON.stringify(issues));

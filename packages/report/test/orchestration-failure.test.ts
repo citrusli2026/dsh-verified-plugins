@@ -33,12 +33,13 @@ test('a prefetch failure produces a valid report without execution claims', () =
 });
 
 test('a killed execution produces timeout conclusions backed by its exit code', () => {
-  const report = orchestrationFailure(staticReport, 'execution', 124, 420000, 'image', 'sha256:abc', '0.2.0-rc.2');
+  const report = orchestrationFailure(staticReport, 'execution', 124, 420000, 'image', 'sha256:abc', '0.2.0-rc.2', 2);
   assert.deepEqual(validateReport(report, schema), []);
   for (const key of ['L1_install', 'L2_load', 'L3_run', 'L5_overhead', 'L6_uninstall']) {
     assert.equal(report.dimensions[key].status, 'timeout');
     assert.deepEqual(report.dimensions[key].evidenceRefs, ['e-orchestration']);
   }
   assert.equal(report.evidence.at(-1).exitCode, 124);
+  assert.match(report.container.notes, /2 execution attempt/);
   assert.equal(report.verdict, 'partial');
 });
