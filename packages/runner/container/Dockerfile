@@ -53,6 +53,8 @@ COPY runtime-facts.mjs /opt/dsh-runtime-facts/runtime-facts.mjs
 RUN npm install --global \
       --allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,node-addon-require-builtin,@google/genai,protobufjs \
       "@deepseek-ai/dsh@${DSH_VERSION}" > /opt/dsh-runtime-facts/npm-install.log 2>&1 \
+ && cd /usr/local/lib/node_modules/@deepseek-ai/dsh/node_modules/node-addon-require-builtin \
+ && npm rebuild --foreground-scripts \
  && node /opt/dsh-runtime-facts/runtime-facts.mjs \
  && npm cache clean --force \
  && rm -rf /tmp/npm-cache
