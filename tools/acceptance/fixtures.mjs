@@ -77,8 +77,13 @@ function safeEnv(home) {
 
 function nativeProbe(home) {
   const result = spawnSync(process.execPath, ['-e', [
-    "const binding = require('/usr/local/lib/node_modules/@deepseek-ai/dsh/node_modules/node-addon-require-builtin');",
-    'console.log(JSON.stringify(binding.getBindingInfo()));',
+    "try {",
+    "  const binding = require('/usr/local/lib/node_modules/@deepseek-ai/dsh/node_modules/node-addon-require-builtin');",
+    '  console.log(JSON.stringify({ ok: true, info: binding.getBindingInfo() }));',
+    '} catch (error) {',
+    "  console.log(JSON.stringify({ ok: false, message: error.message, attempts: error.attempts }, null, 2));",
+    '  process.exitCode = 1;',
+    '}',
   ].join('\n')], {
     cwd: WORK,
     encoding: 'utf8',
@@ -86,7 +91,7 @@ function nativeProbe(home) {
     maxBuffer: 512 * 1024,
     env: safeEnv(home),
   });
-  return clean(`${result.stdout ?? ''}${result.stderr ?? ''}`, 4096)
+  return clean(`${result.stdout ?? ''}${result.stderr ?? ''}`, 12000)
     .replaceAll(WORK, '<temp>');
 }
 
