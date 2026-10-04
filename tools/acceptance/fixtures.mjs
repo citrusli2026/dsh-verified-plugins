@@ -41,22 +41,14 @@ function clean(text, max = 1024) {
 function runDsh(home, args, extraEnv = {}, timeout = 30_000) {
   const caseHome = join(home, 'process-home');
   mkdirSync(caseHome, { recursive: true });
-  const safeEnv = {
-    PATH: process.env.PATH,
-    LANG: process.env.LANG,
-    TMPDIR: process.env.TMPDIR,
-  };
   const result = spawnSync('dsh', args, {
     cwd: WORK,
     encoding: 'utf8',
     timeout,
     maxBuffer: 4 * 1024 * 1024,
     env: {
-      ...safeEnv,
+      ...safeEnv(caseHome),
       DSH_HOME: home,
-      HOME: caseHome,
-      XDG_CONFIG_HOME: join(caseHome, '.config'),
-      NPM_CONFIG_USERCONFIG: join(caseHome, 'missing.npmrc'),
       CI: '1',
       ...extraEnv,
     },
@@ -70,6 +62,32 @@ function runDsh(home, args, extraEnv = {}, timeout = 30_000) {
       .replaceAll(FIXTURE_ROOT, '<fixtures>')
       .replaceAll(WORK, '<temp>'),
   };
+}
+
+function safeEnv(home) {
+  return {
+    PATH: process.env.PATH,
+    LANG: process.env.LANG,
+    TMPDIR: process.env.TMPDIR,
+    HOME: home,
+    XDG_CONFIG_HOME: join(home, '.config'),
+    NPM_CONFIG_USERCONFIG: join(home, 'missing.npmrc'),
+  };
+}
+
+function nativeProbe(home) {
+  const result = spawnSync(process.execPath, ['-e', [
+    "const binding = require('/usr/local/lib/node_modules/@deepseek-ai/dsh/node_modules/node-addon-require-builtin');",
+    'console.log(JSON.stringify(binding.getBindingInfo()));',
+  ].join('\n')], {
+    cwd: WORK,
+    encoding: 'utf8',
+    timeout: 10_000,
+    maxBuffer: 512 * 1024,
+    env: safeEnv(home),
+  });
+  return clean(`${result.stdout ?? ''}${result.stderr ?? ''}`)
+    .replaceAll(WORK, '<temp>');
 }
 
 function profile(home) {
@@ -124,10 +142,11 @@ function normal() {
   const addResult = add(home, 'normal');
   expect(addResult.exitCode === 0, `normal add failed: ${addResult.output}`);
   expect(bundleNames(home).includes('dsh-fixture-normal'), 'normal bundle was not selected');
+  const nativeResult = nativeProbe(home);
   const bootResult = boot(home, { FIXTURE_ACTIVATION_PATH: marker });
   expect(
     existsSync(marker),
-    `normal fixture did not execute during profile boot: exit=${bootResult.exitCode} signal=${bootResult.signal} timedOut=${bootResult.timedOut} bundles=${JSON.stringify(bundleNames(home))} output=${bootResult.output}`,
+    `normal fixture did not execute during profile boot: exit=${bootResult.exitCode} signal=${bootResult.signal} timedOut=${bootResult.timedOut} bundles=${JSON.stringify(bundleNames(home))} nativeProbe=${nativeResult} output=${bootResult.output}`,
   );
   const removeResult = remove(home, 'dsh-fixture-normal');
   expect(removeResult.exitCode === 0, `normal remove failed: ${removeResult.output}`);
