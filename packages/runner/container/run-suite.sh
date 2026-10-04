@@ -102,6 +102,7 @@ for raw in "${LIST[@]}"; do
   remaining=$((deadline - $(date +%s)))
   if [ "$remaining" -le 0 ] || ! timeout --signal=KILL "$remaining" docker run --rm \
     --entrypoint /bin/bash \
+    -e XDG_CACHE_HOME=/work/cache/xdg \
     -v "$PWD/packages/runner/container/prefetch.sh:/work/prefetch.sh:ro" \
     -v "$cachevol:/work/cache" \
     "$IMAGE" /work/prefetch.sh "$exact_spec" "${DSH_VERSION:-0.2.0-rc.2}" \
@@ -129,6 +130,7 @@ for raw in "${LIST[@]}"; do
   timeout --signal=KILL "$remaining" docker run --name "$cname" --network none --entrypoint node \
     -e npm_config_offline=true \
     -e npm_config_store_dir=/work/cache/store \
+    -e XDG_CACHE_HOME=/work/cache/xdg \
     -e COREPACK_DEFAULT_TO_LATEST=0 \
     -e COREPACK_ENABLE_NETWORK=0 \
     -e "PROBE_SPEC=$exact_spec" \
