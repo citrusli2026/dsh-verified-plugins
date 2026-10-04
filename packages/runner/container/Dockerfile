@@ -14,9 +14,12 @@ FROM node:24-bookworm-slim
 ARG DSH_VERSION=0.2.0-rc.2
 ARG PNPM_VERSION=10.33.2
 
+# The native loader otherwise copies its verified binary into /tmp; the
+# execution tier's transient filesystem is intentionally not executable.
 ENV DEBIAN_FRONTEND=noninteractive \
     npm_config_cache=/tmp/npm-cache \
     DSH_HOME=/work/dsh-home \
+    NARB_DISABLE_NATIVE_CACHE=1 \
     CI=1
 
 # `passwd` is not in bookworm-slim and provides useradd; without it the
