@@ -86,7 +86,7 @@ function nativeProbe(home) {
     maxBuffer: 512 * 1024,
     env: safeEnv(home),
   });
-  return clean(`${result.stdout ?? ''}${result.stderr ?? ''}`)
+  return clean(`${result.stdout ?? ''}${result.stderr ?? ''}`, 4096)
     .replaceAll(WORK, '<temp>');
 }
 
