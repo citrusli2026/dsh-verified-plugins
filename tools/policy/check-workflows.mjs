@@ -253,6 +253,7 @@ function selfTest() {
   }
   const safeSuite = 'docker volume create --opt type=tmpfs --opt device=tmpfs --opt o=size=3g,uid=10001,gid=10001 "$cachevol"\n' +
     'docker run --name "$cname" --network none --read-only --cpus 2 --memory 2g --memory-swap 2g --pids-limit 256 ' +
+    '--tmpfs /tmp:rw,size=256m --tmpfs /home/verifier:rw,size=256m ' +
     '--tmpfs /work/dsh-home:rw,size=1g --tmpfs /work/out:rw,size=512m --entrypoint node -e npm_config_offline=true';
   const safeFetch = 'pnpm add --lockfile-only --ignore-scripts\npnpm fetch --prod';
   if (runnerBoundaryErrors(safeSuite, safeFetch).length !== 0 ||
@@ -278,7 +279,9 @@ function runnerBoundaryErrors(suite, prefetch) {
   }
   const required = [
     '--read-only', '--cpus 2', '--memory 2g', '--memory-swap 2g',
-    '--pids-limit 256', '--tmpfs /work/dsh-home:', '--tmpfs /work/out:',
+    '--pids-limit 256', '--tmpfs /tmp:rw,size=256m',
+    '--tmpfs /home/verifier:rw,size=256m',
+    '--tmpfs /work/dsh-home:rw,size=1g', '--tmpfs /work/out:rw,size=512m',
   ];
   if (required.some((flag) => !execution.includes(flag)) ||
       !/docker volume create[^\n]*--opt type=tmpfs[^\n]*--opt device=tmpfs[\s\S]*--opt o=size=3g/.test(suite)) {

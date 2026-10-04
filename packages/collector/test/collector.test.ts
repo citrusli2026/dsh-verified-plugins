@@ -285,18 +285,21 @@ test('checking a report never trusts a declared engines.dsh as compatibility', (
 
 /* ------------------------------------------------------------------ registry */
 
-test('spec parsing handles scoped names and bare names', () => {
+test('spec parsing requires an exact version for scoped and bare names', () => {
   assert.deepEqual(parseSpec('@scope/name@1.2.3'), { name: '@scope/name', range: '1.2.3' });
   assert.deepEqual(parseSpec('name@1.2.3'), { name: 'name', range: '1.2.3' });
-  assert.deepEqual(parseSpec('name'), { name: 'name', range: 'latest' });
+  assert.throws(() => parseSpec('name'), RegistryError);
+  assert.throws(() => parseSpec('@scope/name'), RegistryError);
+  assert.throws(() => parseSpec('name@latest'), RegistryError);
+  assert.throws(() => parseSpec('name@^1.2.3'), RegistryError);
   assert.throws(() => parseSpec(''), RegistryError);
 });
 
-test('version selection picks the newest match and refuses an impossible range', () => {
+test('version selection uses the exact artifact, never a tag or range', () => {
   const versions = { '0.1.0': {}, '0.2.0': {}, '0.2.0-rc.2': {}, '0.3.0': {} };
-  assert.equal(selectVersion(versions, 'latest'), '0.3.0');
   assert.equal(selectVersion(versions, '0.2.0'), '0.2.0');
-  assert.equal(selectVersion(versions, '^0.2.0'), '0.2.0');
+  assert.throws(() => selectVersion(versions, 'latest'), RegistryError);
+  assert.throws(() => selectVersion(versions, '^0.2.0'), RegistryError);
   assert.throws(() => selectVersion(versions, '9.9.9'), RegistryError);
 });
 

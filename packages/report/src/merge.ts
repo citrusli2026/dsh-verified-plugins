@@ -460,6 +460,7 @@ export function mergeExecution(
         ]
       : []),
     ...(l2.observation ? [] : ['L2 loader inventory was unavailable; no active-fiber claim is made']),
+    'network egress was denied; attempted destination hosts were not observable in this run',
     ...execution.notes.map(redactRunText),
   ].filter((l: string, i: number, all: string[]) => all.indexOf(l) === i);
 

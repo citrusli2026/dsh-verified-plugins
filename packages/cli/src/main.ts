@@ -63,7 +63,7 @@ function usage(): void {
       '  stale     Check each published report against the registry for freshness.',
       '  amend     Supersede a report with a re-run, recording the change additively.',
       '',
-      'Specs are exact: name@1.2.3 or a bare name (resolves to latest).',
+      'Specs must be exact: name@1.2.3 (tags and ranges are refused).',
       '',
     ].join('\n'),
   );

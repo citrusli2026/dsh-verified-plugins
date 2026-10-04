@@ -101,7 +101,7 @@ node packages/cli/src/main.ts validate <report.json> [...]   # schema + verdict 
 node packages/cli/src/main.ts catalog [--check]              # rebuild / check index freshness
 ```
 
-Specs are exact: `name@1.2.3`, or a bare name (resolves to latest). Static-only
+Specs must be exact: `name@1.2.3`; bare names, tags and ranges are refused. Static-only
 runs execute no plugin code, which is why they are safe to run anywhere — and
 why their verdict is capped at `partial`.
 
