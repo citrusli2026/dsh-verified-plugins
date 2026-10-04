@@ -54,13 +54,13 @@ function excerpt(text: string, max = MAX_EXCERPT): string {
   return `…(trimmed)…\n${new TextDecoder('utf-8', { fatal: false }).decode(buf)}`;
 }
 
-function run(name: string, args: string[], timeoutMs: number): StepResult {
+function run(name: string, args: string[], timeoutMs: number, extraEnv: Record<string, string> = {}): StepResult {
   const started = performance.now();
   const result = spawnSync('dsh', args, {
     encoding: 'utf8',
     timeout: timeoutMs,
     maxBuffer: 32 * 1024 * 1024,
-    env: { ...process.env, DSH_HOME, CI: '1' },
+    env: { ...process.env, ...extraEnv, DSH_HOME, CI: '1' },
   });
   const durationMs = Math.round(performance.now() - started);
   const signal = result.signal ?? null;
@@ -208,10 +208,19 @@ function classifyInstall(step: StepResult): L1Outcome {
 }
 
 interface L2Outcome {
-  status: 'pass' | 'fail' | 'timeout' | 'skip';
+  status: 'pass' | 'fail' | 'timeout' | 'skip' | 'inconclusive';
   reason: string;
   detail: string;
   diagnostics: string;
+  observation?: L2Observation | null;
+}
+
+interface L2Observation {
+  found?: boolean;
+  enabled?: boolean;
+  error?: string | null;
+  overrides?: string[];
+  rows: Array<{ rowId: string; entryId: string | null; enabled: boolean; fiberPhase: string | null }>;
 }
 
 /**
@@ -256,7 +265,7 @@ function failureDiagnostics(text: string): string[] {
  * failed *required* entry exits non-zero. The classifier keys on failure-shaped
  * diagnostics, never on the mere presence of output.
  */
-function classifyBoot(step: StepResult): L2Outcome {
+function classifyBoot(step: StepResult, observation: L2Observation | null): L2Outcome {
   const text = step.excerpt.trim();
   const failures = failureDiagnostics(text);
 
@@ -266,34 +275,43 @@ function classifyBoot(step: StepResult): L2Outcome {
       reason: 'the composition reported a failure',
       detail: `${failures.length} failure-shaped diagnostic line(s); the composition names what it could not load`,
       diagnostics: failures.join('\n'),
+      observation,
     };
   }
-
-  if (step.timedOut) {
+  if (!step.timedOut && step.exitCode !== 0) {
     return {
-      status: 'pass',
-      reason: 'booted, mounted and stayed alive',
-      detail:
-        'the process was still running when the wall-clock bound reached it and reported no failure diagnostics, so the bundle was neither skipped nor rejected',
+      status: 'fail',
+      reason: `the composition exited with code ${step.exitCode}`,
+      detail: 'the profile exited before the bounded observation completed',
+      diagnostics: text,
+      observation,
+    };
+  }
+  if (!observation) {
+    return {
+      status: 'inconclusive',
+      reason: 'the loader inventory could not be read',
+      detail: 'process lifetime and clean diagnostics alone do not prove that the subject fiber became active',
       diagnostics: text,
     };
   }
-
-  if (step.exitCode === 0) {
-    return {
-      status: 'pass',
-      reason: 'the composition booted and exited cleanly',
-      detail: `exit code 0 with no failure diagnostics, before the wall-clock bound`,
-      diagnostics: text,
-    };
-  }
-
+  if (!observation.found || observation.error) return {
+    status: 'fail', reason: observation.error ?? 'the subject bundle is absent from the inventory',
+    detail: 'the running plugin manager did not report a usable subject bundle', diagnostics: text, observation,
+  };
+  if (!observation.enabled || observation.rows.length === 0 || observation.rows.some((row) => !row.enabled)) return {
+    status: 'inconclusive', reason: 'no complete enabled subject row set was observed',
+    detail: 'the subject has no directly observable enabled rows, or one was intentionally disabled', diagnostics: text, observation,
+  };
+  const inactive = observation.rows.filter((row) => !row.entryId || row.fiberPhase !== 'active');
+  if (inactive.length > 0) return {
+    status: inactive.some((row) => row.fiberPhase === 'failed' || !row.entryId) ? 'fail' : 'inconclusive',
+    reason: `${inactive.length} subject loader row(s) did not reach active`,
+    detail: 'each declared bundle row must map to a live Loader entry with an active fiber', diagnostics: text, observation,
+  };
   return {
-    status: 'fail',
-    reason: `the composition exited with code ${step.exitCode}`,
-    detail:
-      'a profile whose plugins fail to load exits before the agent runner mounts, so a non-zero exit is the load-failure signal',
-    diagnostics: text,
+    status: 'pass', reason: `${observation.rows.length} subject loader row(s) active`,
+    detail: 'the plugin manager projected every declared subject row as enabled with an active fiber', diagnostics: text, observation,
   };
 }
 
@@ -662,7 +680,15 @@ let l3: L3Outcome = {
 if (l1.status === 'pass') {
   for (let i = 0; i < SAMPLE_RUNS; i++) activatedRuns.push(sampleOnce(PROFILE, 'activated', i));
 
-  l2 = classifyBoot(run('l2-boot', ['--profile', PROFILE], BOOT_BOUND_MS));
+  const l2Overlay = process.env.L2_OVERLAY ?? '/work/fixtures/load/l2-overlay.yml';
+  const l2Snapshot = join(OUT_DIR, 'l2-inventory.json');
+  const l2Step = run('l2-boot', ['--profile', PROFILE, '--patch', l2Overlay], BOOT_BOUND_MS, {
+    DSH_VERIFY_SUBJECT: subjectName,
+    DSH_VERIFY_L2_OUT: l2Snapshot,
+  });
+  let observation: L2Observation | null = null;
+  try { observation = JSON.parse(readFileSync(l2Snapshot, 'utf8')) as L2Observation; } catch { /* no observation */ }
+  l2 = classifyBoot(l2Step, observation);
 
   // --- L3: a keyless session ----------------------------------------------
   // The subject is installed into a headless profile too, so the session that

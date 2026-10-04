@@ -74,7 +74,11 @@ function execution(overrides: Partial<ExecutionResult> = {}): ExecutionResult {
       pendingBuildScripts: [],
       logPath: null,
     },
-    L2_load: { status: 'pass', reason: 'booted and settled', detail: 'no diagnostics', diagnostics: '' },
+    L2_load: {
+      status: 'pass', reason: 'one subject row active', detail: 'inventory read', diagnostics: '',
+      observation: { found: true, enabled: true, error: null, overrides: [],
+        rows: [{ rowId: 'subject', entryId: 'subject', enabled: true, fiberPhase: 'active' }] },
+    },
     L6_uninstall: { status: 'pass', reason: 'removed without residue', detail: 'clean', residue: [] },
     steps: [step('l1-install'), step('l2-boot', { signal: 'SIGKILL', timedOut: true, exitCode: null }), step('l6-remove')],
     notes: [],
@@ -94,6 +98,14 @@ test('merge: execution replaces the skipped dimensions with real statuses', () =
   assert.equal(dims.L2_load.status, 'pass');
   assert.equal(dims.L6_uninstall.status, 'pass');
   assert.equal(merged.runtime.dshVersion, '0.2.0-rc.2');
+});
+
+test('merge: a load pass without active subject fiber evidence is downgraded', () => {
+  const result = execution();
+  delete result.L2_load.observation;
+  const merged = mergeExecution(staticReport(), result);
+  assert.equal(merged.dimensions.L2_load.status, 'inconclusive');
+  assert.deepEqual(validateReport(merged, SCHEMA), []);
 });
 
 test('merge: an offline cache miss cannot become an install failure', () => {

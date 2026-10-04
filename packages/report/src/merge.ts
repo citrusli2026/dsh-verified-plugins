@@ -45,7 +45,11 @@ export interface ExecutionResult {
     pendingBuildScripts: string[];
     logPath: string | null;
   };
-  L2_load: { status: string; reason: string; detail: string; diagnostics: string };
+  L2_load: {
+    status: string; reason: string; detail: string; diagnostics: string;
+    observation?: { found?: boolean; enabled?: boolean; error?: string | null; overrides?: string[];
+      rows: Array<{ rowId: string; entryId: string | null; enabled: boolean; fiberPhase: string | null }> } | null;
+  };
   L3_run?: {
     status: string;
     reason: string;
@@ -176,6 +180,16 @@ export function mergeExecution(
 
   evidence.push(evidenceFromStep('e-l1-install', l1Step, `dsh plugin --profile verify add ${execution.spec}`));
   if (l2Step) evidence.push(evidenceFromStep('e-l2-boot', l2Step, 'dsh --profile verify'));
+  if (execution.L2_load.observation) {
+    const inventory = makeExcerpt(JSON.stringify(execution.L2_load.observation), {
+      paths: RUN_PATHS, maxBytes: MAX_EXCERPT_BYTES,
+    });
+    evidence.push({
+      id: 'e-l2-inventory', kind: 'sample',
+      command: 'pluginManager.listBundles() + pluginManager.listPlugins() in the running Host',
+      excerpt: inventory.text, excerptBytes: inventory.bytes, truncated: inventory.truncated,
+    });
+  }
   if (l6Step) evidence.push(evidenceFromStep('e-l6-remove', l6Step, 'dsh plugin --profile verify remove <subject>'));
 
   // A decisive status must cite evidence. If the execution result claims one but
@@ -246,6 +260,9 @@ export function mergeExecution(
   };
 
   const l2 = execution.L2_load;
+  const observedLoadPass = l2.observation?.found && l2.observation.enabled && !l2.observation.error &&
+    l2.observation.rows.length > 0 && l2.observation.rows.every((row) =>
+      row.entryId && row.enabled && row.fiberPhase === 'active');
   if (l2.status === 'skip') {
     dims.L2_load = {
       id: 'L2',
@@ -265,17 +282,21 @@ export function mergeExecution(
   } else {
     dims.L2_load = {
       id: 'L2',
-      status: l2.status as Dimension['status'],
-      summary: l2.reason,
+      status: l2.status === 'pass' && !observedLoadPass ? 'inconclusive' : l2.status as Dimension['status'],
+      summary: l2.status === 'pass' && !observedLoadPass ? 'active subject fibers were not evidenced' : l2.reason,
       metrics: {
         bootBoundMs: execution.environment.bootBoundMs ?? null,
         durationMs: l2Step.durationMs,
         signal: l2Step.signal,
+        observedRows: l2.observation?.rows.length ?? null,
+        activeRows: l2.observation?.rows.filter((row) => row.enabled && row.fiberPhase === 'active').length ?? null,
       },
-      evidenceRefs: ['e-l2-boot'],
+      evidenceRefs: ['e-l2-boot', ...(l2.observation ? ['e-l2-inventory'] : [])],
       notes: [
         redactRunText(l2.detail),
-        'the fiber phase is not read directly: an early exit with diagnostics is the load-failure signal, and a boot that settles and waits is the success signal',
+        l2.observation
+          ? 'the subject bundle rows and their fiber phases were read from the running plugin manager'
+          : 'the loader inventory was unavailable; process lifetime alone did not earn a load pass',
       ],
     };
   }
@@ -435,7 +456,7 @@ export function mergeExecution(
           'L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model',
         ]
       : []),
-    'the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase',
+    ...(l2.observation ? [] : ['L2 loader inventory was unavailable; no active-fiber claim is made']),
     ...execution.notes.map(redactRunText),
   ].filter((l: string, i: number, all: string[]) => all.indexOf(l) === i);
 
