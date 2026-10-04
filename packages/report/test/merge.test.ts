@@ -96,6 +96,23 @@ test('merge: execution replaces the skipped dimensions with real statuses', () =
   assert.equal(merged.runtime.dshVersion, '0.2.0-rc.2');
 });
 
+test('merge: an offline cache miss cannot become an install failure', () => {
+  const exec = execution({
+    L1_install: {
+      status: 'inconclusive', reason: 'offline artifact resolution was incomplete',
+      detail: 'the required package was absent from the offline store',
+      declaredPeers: null, bundlesAfter: null, pendingBuildScripts: [], logPath: null,
+    },
+    L2_load: { status: 'skip', reason: 'not installed', detail: 'not run', diagnostics: '' },
+    L6_uninstall: { status: 'skip', reason: 'not installed', detail: 'not run', residue: [] },
+    steps: [step('l1-install', { exitCode: 1, excerpt: 'ERR_PNPM_NO_OFFLINE_META' })],
+  });
+  const merged = mergeExecution(staticReport(), exec);
+  assert.equal(merged.dimensions.L1_install.status, 'inconclusive');
+  assert.equal(merged.verdict, 'partial');
+  assert.deepEqual(validateReport(merged, SCHEMA), []);
+});
+
 test('merge: a peer-incompatible install is a failure, and skips load and uninstall', () => {
   const exec = execution({
     L1_install: {

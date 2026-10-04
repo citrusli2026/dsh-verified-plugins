@@ -5,13 +5,19 @@ Evidence-linked, reproducible, not another star list.
 
 [Site](https://citrusli2026.github.io/dsh-verified-plugins/) · [Method](docs/method.md) · [Report schema](docs/schema.md) · [Security](docs/security.md) · [Appeals](docs/appeals.md) · [Catalog](catalog/index.json)
 
-> **Status: V0–V6 done.** All seven dimensions run end to end, batches are
-> supported, reports are published and freshness is tracked —
+> **Status: V0–V6 implemented; network isolation correction awaiting CI acceptance.**
+> All seven dimensions have run end to end, batches are supported, reports are published and freshness is tracked —
 > **[browse the site](https://citrusli2026.github.io/dsh-verified-plugins/)**.
-> 24 reports: 19 `verified`, 4 `partial`, 1 `not-installable`, 1 now **stale**.
+> 24 reports: 19 `verified`, 4 `partial`, 1 `not-installable`, 4 now **stale**.
 > Sessions run against a replayed transcript, never a credential. Dispute a
 > report via [docs/appeals.md](docs/appeals.md). Read
 > [docs/security.md](docs/security.md) first.
+
+**Security correction:** the 24 historical execution reports were produced in
+containers with network access. They remain evidence of the measured dimensions,
+but do not satisfy the no-egress condition. The executor now separates package
+fetch from network-denied execution; that revised path still needs a Docker CI
+acceptance run before new reports are published. See [the incident](docs/security.md#7-historical-network-incident).
 
 ---
 
@@ -165,9 +171,10 @@ Registry metadata only; no container, no credential, 26 seconds.
 
 ## Freshness and corrections
 
-A report is a snapshot. `catalog/staleness.json` records which subjects have
-been republished since, and the site marks them — a **stale** report is not a
-wrong report, it describes a version that is no longer the latest.
+A report is a snapshot. `catalog/staleness.json` checks each report's version,
+runtime and exact package integrity against the registry. The site marks stale
+or unknown results. A changed latest tag does not make an older report wrong;
+a same-version integrity mismatch needs investigation.
 
 Corrections are additive and mechanically guarded: `supersedes` plus a
 `changelog` entry whose description is **computed from both reports**, so a

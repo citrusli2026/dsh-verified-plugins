@@ -1,18 +1,19 @@
 {
   "schema": "dsh.verifier.staleness.v1",
-  "generatedAt": "2026-10-03T17:02:12.660Z",
+  "generatedAt": "2026-10-04T01:16:38.481Z",
   "registry": "https://registry.npmjs.org",
   "runtimeVersion": "0.2.0-rc.2",
   "counts": {
     "checked": 24,
-    "current": 23,
-    "stale": 1,
+    "current": 20,
+    "stale": 4,
     "unknown": 0
   },
   "limits": [
     "freshness is a property of the catalogue entry, not of the report: the report remains the record of what was run",
-    "a stale report is not a wrong report — it describes a version that is no longer the latest, and its findings still hold for that version",
-    "unknown means the registry could not be read, which is not the same as current"
+    "a stale report is not automatically wrong: it may describe a version that is no longer latest, a different runtime, or a changed registry integrity",
+    "unknown means the registry or exact-version integrity could not be checked, which is not the same as current",
+    "the exact reported version is checked against the registry integrity; a mismatch can also mean the registry metadata changed, so it requires investigation"
   ],
   "entries": [
     {
@@ -21,6 +22,8 @@
       "verifiedVersion": "0.1.2",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "0.1.2",
+      "currentIntegrity": "sha512-6zMz+avT+RCyyWZfob0f7GFHCOzKqpWsT1SUNSPhlzwceAXfuHJEdPMagrc2sP8xLG8ZYHwDVrCYNLFxyJP+qA==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -30,6 +33,8 @@
       "verifiedVersion": "0.1.3",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "0.1.3",
+      "currentIntegrity": "sha512-Ey3PaDmWK4zzu57SDf99one2J0xjVi5q6N/HlZswQbQlbPtVOqq+cCCtFNDFFnYmhTGPf4zqnr5cYhkk4GyfQQ==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -39,6 +44,8 @@
       "verifiedVersion": "5.10.5",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "5.10.5",
+      "currentIntegrity": "sha512-SHeZ5pr0BuCEKBJSDN4no008ETwlBl3GNOuOPfDjLTkVkGriNc5NPeAz1kG91CwmG7klLzzGAvnjTrkLrRqyfw==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -48,6 +55,8 @@
       "verifiedVersion": "1.0.11",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "1.0.11",
+      "currentIntegrity": "sha512-fg6bs3GMxHjDHdqH9rQsLIC4DKeTxRygIrim/HP+ID8xjhoaF4RYJx6SuODiBPEes7oTLS2GUvljnOssdzuq/Q==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -57,6 +66,8 @@
       "verifiedVersion": "1.1.8",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "1.1.8",
+      "currentIntegrity": "sha512-Bz8npEazkkVOD7Ku8EOHSzc/CMrypl+UhBbScHjBZZSyt27xgNGL1EaNYEcwuxbDIJPKHF38yOmjh92iy1xM3w==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -66,6 +77,8 @@
       "verifiedVersion": "0.1.5",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "0.1.5",
+      "currentIntegrity": "sha512-l2H7RhC7Tw9w2sXB0VZ+FdxNKvYtqT4MaGc6j93THglh+OqtD1qrbeR7lVfSLSo609+LCXo5C4q/g3ahd7OcNQ==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -75,6 +88,8 @@
       "verifiedVersion": "0.1.22",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "0.1.22",
+      "currentIntegrity": "sha512-JF6bpHf+BYQbe14+yH1uM5EeviRZmi72gGZiIvS/5R8FHq6/i5+H+dXoy7s6CNQVRhM4NWjw4XsC8tSjwDksvQ==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -83,9 +98,13 @@
       "name": "@noob-stupid/dsh-plugin-console",
       "verifiedVersion": "0.5.36",
       "verifiedRuntime": "0.2.0-rc.2",
-      "currentVersion": "0.5.36",
-      "status": "current",
-      "reasons": []
+      "currentVersion": "0.5.37",
+      "currentIntegrity": "sha512-KzWzTBrJ4TstXBIxRL+IWnrBFxI695hhiUapbc/2LGk8iT2Wm4iplMWWVRaNZkwQ+sNQADsIc0rj6s05bopqDg==",
+      "integrityStatus": "match",
+      "status": "stale",
+      "reasons": [
+        "the latest tag points at 0.5.37, while this report covers 0.5.36"
+      ]
     },
     {
       "reportId": "npm:@roarpeng/graphflow@2.2.0",
@@ -93,6 +112,8 @@
       "verifiedVersion": "2.2.0",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "2.2.0",
+      "currentIntegrity": "sha512-IyY6QjSNuQLojcV92qR44ILiXwu0n/yeaQDd0zzOC18iMRqybt1wIiI7FCcPmUDInlvLd4rEnM49AYsW/AF4NA==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -102,6 +123,8 @@
       "verifiedVersion": "0.1.0",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "0.1.0",
+      "currentIntegrity": "sha512-D8fDqV6DV/vo80Gj/3rgidd+hwBbhTVncaVoD5Uhh+DbgYlEoQQOmBVbhU5HW33wE5OqJP/2HkTRPJ0hf7W0tA==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -111,6 +134,8 @@
       "verifiedVersion": "0.3.2",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "0.3.2",
+      "currentIntegrity": "sha512-Z8m5KmNzCqc83M99q6pSPUwzFYr+RI4F1pQNCHp56rL/97Ogz7Z/YcWGEwYlvfSMWePjcib8aUQNpSVInW35AA==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -120,6 +145,8 @@
       "verifiedVersion": "4.34.2",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "4.34.2",
+      "currentIntegrity": "sha512-6t3Epsq8ZqCqAEhmJzvtBgwjUKC2bBxsfnJj26uqWOAGDt+6jpBlaDZFr/So1RTS0SJ3SbfW9KDJ5verP4iHCQ==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -129,6 +156,8 @@
       "verifiedVersion": "0.2.0-alpha.1",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "0.2.0-alpha.1",
+      "currentIntegrity": "sha512-gS1Xh27k6dU3FeI5XN/sX72pdWy6ypr9MkiAki/u28mmxTS+sqyGRFXTdIR8BUb3J/zKcWQJoadNkv8zR7Qd3g==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -137,10 +166,12 @@
       "name": "dsh-cost-meter",
       "verifiedVersion": "1.8.8",
       "verifiedRuntime": "0.2.0-rc.2",
-      "currentVersion": "1.8.9",
+      "currentVersion": "1.8.10",
+      "currentIntegrity": "sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==",
+      "integrityStatus": "match",
       "status": "stale",
       "reasons": [
-        "a newer version is published: 1.8.9, while this report covers 1.8.8"
+        "the latest tag points at 1.8.10, while this report covers 1.8.8"
       ]
     },
     {
@@ -149,6 +180,8 @@
       "verifiedVersion": "0.4.0",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "0.4.0",
+      "currentIntegrity": "sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -157,9 +190,13 @@
       "name": "dsh-free-search",
       "verifiedVersion": "0.7.2",
       "verifiedRuntime": "0.2.0-rc.2",
-      "currentVersion": "0.7.2",
-      "status": "current",
-      "reasons": []
+      "currentVersion": "0.7.3",
+      "currentIntegrity": "sha512-keV1VsfTIT10vSU4IfNFhGsDAbEwsoh4EZSriYR4DKb1x/CJsqtMlHOkCIuucDIysIPytCepgyj+FtRQaAkhUQ==",
+      "integrityStatus": "match",
+      "status": "stale",
+      "reasons": [
+        "the latest tag points at 0.7.3, while this report covers 0.7.2"
+      ]
     },
     {
       "reportId": "npm:dsh-mnemon@0.5.23",
@@ -167,6 +204,8 @@
       "verifiedVersion": "0.5.23",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "0.5.23",
+      "currentIntegrity": "sha512-Ey0rlzroEj1OpKmjU5NWaCrNLL0ujI4/8m5AjT+mZRA2fQERuL84gr1xDJ0RE8fK1WhzqRiwrV4pVTCXAGvirA==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -175,9 +214,13 @@
       "name": "dsh-pet",
       "verifiedVersion": "0.3.1",
       "verifiedRuntime": "0.2.0-rc.2",
-      "currentVersion": "0.3.1",
-      "status": "current",
-      "reasons": []
+      "currentVersion": "0.3.3",
+      "currentIntegrity": "sha512-7K8jDdoIT9nCX6HN0xhdcdOVAtSygSArE+zAWSBUfivC+gs6k9Szl7T8ozHfPs/QzOg45YRLLWvZVNZZfewcyQ==",
+      "integrityStatus": "match",
+      "status": "stale",
+      "reasons": [
+        "the latest tag points at 0.3.3, while this report covers 0.3.1"
+      ]
     },
     {
       "reportId": "npm:dsh-plugin-wallpaper-engine@1.2.0",
@@ -185,6 +228,8 @@
       "verifiedVersion": "1.2.0",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "1.2.0",
+      "currentIntegrity": "sha512-WgY1pLh2zbGyLSPJP1aSKq42hntF8PnrAlSeQWqpZwPoLdMByL/9Abth9ELlhw+t0odXNs4Fbiyljju0MF0tfA==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -194,6 +239,8 @@
       "verifiedVersion": "2.10.6",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "2.10.6",
+      "currentIntegrity": "sha512-yqybeWWutozi1yBLDpSs6ien9SndFPVNK6HlmhJf8q0AOLauzcLntmFyGQ0/v3EzS3V8ftM4yvqcc/o6LcGcGA==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -203,6 +250,8 @@
       "verifiedVersion": "0.30.57",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "0.30.57",
+      "currentIntegrity": "sha512-7s9yTorn9FquZTDoOfC1U0QuXvdANEbBOX9yuIlITFksAFkycjDDsPq7xBpWP6O1tILtezYMZnUyEX37vvVJ+w==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -212,6 +261,8 @@
       "verifiedVersion": "0.3.6",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "0.3.6",
+      "currentIntegrity": "sha512-IaLbxGvKdPHS6hdb/K/Bl+j3C2WoEDN/LIKzAVi6n2VCwi6mPZhkmu1W4egvEo9kXJ+YIEikuvfc5B0ZzF9hEA==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -221,6 +272,8 @@
       "verifiedVersion": "0.3.18",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "0.3.18",
+      "currentIntegrity": "sha512-2RMevYiKTa2P+FzLutXlpTmQ9coWRbRQ7eG1b07MbkxB1HXXWbN/lqn0MZgDu49AILeJqmGivwB0S0H09pc9xQ==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     },
@@ -230,6 +283,8 @@
       "verifiedVersion": "1.66.8",
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "1.66.8",
+      "currentIntegrity": "sha512-zOYCijI/du6qlcmUbx47aaUv6OM7Z/akIQ8n3f9Q2ihtV3U3sbRI5nG0guS+8npsb/vhA2turyEf9Yblg6LweQ==",
+      "integrityStatus": "match",
       "status": "current",
       "reasons": []
     }

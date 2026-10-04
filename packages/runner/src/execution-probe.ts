@@ -99,7 +99,7 @@ function readProfilePackageJson(): Record<string, any> | null {
 }
 
 interface L1Outcome {
-  status: 'pass' | 'fail' | 'timeout';
+  status: 'pass' | 'fail' | 'timeout' | 'inconclusive';
   reason: string;
   detail: string;
   declaredPeers: Record<string, string> | null;
@@ -179,13 +179,17 @@ function classifyInstall(step: StepResult): L1Outcome {
   const peerRejected = /installation rejected/i.test(text) && /incompatible with/i.test(text);
   const pnpmError = /ERR_PNPM_[A-Z_]+/.exec(text)?.[0] ?? null;
   const buildsBlocked = pending.length > 0 && (pnpmError === 'ERR_PNPM_IGNORED_BUILDS' || /Ignored build scripts:/i.test(text));
+  const offlineMissing = process.env.npm_config_offline === 'true' &&
+    /NO_OFFLINE_META|META_FETCH_FAIL|FETCH_\d+|ERR_PNPM_NO_MATCHING_VERSION_INSIDE_WORKSPACE|ENETUNREACH|EAI_AGAIN|network is unreachable|offline/i.test(text);
 
   return {
-    status: 'fail',
+    status: offlineMissing && !peerRejected && !buildsBlocked ? 'inconclusive' : 'fail',
     reason: buildsBlocked
       ? 'installation blocked pending dependency build-script approval'
       : peerRejected
         ? 'peer-incompatible with the pinned runtime'
+        : offlineMissing
+          ? 'offline artifact resolution was incomplete'
         : pnpmError
           ? `package manager error (${pnpmError})`
           : 'install failed',
@@ -193,6 +197,8 @@ function classifyInstall(step: StepResult): L1Outcome {
       ? `pnpm refused to run build scripts for ${pending.length} package(s) and the install did not complete. This verifier never approves them: approval permits commands with the host user's permissions, which is the user's decision and a finding rather than a chore. The requested scripts are listed in the metrics.`
       : peerRejected
         ? `DSH refused the install: the plugin's declared peerDependencies on @deepseek-ai/dsh* do not match the runtime. An exact-version exemption would bypass this check; granting one is a user decision and is not done here.`
+        : offlineMissing
+          ? 'the fetch phase did not make every required artifact available offline; no install conclusion can be drawn from this attempt'
         : `the CLI exited ${step.exitCode}`,
     declaredPeers,
     bundlesAfter: bundles,

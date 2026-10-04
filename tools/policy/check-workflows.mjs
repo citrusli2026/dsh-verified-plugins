@@ -16,6 +16,7 @@
  *   R7  a plugin-executing workflow must not expose a token to the environment
  *   R8  every workflow must declare top-level `permissions:` explicitly
  *   R9  a plugin-executing workflow must disable checkout credential persistence
+ *   R10 the batch runner keeps its fetch/execute network split
  *
  * Usage: node tools/policy/check-workflows.mjs [--verbose]
  * Exit:  0 = policy clean and self-test green, 1 = violation or broken self-test.
@@ -28,6 +29,8 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const WORKFLOWS_DIR = join(ROOT, '.github', 'workflows');
 const FIXTURES_DIR = join(dirname(fileURLToPath(import.meta.url)), 'fixtures');
+const RUN_SUITE = join(ROOT, 'packages', 'runner', 'container', 'run-suite.sh');
+const PREFETCH = join(ROOT, 'packages', 'runner', 'container', 'prefetch.sh');
 
 const verbose = process.argv.includes('--verbose');
 
@@ -247,7 +250,28 @@ function selfTest() {
       ok = false;
     }
   }
+  const safeSuite = 'docker run --name "$cname" --network none --entrypoint node -e npm_config_offline=true';
+  const safeFetch = 'pnpm add --lockfile-only --ignore-scripts\npnpm fetch --prod';
+  if (runnerBoundaryErrors(safeSuite, safeFetch).length !== 0 ||
+      runnerBoundaryErrors(safeSuite.replace('--network none', ''), safeFetch).length === 0 ||
+      runnerBoundaryErrors(safeSuite, safeFetch.replace('--ignore-scripts', '')).length === 0) {
+    console.error('  SELFTEST FAIL R10 did not detect a removed network or script gate');
+    ok = false;
+  }
   return ok;
+}
+
+function runnerBoundaryErrors(suite, prefetch) {
+  const errors = [];
+  if (!/docker run --name "\$cname" --network none --entrypoint node/.test(suite) ||
+      !/-e npm_config_offline=true/.test(suite)) {
+    errors.push('R10 execution container must have --network none and pnpm offline mode');
+  }
+  if (!/pnpm add --lockfile-only --ignore-scripts/.test(prefetch) ||
+      !/pnpm fetch --prod/.test(prefetch)) {
+    errors.push('R10 networked fetch must use lockfile-only resolution and pnpm fetch');
+  }
+  return errors;
 }
 
 /* ------------------------------------------------------------------- main */
@@ -287,6 +311,19 @@ function main() {
   }
 
   if (totalErrors === 0) console.log(`  OK: ${files.length} workflow(s) satisfy P0`);
+
+  console.log('\nscanning the batch runner boundary:');
+  if (!existsSync(RUN_SUITE) || !existsSync(PREFETCH)) {
+    console.error('  FAIL R10 batch runner or prefetch script missing');
+    failed = true;
+  } else {
+    const errors = runnerBoundaryErrors(readFileSync(RUN_SUITE, 'utf8'), readFileSync(PREFETCH, 'utf8'));
+    if (errors.length === 0) console.log('  OK: fetch-only phase and network-denied execution are present');
+    for (const error of errors) {
+      console.error(`  FAIL ${error}`);
+      failed = true;
+    }
+  }
 
   if (failed) {
     console.error('\nFAIL: P0 workflow policy violated (see docs/method.md § Threat model).');

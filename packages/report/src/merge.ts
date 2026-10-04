@@ -199,7 +199,7 @@ export function mergeExecution(
   const l1 = execution.L1_install;
   const l1Status: Dimension['status'] = !l1Step
     ? 'inconclusive'
-    : (['pass', 'fail', 'timeout'] as const).includes(l1.status as 'pass')
+    : (['pass', 'fail', 'timeout', 'inconclusive'] as const).includes(l1.status as 'pass')
       ? (l1.status as Dimension['status'])
       : 'inconclusive';
   dims.L1_install = {

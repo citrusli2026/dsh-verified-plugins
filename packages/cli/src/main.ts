@@ -197,6 +197,7 @@ async function commandStale(args: ParsedArgs): Promise<number> {
       name: String(report.subject?.name),
       version: String(report.subject?.version),
       runtimeVersion: String(report.runtime?.dshVersion ?? 'unknown'),
+      integrity: typeof report.subject?.integrity === 'string' ? report.subject.integrity : null,
     });
   }
 

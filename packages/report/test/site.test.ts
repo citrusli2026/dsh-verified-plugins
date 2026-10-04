@@ -140,6 +140,13 @@ test('report page: the verdict is rendered and no score appears in the visible t
   assert.ok(!/\bscore\b|\brating\b|\d+\s*\/\s*10|\d+\s*%/.test(text), `visible text implies a score: ${text.slice(0, 200)}`);
 });
 
+test('historical report page discloses the network isolation incident', () => {
+  const old = report();
+  old.generatedAt = '2026-10-03T15:56:06.201Z';
+  assert.match(renderReportPage(old, 'example'), /no-egress condition was not met/);
+  assert.doesNotMatch(renderReportPage(report(), 'example'), /no-egress condition was not met/);
+});
+
 test('index page: every entry is listed with a link and an inline badge', () => {
   const index = {
     schema: 'dsh.plugin.catalog.v1',

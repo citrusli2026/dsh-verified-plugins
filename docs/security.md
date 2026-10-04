@@ -191,5 +191,23 @@ around it — when any of these holds:
 | zero configured secrets | `tools/audit/no-secrets.sh` (outside CI, where it is provable) |
 | reports do not overclaim | `packages/report` (verdict derived from dimensions, rejected if declared otherwise) |
 
+## 7. Historical network incident
+
+The 24 reports committed before 2026-10-04 were produced by an executor whose
+`docker run` command did **not** pass `--network none`. Those executions had
+network access. Their L0–L6 observations remain records of what ran, but they
+do **not** demonstrate the no-egress condition described in S2. The site marks
+these historical reports. Their badges are dimension summaries, not evidence
+that the execution environment met S2.
+
+The executor now resolves and downloads package files in a separate networked
+container using pnpm lockfile-only resolution and `pnpm fetch`, both without
+install scripts. It then runs `dsh plugin` in a fresh container with
+`--network none` and an isolated per-subject package store. If the offline
+store lacks a dependency, L1 is inconclusive rather than an install failure.
+This correction has passed local static and unit checks but has **not yet been
+accepted in Docker CI**; no new execution report should be published until a
+real container run confirms the offline path. See `docs/evidence/V7.md`.
+
 The policy checker carries **self-test fixtures**: if a rule stops firing, CI
 fails. A guardrail that cannot be shown to trigger is theatre.

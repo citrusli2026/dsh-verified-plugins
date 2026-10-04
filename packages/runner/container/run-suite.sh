@@ -5,7 +5,8 @@
 # one-off container, then the merge that produces the published report.
 #
 # Cost control, which is V4's subject:
-#   * one container per subject, always discarded, never reused;
+#   * one networked fetch container and one offline execution container per
+#     subject, both discarded, with a store used by no other subject;
 #   * a per-subject wall-clock ceiling, so one pathological subject cannot hold
 #     the batch;
 #   * a failure on one subject does not abort the others — it is recorded and
@@ -58,34 +59,69 @@ for raw in "${LIST[@]}"; do
     continue
   fi
 
-  # L0 pre-filter: a package with no bundle declaration is not a plugin. It
-  # still installs — as a plain dependency that is never composed — so running
-  # the execution dimensions would burn a container to measure the absence of
-  # the subject, and report it as a pass. The static report is already a valid
-  # final report for this case.
-  declares=$(node -p "const r=JSON.parse(require('node:fs').readFileSync(process.argv[1],'utf8')); (r.dimensions.L0_qualification.metrics?.patchPaths ?? []).length" "$dir/static.json" 2>/dev/null || echo 1)
-  if [ "$declares" = "0" ]; then
+  # L0 pre-filter: an absent bundle or missing patch cannot be composed.
+  # Installing it would measure the absence of the subject, not its behaviour.
+  l0_status=$(node -p "JSON.parse(require('node:fs').readFileSync(process.argv[1],'utf8')).dimensions.L0_qualification.status" "$dir/static.json" 2>/dev/null || echo inconclusive)
+  if [ "$l0_status" != "pass" ]; then
     cp "$dir/static.json" "$dir/report.json"
     secs=$(( $(date +%s) - started ))
-    echo "   -> not a bundle; L0 pre-filtered, no container started (${secs}s)"
-    printf '%s\tnot-a-bundle\t%s\n' "$spec" "$secs" >> "$OUTROOT/timings.tsv"
+    echo "   -> L0 $l0_status; no container started (${secs}s)"
+    printf '%s\tL0-%s\t%s\n' "$spec" "$l0_status" "$secs" >> "$OUTROOT/timings.tsv"
     continue
   fi
 
-  # One container, one subject, discarded. Mounts are read-only.
+  # Never pass a tag or range into either phase. The static fetch resolved and
+  # hashed an exact artifact; execution must target that same name@version.
+  exact_spec=$(node -p "const s=JSON.parse(require('node:fs').readFileSync(process.argv[1],'utf8')).subject; s.name+'@'+s.version" "$dir/static.json")
+
+  # Resolve and download without executing the subject. The cache belongs to
+  # this subject only and is removed before artifacts are uploaded.
+  cachevol="dsh-verify-cache-${GITHUB_RUN_ID:-local}-$$-$DONE"
+  docker volume create "$cachevol" >/dev/null
+  docker run --rm --network none --user root --entrypoint /bin/chown \
+    -v "$cachevol:/work/cache" "$IMAGE" 10001:10001 /work/cache >/dev/null
+  deadline=$((started + PER_SUBJECT_TIMEOUT_S))
+  remaining=$((deadline - $(date +%s)))
+  if [ "$remaining" -le 0 ] || ! timeout --signal=KILL "$remaining" docker run --rm \
+    --entrypoint /bin/bash \
+    -v "$PWD/packages/runner/container/prefetch.sh:/work/prefetch.sh:ro" \
+    -v "$cachevol:/work/cache" \
+    "$IMAGE" /work/prefetch.sh "$exact_spec" "${DSH_VERSION:-0.2.0-rc.2}" \
+    >"$dir/prefetch.log" 2>&1; then
+    echo "   prefetch BLOCKED — see $dir/prefetch.log"
+    docker volume rm -f "$cachevol" >/dev/null
+    FAILED=$((FAILED + 1))
+    printf '%s\tprefetch-blocked\t%s\n' "$spec" "$(( $(date +%s) - started ))" >> "$OUTROOT/timings.tsv"
+    continue
+  fi
+
+  remaining=$((deadline - $(date +%s)))
+  if [ "$remaining" -le 0 ]; then
+    echo "   subject ceiling reached before execution"
+    docker volume rm -f "$cachevol" >/dev/null
+    FAILED=$((FAILED + 1))
+    printf '%s\ttimeout\t%s\n' "$spec" "$(( $(date +%s) - started ))" >> "$OUTROOT/timings.tsv"
+    continue
+  fi
+
+  # The subject can execute only here, with Docker's network namespace absent.
   cname="suite-$DONE"
   docker rm -f "$cname" >/dev/null 2>&1 || true
-  timeout --signal=KILL "$PER_SUBJECT_TIMEOUT_S" docker run --name "$cname" --entrypoint node \
-    -e "PROBE_SPEC=$spec" \
+  timeout --signal=KILL "$remaining" docker run --name "$cname" --network none --entrypoint node \
+    -e npm_config_offline=true \
+    -e npm_config_store_dir=/work/cache/store \
+    -e "PROBE_SPEC=$exact_spec" \
     -e "OUT_DIR=/work/out/exec" \
     -e "SAMPLER_PATH=/work/host-sampler.mjs" \
     -e "L3_OVERLAY=/work/fixtures/replay/l3-overlay.yml" \
     -v "$PWD/packages/runner/src/execution-probe.ts:/work/execution-probe.ts:ro" \
     -v "$PWD/packages/runner/src/host-sampler.mjs:/work/host-sampler.mjs:ro" \
     -v "$PWD/packages/runner/fixtures:/work/fixtures:ro" \
-    "$IMAGE" /work/execution-probe.ts "$spec" >"$dir/execution.log" 2>&1
+    -v "$cachevol:/work/cache" \
+    "$IMAGE" /work/execution-probe.ts "$exact_spec" >"$dir/execution.log" 2>&1
   docker cp "$cname:/work/out/exec/execution.json" "$dir/execution.json" >/dev/null 2>&1
   docker rm -f "$cname" >/dev/null 2>&1 || true
+  docker volume rm -f "$cachevol" >/dev/null
 
   if [ ! -f "$dir/execution.json" ]; then
     echo "   execution produced no result — see $dir/execution.log"
