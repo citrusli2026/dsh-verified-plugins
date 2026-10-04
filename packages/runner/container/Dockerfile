@@ -55,6 +55,9 @@ RUN npm install --global \
       "@deepseek-ai/dsh@${DSH_VERSION}" > /opt/dsh-runtime-facts/npm-install.log 2>&1 \
  && cd /usr/local/lib/node_modules/@deepseek-ai/dsh/node_modules/node-addon-require-builtin \
  && npm rebuild --foreground-scripts \
+ && NARB_PLATFORM_VERSION="$(node -p "require('./package.json').optionalDependencies['node-addon-require-builtin-linux-x64-gnu']")" \
+ && npm install --global --ignore-scripts "node-addon-require-builtin-linux-x64-gnu@${NARB_PLATFORM_VERSION}" \
+ && node -e "console.log(require.resolve('node-addon-require-builtin-linux-x64-gnu', { paths: ['/usr/local/lib/node_modules/@deepseek-ai/dsh/node_modules/node-addon-require-builtin'] }))" \
  && node /opt/dsh-runtime-facts/runtime-facts.mjs \
  && npm cache clean --force \
  && rm -rf /tmp/npm-cache
