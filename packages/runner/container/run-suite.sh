@@ -100,9 +100,20 @@ for raw in "${LIST[@]}"; do
   # subject's 5 GiB disk ceiling. A read-only root prevents bypassing it.
   docker volume create --driver local --opt type=tmpfs --opt device=tmpfs \
     --opt o=size=3g,uid=10001,gid=10001 "$cachevol" >/dev/null || exit 1
+  # Keep the tmpfs mounted between phases; Docker discards its contents after
+  # the last container releases the volume. This holder runs no plugin code.
+  cacheholder="cache-$DONE"
+  docker rm -f "$cacheholder" >/dev/null 2>&1 || true
+  docker run -d --name "$cacheholder" --network none --read-only \
+    --cpus 0.25 --memory 128m --memory-swap 128m --pids-limit 32 \
+    --entrypoint node -v "$cachevol:/work/cache" "$IMAGE" \
+    -e 'setInterval(() => {}, 60000)' >/dev/null || exit 1
   deadline=$((started + PER_SUBJECT_TIMEOUT_S))
   remaining=$((deadline - $(date +%s)))
-  if [ "$remaining" -le 0 ] || ! timeout --signal=KILL "$remaining" docker run --rm \
+  prefetch_rc=124
+  if [ "$remaining" -gt 0 ]; then
+    prefetch_rc=0
+    timeout --signal=KILL "$remaining" docker run --rm \
     --read-only --cpus 2 --memory 2g --memory-swap 2g --pids-limit 256 \
     --tmpfs /tmp:rw,size=256m,mode=1777 \
     --tmpfs /home/verifier:rw,size=256m,uid=10001,gid=10001 \
@@ -110,10 +121,16 @@ for raw in "${LIST[@]}"; do
     -e XDG_CACHE_HOME=/work/cache/xdg \
     -v "$PWD/packages/runner/container/prefetch.sh:/work/prefetch.sh:ro" \
     -v "$cachevol:/work/cache" \
-    "$IMAGE" /work/prefetch.sh "$exact_spec" "${DSH_VERSION:-0.2.0-rc.2}" \
-    >"$dir/prefetch.log" 2>&1; then
+      "$IMAGE" /work/prefetch.sh "$exact_spec" "${DSH_VERSION:-0.2.0-rc.2}" \
+      >"$dir/prefetch.log" 2>&1 || prefetch_rc=$?
+  fi
+  if [ "$prefetch_rc" -ne 0 ]; then
     echo "   prefetch BLOCKED — see $dir/prefetch.log"
-    print_excerpt "$dir/prefetch.log"
+    [ -f "$dir/prefetch.log" ] && print_excerpt "$dir/prefetch.log"
+    node packages/report/src/orchestration-failure.ts "$dir/static.json" "$dir/report.json" \
+      prefetch "$prefetch_rc" "$(( ($(date +%s) - started) * 1000 ))" \
+      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}"
+    docker rm -f "$cacheholder" >/dev/null
     docker volume rm -f "$cachevol" >/dev/null
     FAILED=$((FAILED + 1))
     printf '%s\tprefetch-blocked\t%s\n' "$spec" "$(( $(date +%s) - started ))" >> "$OUTROOT/timings.tsv"
@@ -123,6 +140,10 @@ for raw in "${LIST[@]}"; do
   remaining=$((deadline - $(date +%s)))
   if [ "$remaining" -le 0 ]; then
     echo "   subject ceiling reached before execution"
+    node packages/report/src/orchestration-failure.ts "$dir/static.json" "$dir/report.json" \
+      execution 124 "$(( ($(date +%s) - started) * 1000 ))" \
+      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}"
+    docker rm -f "$cacheholder" >/dev/null
     docker volume rm -f "$cachevol" >/dev/null
     FAILED=$((FAILED + 1))
     printf '%s\ttimeout\t%s\n' "$spec" "$(( $(date +%s) - started ))" >> "$OUTROOT/timings.tsv"
@@ -132,6 +153,7 @@ for raw in "${LIST[@]}"; do
   # The subject can execute only here, with Docker's network namespace absent.
   cname="suite-$DONE"
   docker rm -f "$cname" >/dev/null 2>&1 || true
+  execution_rc=0
   timeout --signal=KILL "$remaining" docker run --name "$cname" --network none \
     --read-only --cpus 2 --memory 2g --memory-swap 2g --pids-limit 256 \
     --tmpfs /tmp:rw,size=256m,mode=1777 \
@@ -152,14 +174,17 @@ for raw in "${LIST[@]}"; do
     -v "$PWD/packages/runner/src/host-sampler.mjs:/work/host-sampler.mjs:ro" \
     -v "$PWD/packages/runner/fixtures:/work/fixtures:ro" \
     -v "$cachevol:/work/cache" \
-    "$IMAGE" /work/execution-probe.ts "$exact_spec" >"$dir/execution.log" 2>&1
-  docker cp "$cname:/work/out/exec/execution.json" "$dir/execution.json" >/dev/null 2>&1
+    "$IMAGE" /work/execution-probe.ts "$exact_spec" >"$dir/execution.json" 2>"$dir/execution.log" || execution_rc=$?
   docker rm -f "$cname" >/dev/null 2>&1 || true
+  docker rm -f "$cacheholder" >/dev/null
   docker volume rm -f "$cachevol" >/dev/null
 
-  if [ ! -f "$dir/execution.json" ]; then
+  if ! node -e "JSON.parse(require('node:fs').readFileSync(process.argv[1], 'utf8'))" "$dir/execution.json" >/dev/null 2>&1; then
     echo "   execution produced no result — see $dir/execution.log"
     print_excerpt "$dir/execution.log"
+    node packages/report/src/orchestration-failure.ts "$dir/static.json" "$dir/report.json" \
+      execution "$execution_rc" "$(( ($(date +%s) - started) * 1000 ))" \
+      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}"
     FAILED=$((FAILED + 1))
     printf '%s\texecution-failed\t%s\n' "$spec" "$(( $(date +%s) - started ))" >> "$OUTROOT/timings.tsv"
     continue
