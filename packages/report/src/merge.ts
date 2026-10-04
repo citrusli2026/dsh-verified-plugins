@@ -13,6 +13,7 @@ import { createHash } from 'node:crypto';
 
 import type { Dimension, EvidenceEntry } from './validate.ts';
 import { deriveVerdict, DISCLAIMER, type DimensionKey } from './validate.ts';
+import { makeExcerpt, redactPaths, redactSecrets } from './redact.ts';
 
 export interface ExecutionStep {
   name: string;
@@ -75,6 +76,24 @@ export interface ExecutionResult {
 }
 
 const MAX_EXCERPT_BYTES = 2048;
+const RUN_PATHS = [
+  { from: '/home/verifier', to: '<home>' },
+  { from: '/usr/local', to: '<runtime>' },
+  { from: '/work', to: '<work>' },
+  { from: '/tmp', to: '<tmp>' },
+  { from: '/opt', to: '<runtime>' },
+];
+
+function redactRunText(value: string): string {
+  return redactSecrets(redactPaths(value, { paths: RUN_PATHS }).text).text;
+}
+
+function redactSessionFields(value: string): string {
+  return value.replace(
+    /"(?:text|content|sessionId|message)"\s*:\s*"(?:\\.|[^"\\])*"/g,
+    (field) => `${field.slice(0, field.indexOf(':') + 1)}"[redacted:session-content]"`,
+  );
+}
 
 function capExcerpt(text: string): { excerpt: string; bytes: number; truncated: boolean } {
   const bytes = Buffer.byteLength(text, 'utf8');
@@ -89,14 +108,17 @@ function stepFor(execution: ExecutionResult, name: string): ExecutionStep | unde
 }
 
 function evidenceFromStep(id: string, step: ExecutionStep | undefined, fallbackCommand: string): EvidenceEntry {
-  const capped = capExcerpt(step?.excerpt ?? '');
+  const raw = step?.excerpt ?? '';
+  const capped = makeExcerpt(id === 'e-l3-session' ? redactSessionFields(raw) : raw, {
+    paths: RUN_PATHS, maxBytes: MAX_EXCERPT_BYTES,
+  });
   return {
     id,
     kind: 'command',
     command: step?.command ?? fallbackCommand,
     ...(step?.exitCode !== null && step?.exitCode !== undefined ? { exitCode: step.exitCode } : {}),
     ...(step ? { durationMs: step.durationMs } : {}),
-    excerpt: capped.excerpt,
+    excerpt: capped.text,
     excerptBytes: capped.bytes,
     truncated: capped.truncated,
     sha256: createHash('sha256').update(step?.excerpt ?? '').digest('hex'),
@@ -213,11 +235,11 @@ export function mergeExecution(
       bundlesAfterInstall: l1.bundlesAfter,
       pendingBuildScripts: l1.pendingBuildScripts,
       buildScriptsApproved: 0,
-      diagnosticsLog: l1.logPath,
+      diagnosticsLog: l1.logPath ? redactRunText(l1.logPath) : null,
     },
     evidenceRefs: l1Step ? ['e-l1-install'] : [],
     notes: [
-      l1.detail,
+      redactRunText(l1.detail),
       ...(l1Step ? [] : missingStepNote('L1_install')),
       'no dependency build script was approved by the verifier; approval permits commands with the host user permissions',
     ],
@@ -230,7 +252,7 @@ export function mergeExecution(
       status: 'skip',
       summary: l2.reason,
       evidenceRefs: [],
-      notes: [l2.detail],
+      notes: [redactRunText(l2.detail)],
     };
   } else if (!l2Step) {
     dims.L2_load = {
@@ -252,7 +274,7 @@ export function mergeExecution(
       },
       evidenceRefs: ['e-l2-boot'],
       notes: [
-        l2.detail,
+        redactRunText(l2.detail),
         'the fiber phase is not read directly: an early exit with diagnostics is the load-failure signal, and a boot that settles and waits is the success signal',
       ],
     };
@@ -260,7 +282,7 @@ export function mergeExecution(
 
   const l6 = execution.L6_uninstall;
   if (l6.status === 'skip') {
-    dims.L6_uninstall = { id: 'L6', status: 'skip', summary: l6.reason, evidenceRefs: [], notes: [l6.detail] };
+    dims.L6_uninstall = { id: 'L6', status: 'skip', summary: l6.reason, evidenceRefs: [], notes: [redactRunText(l6.detail)] };
   } else if (!l6Step) {
     dims.L6_uninstall = {
       id: 'L6',
@@ -274,9 +296,9 @@ export function mergeExecution(
       id: 'L6',
       status: l6.status as Dimension['status'],
       summary: l6.reason,
-      metrics: { residue: l6.residue, durationMs: l6Step.durationMs },
+      metrics: { residue: l6.residue.map(redactRunText), durationMs: l6Step.durationMs },
       evidenceRefs: ['e-l6-remove'],
-      notes: [l6.detail],
+      notes: [redactRunText(l6.detail)],
     };
   }
 
@@ -290,16 +312,21 @@ export function mergeExecution(
       notes: ['a session was not attempted'],
     };
   } else if (l3.status === 'skip') {
-    dims.L3_run = { id: 'L3', status: 'skip', summary: l3.reason, evidenceRefs: [], notes: [l3.detail] };
+    dims.L3_run = { id: 'L3', status: 'skip', summary: l3.reason, evidenceRefs: [], notes: [redactRunText(l3.detail)] };
   } else {
     dims.L3_run = {
       id: 'L3',
       status: l3.status as Dimension['status'],
       summary: l3.reason,
-      metrics: { replayAdapter: l3.replayAdapter, probeTask: l3.task, events: l3.events },
+      metrics: {
+        replayAdapter: l3.replayAdapter,
+        probeTask: l3.task,
+        events: l3.events ? Object.fromEntries(Object.entries(l3.events).filter(([key]) =>
+          ['turnEndReason', 'finalEventSeen', 'textEventCount', 'errorEventSeen', 'exitCode', 'durationMs', 'eventCount'].includes(key))) : null,
+      },
       evidenceRefs: l3Step ? ['e-l3-session'] : [],
       notes: [
-        l3.detail,
+        redactRunText(l3.detail),
         `probe task, stated verbatim: ${JSON.stringify(l3.task)}`,
         ...(l3Step ? [] : missingStepNote('L3_run')),
       ],
@@ -394,7 +421,7 @@ export function mergeExecution(
     ...report.container,
     image: process.env.VERIFIER_IMAGE ?? report.container?.image ?? 'unknown',
     imageDigest: process.env.VERIFIER_IMAGE_DIGEST ?? null,
-    notes: 'executed in a one-off container; the subject was installed, booted and removed there',
+    notes: `network-denied execution container; install outcome: ${l1Status}; later phases ran only where their dimensions say so`,
   };
 
   report.verdict = deriveVerdict(dims as Record<DimensionKey, Dimension>);
@@ -409,7 +436,7 @@ export function mergeExecution(
         ]
       : []),
     'the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase',
-    ...execution.notes,
+    ...execution.notes.map(redactRunText),
   ].filter((l: string, i: number, all: string[]) => all.indexOf(l) === i);
 
   report.disclaimers = [DISCLAIMER];

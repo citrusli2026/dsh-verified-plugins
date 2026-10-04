@@ -111,7 +111,7 @@ export function renderIndexPage(index: CatalogIndex, staleness?: StalenessView |
     'dsh-verified-plugins',
     `<h1>dsh-verified-plugins</h1>
 <p class="muted">Execution-verified reports for DeepSeek Harness plugins. Every conclusion links to the artifact it rests on.</p>
-<p class="note"><strong>Historical method limitation:</strong> the reports published before 2026-10-04 were executed with network access. Their no-egress condition was not met. See <a href="https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/security.md#7-historical-network-incident">the incident record</a>.</p>
+<p class="note"><strong>Historical method limitation:</strong> the reports published before 2026-10-04 were executed with network access and contain container paths and replay fixture text. See <a href="https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/security.md#7-historical-network-incident">the incident record</a>.</p>
 <p><strong>${escapeHtml(String(index.counts.total))} reports</strong> — ${counts}</p>
 <p class="note">${escapeHtml(index.coverage.note)}</p>
 <p class="note">A <strong>stale</strong> report may describe an older version or runtime, or a changed registry integrity. Check its reason in <a href="./staleness.json">staleness.json</a>.</p>
@@ -148,7 +148,7 @@ export function renderReportPage(
   // a network-denied container. Keep the incident visible on those pages.
   const networkIncident = typeof report.generatedAt === 'string' &&
     report.generatedAt < '2026-10-04T00:00:00.000Z'
-    ? '<p><strong>Method limitation.</strong> This historical execution used a container with network access. The no-egress condition was not met. See <a href="https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/security.md#7-historical-network-incident">the security incident</a>.</p>'
+    ? '<p><strong>Method limitation.</strong> This historical execution used a container with network access and published container paths and replay fixture text. The no-egress and redaction conditions were not met. See <a href="https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/security.md#7-historical-network-incident">the security incident</a>.</p>'
     : '';
   const dims = report.dimensions as Record<string, any>;
   const evidence = (report.evidence ?? []) as Array<Record<string, any>>;

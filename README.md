@@ -14,8 +14,9 @@ Evidence-linked, reproducible, not another star list.
 > [docs/security.md](docs/security.md) first.
 
 **Security correction:** the 24 historical execution reports were produced in
-containers with network access. They remain evidence of the measured dimensions,
-but do not satisfy the no-egress condition. The executor now separates package
+containers with network access and include container paths; 20 include replay
+fixture text. They remain evidence of the measured dimensions, but do not
+satisfy the stated no-egress and redaction conditions. The executor now separates package
 fetch from network-denied execution; that revised path still needs a Docker CI
 acceptance run before new reports are published. See [the incident](docs/security.md#7-historical-network-incident).
 

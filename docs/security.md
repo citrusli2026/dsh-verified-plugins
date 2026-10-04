@@ -195,19 +195,24 @@ around it — when any of these holds:
 
 The 24 reports committed before 2026-10-04 were produced by an executor whose
 `docker run` command did **not** pass `--network none`. Those executions had
-network access. Their L0–L6 observations remain records of what ran, but they
-do **not** demonstrate the no-egress condition described in S2. The site marks
-these historical reports. Their badges are dimension summaries, not evidence
-that the execution environment met S2.
+network access. All 24 also contain absolute **container** paths in published
+evidence, and 20 contain text from the verifier-authored replay fixture. No
+user session or credential was involved, but this still violates the stated
+data-handling contract. Their L0–L6 observations remain records of what ran;
+they do **not** demonstrate the no-egress or redaction conditions described
+above. The site marks these historical reports. Their badges are dimension
+summaries, not evidence that the execution environment met S2 or § 4.
 
 The executor now resolves and downloads package files in a separate networked
 container using pnpm lockfile-only resolution and `pnpm fetch`, both without
 install scripts. It then runs `dsh plugin` in a fresh container with
 `--network none` and an isolated per-subject package store. If the offline
 store lacks a dependency, L1 is inconclusive rather than an install failure.
-This correction has passed local static and unit checks but has **not yet been
-accepted in Docker CI**; no new execution report should be published until a
-real container run confirms the offline path. See `docs/evidence/V7.md`.
+The merge now redacts container paths and sensitive strings from execution
+evidence, and strips replay text and session identifiers. This correction has
+passed local static and unit checks but has **not yet been accepted as a full
+L1–L6 run in Docker CI**; no new execution report should be published until
+that run succeeds. See `docs/evidence/V7.md`.
 
 The policy checker carries **self-test fixtures**: if a rule stops firing, CI
 fails. A guardrail that cannot be shown to trigger is theatre.

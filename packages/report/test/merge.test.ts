@@ -181,6 +181,7 @@ test('merge: a completed keyless session is an L3 pass with its probe task publi
   assert.equal(l3.status, 'pass');
   assert.deepEqual(l3.evidenceRefs, ['e-l3-session']);
   assert.equal(l3.metrics?.probeTask, 'reply with any text');
+  assert.equal((l3.metrics?.events as Record<string, unknown>).finalText, undefined);
   // The detailed claim lives once, in the dimension notes...
   assert.ok(l3.notes?.some((n) => /served by the replay adapter/.test(n)));
   // ...and the report says plainly what a replayed session does not establish.
@@ -188,6 +189,35 @@ test('merge: a completed keyless session is an L3 pass with its probe task publi
     (merged.limits as string[]).some((l) => /not against a provider/.test(l)),
     'a replayed L3 must carry its own limitation',
   );
+  assert.deepEqual(validateReport(merged, SCHEMA), []);
+});
+
+test('merge: execution evidence does not publish container paths, tokens or session text', () => {
+  const exec = execution({
+    L1_install: {
+      ...execution().L1_install,
+      logPath: '/work/dsh-home/profiles/verify/pnpm.log',
+    },
+    L3_run: {
+      status: 'pass', reason: 'completed', detail: 'fixture', task: 'reply with any text',
+      events: { finalText: 'secret transcript', finalEventSeen: true },
+      replayAdapter: '@deepseek-ai/dsh-llm-replay@0.2.0-rc.2',
+    },
+    steps: [
+      step('l1-install', { excerpt: 'at /usr/local/lib/tool.js TOKEN=private-value' }),
+      step('l2-boot'),
+      step('l3-session', { excerpt: '{"type":"final","text":"secret transcript","sessionId":"abc"}' }),
+      step('l6-remove'),
+    ],
+  });
+  const merged = mergeExecution(staticReport(), exec);
+  const serialized = JSON.stringify(merged);
+  assert.ok(!serialized.includes('/work/'));
+  assert.ok(!serialized.includes('/usr/local/'));
+  assert.ok(!serialized.includes('private-value'));
+  assert.ok(!serialized.includes('secret transcript'));
+  assert.ok(!serialized.includes('"sessionId":"abc"'));
+  assert.match(serialized, /\[redacted:session-content\]/);
   assert.deepEqual(validateReport(merged, SCHEMA), []);
 });
 

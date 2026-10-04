@@ -129,6 +129,8 @@ for raw in "${LIST[@]}"; do
   timeout --signal=KILL "$remaining" docker run --name "$cname" --network none --entrypoint node \
     -e npm_config_offline=true \
     -e npm_config_store_dir=/work/cache/store \
+    -e COREPACK_DEFAULT_TO_LATEST=0 \
+    -e COREPACK_ENABLE_NETWORK=0 \
     -e "PROBE_SPEC=$exact_spec" \
     -e "OUT_DIR=/work/out/exec" \
     -e "SAMPLER_PATH=/work/host-sampler.mjs" \

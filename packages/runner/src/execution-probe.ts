@@ -353,15 +353,22 @@ function classifyRun(step: StepResult): L3Outcome {
   const textEvents = parsed.filter((e) => e.type === 'text').map((e) => e.text);
 
   const events = {
-    session: parsed.find((e) => e.type === 'session')?.sessionId ?? null,
     turnEndReason: turnEndReason ?? null,
-    finalText: final?.text ?? null,
+    finalEventSeen: Boolean(final),
     textEventCount: textEvents.length,
-    error: errorEvent?.message ?? null,
+    errorEventSeen: Boolean(errorEvent),
     exitCode: step.exitCode,
     durationMs: step.durationMs,
     eventCount: parsed.length,
   };
+
+  // The parser has finished with the raw stream. Remove session identifiers
+  // and content before the step is serialized into execution.json. The
+  // committed report records the event shape and completion, not a transcript.
+  step.excerpt = step.excerpt.replace(
+    /"(?:text|content|sessionId|message)"\s*:\s*"(?:\\.|[^"\\])*"/g,
+    (field) => `${field.slice(0, field.indexOf(':') + 1)}"[redacted:session-content]"`,
+  );
 
   if (step.timedOut) {
     return { status: 'fail', reason: 'the session did not finish within the bound', detail: 'no terminal event was reached before the wall-clock ceiling', ...base, events };
@@ -777,6 +784,7 @@ const execution = {
     'no dependency build script was approved by this executor',
     'overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta',
     'sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test',
+    'L3 session identifiers and text are redacted before execution evidence is written',
   ],
 };
 

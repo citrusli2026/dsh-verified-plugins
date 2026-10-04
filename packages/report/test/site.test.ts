@@ -143,8 +143,8 @@ test('report page: the verdict is rendered and no score appears in the visible t
 test('historical report page discloses the network isolation incident', () => {
   const old = report();
   old.generatedAt = '2026-10-03T15:56:06.201Z';
-  assert.match(renderReportPage(old, 'example'), /no-egress condition was not met/);
-  assert.doesNotMatch(renderReportPage(report(), 'example'), /no-egress condition was not met/);
+  assert.match(renderReportPage(old, 'example'), /no-egress and redaction conditions were not met/);
+  assert.doesNotMatch(renderReportPage(report(), 'example'), /no-egress and redaction conditions were not met/);
 });
 
 test('index page: every entry is listed with a link and an inline badge', () => {
