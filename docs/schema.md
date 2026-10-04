@@ -19,7 +19,7 @@ published, and CI refuses to build an index over a report that fails.
 | `verifier` | yes | Name, version, and full commit SHA. Short SHAs are not published. |
 | `subject` | yes | The exact artifact, including the **resolved** integrity hash. |
 | `runtime` | yes | DSH and Node versions. `not-executed` when no runtime ran. |
-| `container` | no | Image and digest. `imageDigest: null` states plainly that the image is unaddressed by digest. |
+| `container` | no | Image tag and content-addressed local image ID in `imageDigest`. A locally built image has no registry `RepoDigest`; `imageDigest: null` means no image ID was recorded. |
 | `verdict` | yes | See the ladder below. Capped by the dimensions that executed. |
 | `dimensions` | yes | All seven, always. A dimension that did not run is `skip`, never omitted. |
 | `capabilities` | no | L4 findings. Presence only — never characterised as malicious. |

@@ -107,13 +107,18 @@ for raw in "${LIST[@]}"; do
   docker run -d --name "$cacheholder" --network none --read-only \
     --cpus 0.25 --memory 128m --memory-swap 128m --pids-limit 32 \
     --entrypoint node -v "$cachevol:/work/cache" "$IMAGE" \
-    -e 'setInterval(() => {}, 60000)' >/dev/null || exit 1
+    -e 'setInterval(() => {}, 60000)' >/dev/null || {
+      docker volume rm -f "$cachevol" >/dev/null 2>&1 || true
+      exit 1
+    }
   deadline=$((started + PER_SUBJECT_TIMEOUT_S))
   remaining=$((deadline - $(date +%s)))
   prefetch_rc=124
   if [ "$remaining" -gt 0 ]; then
     prefetch_rc=0
-    timeout --signal=KILL "$remaining" docker run --rm \
+    prefetch_name="fetch-$DONE"
+    docker rm -f "$prefetch_name" >/dev/null 2>&1 || true
+    timeout --signal=KILL "$remaining" docker run --rm --name "$prefetch_name" \
     --read-only --cpus 2 --memory 2g --memory-swap 2g --pids-limit 256 \
     --tmpfs /tmp:rw,size=256m,mode=1777 \
     --tmpfs /home/verifier:rw,size=256m,uid=10001,gid=10001 \
@@ -123,6 +128,7 @@ for raw in "${LIST[@]}"; do
     -v "$cachevol:/work/cache" \
       "$IMAGE" /work/prefetch.sh "$exact_spec" "${DSH_VERSION:-0.2.0-rc.2}" \
       >"$dir/prefetch.log" 2>&1 || prefetch_rc=$?
+    docker rm -f "$prefetch_name" >/dev/null 2>&1 || true
   fi
   if [ "$prefetch_rc" -ne 0 ]; then
     echo "   prefetch BLOCKED — see $dir/prefetch.log"

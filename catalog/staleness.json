@@ -1,12 +1,12 @@
 {
   "schema": "dsh.verifier.staleness.v1",
-  "generatedAt": "2026-10-04T01:16:38.481Z",
+  "generatedAt": "2026-10-04T04:14:54.489Z",
   "registry": "https://registry.npmjs.org",
   "runtimeVersion": "0.2.0-rc.2",
   "counts": {
-    "checked": 24,
+    "checked": 25,
     "current": 20,
-    "stale": 4,
+    "stale": 5,
     "unknown": 0
   },
   "limits": [
@@ -23,6 +23,17 @@
       "verifiedRuntime": "0.2.0-rc.2",
       "currentVersion": "0.1.2",
       "currentIntegrity": "sha512-6zMz+avT+RCyyWZfob0f7GFHCOzKqpWsT1SUNSPhlzwceAXfuHJEdPMagrc2sP8xLG8ZYHwDVrCYNLFxyJP+qA==",
+      "integrityStatus": "match",
+      "status": "current",
+      "reasons": []
+    },
+    {
+      "reportId": "npm:@dingyi222666/dsh-session-notification@0.2.2",
+      "name": "@dingyi222666/dsh-session-notification",
+      "verifiedVersion": "0.2.2",
+      "verifiedRuntime": "0.2.0-rc.2",
+      "currentVersion": "0.2.2",
+      "currentIntegrity": "sha512-bD1QCZAq4I65qEaekN9LQNnW1mh3S1eHLfd1Cof3pduNcV3KuwoO05PT4nuuO9nCfSlEaUoxHOhSomaSR8r4pw==",
       "integrityStatus": "match",
       "status": "current",
       "reasons": []
@@ -203,11 +214,13 @@
       "name": "dsh-mnemon",
       "verifiedVersion": "0.5.23",
       "verifiedRuntime": "0.2.0-rc.2",
-      "currentVersion": "0.5.23",
+      "currentVersion": "0.5.24",
       "currentIntegrity": "sha512-Ey0rlzroEj1OpKmjU5NWaCrNLL0ujI4/8m5AjT+mZRA2fQERuL84gr1xDJ0RE8fK1WhzqRiwrV4pVTCXAGvirA==",
       "integrityStatus": "match",
-      "status": "current",
-      "reasons": []
+      "status": "stale",
+      "reasons": [
+        "the latest tag points at 0.5.24, while this report covers 0.5.23"
+      ]
     },
     {
       "reportId": "npm:dsh-pet@0.3.1",

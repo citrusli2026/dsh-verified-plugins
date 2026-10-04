@@ -214,10 +214,10 @@ install scripts. It then runs `dsh plugin` in a fresh container with
 `--network none` and an isolated per-subject package store. If the offline
 store lacks a dependency, L1 is inconclusive rather than an install failure.
 The merge now redacts container paths and sensitive strings from execution
-evidence, and strips replay text and session identifiers. This correction has
-passed local static and unit checks but has **not yet been accepted as a full
-L1–L6 run in Docker CI**; no new execution report should be published until
-that run succeeds. See `docs/evidence/V7.md`.
+evidence, and strips replay text and session identifiers. The corrected path
+passed Docker CI isolation and resource acceptance; a new report for
+`@dingyi222666/dsh-session-notification@0.2.2` records its unobserved browser
+client as L2 `inconclusive`. See `docs/evidence/V7.md`.
 
 The policy checker carries **self-test fixtures**: if a rule stops firing, CI
 fails. A guardrail that cannot be shown to trigger is theatre.

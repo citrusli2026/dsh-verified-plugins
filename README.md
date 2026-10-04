@@ -5,10 +5,10 @@ Evidence-linked, reproducible, not another star list.
 
 [Site](https://citrusli2026.github.io/dsh-verified-plugins/) · [Method](docs/method.md) · [Report schema](docs/schema.md) · [Security](docs/security.md) · [Appeals](docs/appeals.md) · [Catalog](catalog/index.json)
 
-> **Status: V0–V6 implemented; network isolation correction awaiting CI acceptance.**
-> All seven dimensions have run end to end, batches are supported, reports are published and freshness is tracked —
+> **Status: isolated execution accepted in CI; browser-client execution remains open.**
+> All seven dimensions are represented, batches are supported, reports are published and freshness is tracked —
 > **[browse the site](https://citrusli2026.github.io/dsh-verified-plugins/)**.
-> 24 reports: 19 `verified`, 4 `partial`, 1 `not-installable`, 4 now **stale**.
+> This branch has 25 reports: 19 historical `verified`, 5 `partial`, 1 `not-installable`; 5 are now **stale**.
 > Sessions run against a replayed transcript, never a credential. Dispute a
 > report via [docs/appeals.md](docs/appeals.md). Read
 > [docs/security.md](docs/security.md) first.
@@ -17,8 +17,10 @@ Evidence-linked, reproducible, not another star list.
 containers with network access and include container paths; 20 include replay
 fixture text. They remain evidence of the measured dimensions, but do not
 satisfy the stated no-egress and redaction conditions. The executor now separates package
-fetch from network-denied execution; that revised path still needs a Docker CI
-acceptance run before new reports are published. See [the incident](docs/security.md#7-historical-network-incident).
+fetch from network-denied execution and passed Docker CI acceptance. The new
+`@dingyi222666/dsh-session-notification@0.2.2` report is `partial`: its browser
+client was not executed. See [the incident](docs/security.md#7-historical-network-incident)
+and [V7 evidence](docs/evidence/V7.md).
 
 ---
 
@@ -64,7 +66,7 @@ lose `verified`. There is **no score and no ranking** — that is the whole poin
 
 ## What is published
 
-`catalog/` holds one JSON report per verified subject plus a generated
+`catalog/` holds one JSON report per measured subject plus a generated
 `index.json`:
 
 ```

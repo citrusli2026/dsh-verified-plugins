@@ -1,11 +1,11 @@
 {
   "schema": "dsh.plugin.catalog.v1",
-  "generatedAt": "2026-10-03T17:03:57.173Z",
+  "generatedAt": "2026-10-04T04:14:43.113Z",
   "counts": {
-    "total": 24,
+    "total": 25,
     "byVerdict": {
       "verified": 19,
-      "partial": 4,
+      "partial": 5,
       "not-installable": 1
     }
   },
@@ -34,6 +34,27 @@
       },
       "presentCapabilities": [],
       "repoPath": "dfy-plugins__dsh-bundle"
+    },
+    {
+      "reportId": "npm:@dingyi222666/dsh-session-notification@0.2.2",
+      "name": "@dingyi222666/dsh-session-notification",
+      "version": "0.2.2",
+      "verdict": "partial",
+      "path": "catalog/npm/dingyi222666__dsh-session-notification.json",
+      "generatedAt": "2026-10-04T04:11:23.203Z",
+      "integrity": "sha512-bD1QCZAq4I65qEaekN9LQNnW1mh3S1eHLfd1Cof3pduNcV3KuwoO05PT4nuuO9nCfSlEaUoxHOhSomaSR8r4pw==",
+      "dshVersion": "0.2.0-rc.2",
+      "dimensions": {
+        "L0_qualification": "pass",
+        "L1_install": "pass",
+        "L2_load": "inconclusive",
+        "L3_run": "pass",
+        "L4_capability": "pass",
+        "L5_overhead": "pass",
+        "L6_uninstall": "pass"
+      },
+      "presentCapabilities": [],
+      "repoPath": "dingyi222666__dsh-session-notification"
     },
     {
       "reportId": "npm:@iasiv5/dsh-obmc-web@0.1.3",
