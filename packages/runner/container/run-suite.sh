@@ -152,7 +152,7 @@ for raw in "${LIST[@]}"; do
     continue
   fi
 
-  if ! node packages/cli/src/main.ts merge "$dir/static.json" "$dir/execution.json" \
+  if ! VERIFIER_IMAGE="$IMAGE" node packages/cli/src/main.ts merge "$dir/static.json" "$dir/execution.json" \
         --out "$dir/report.json" >>"$dir/merge.log" 2>&1; then
     echo "   merge FAILED — see $dir/merge.log"
     FAILED=$((FAILED + 1))

@@ -180,7 +180,7 @@ function classifyInstall(step: StepResult): L1Outcome {
   const pnpmError = /ERR_PNPM_[A-Z_]+/.exec(text)?.[0] ?? null;
   const buildsBlocked = pending.length > 0 && (pnpmError === 'ERR_PNPM_IGNORED_BUILDS' || /Ignored build scripts:/i.test(text));
   const offlineMissing = process.env.npm_config_offline === 'true' &&
-    /NO_OFFLINE_META|META_FETCH_FAIL|FETCH_\d+|ERR_PNPM_NO_MATCHING_VERSION_INSIDE_WORKSPACE|ENETUNREACH|EAI_AGAIN|network is unreachable|offline/i.test(text);
+    /NO_OFFLINE_META|META_FETCH_FAIL|FETCH_\d+|ERR_PNPM_NO_MATCHING_VERSION_INSIDE_WORKSPACE|ENETUNREACH|EAI_AGAIN|network is unreachable|network access disabled|offline/i.test(text);
 
   return {
     status: offlineMissing && !peerRejected && !buildsBlocked ? 'inconclusive' : 'fail',

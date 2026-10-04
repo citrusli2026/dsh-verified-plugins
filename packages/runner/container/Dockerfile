@@ -39,8 +39,12 @@ RUN apt-get update \
 # The decision is recorded, not absorbed. Third-party subject plugins never get
 # this treatment — their pending build scripts are a reportable finding.
 # ---------------------------------------------------------------------------
-RUN corepack enable \
- && corepack prepare "pnpm@${PNPM_VERSION}" --activate
+# The unprivileged executor has a different HOME from the build user. A
+# Corepack shim therefore looked up a default pnpm version online even after
+# `corepack prepare` had populated root's cache. Install the pinned binary
+# directly so the offline executor never needs Corepack's registry lookup.
+RUN corepack disable \
+ && npm install --global "pnpm@${PNPM_VERSION}"
 
 RUN mkdir -p /opt/dsh-runtime-facts
 COPY runtime-facts.mjs /opt/dsh-runtime-facts/runtime-facts.mjs
