@@ -125,7 +125,10 @@ function normal() {
   expect(addResult.exitCode === 0, `normal add failed: ${addResult.output}`);
   expect(bundleNames(home).includes('dsh-fixture-normal'), 'normal bundle was not selected');
   const bootResult = boot(home, { FIXTURE_ACTIVATION_PATH: marker });
-  expect(existsSync(marker), 'normal fixture did not execute during profile boot');
+  expect(
+    existsSync(marker),
+    `normal fixture did not execute during profile boot: exit=${bootResult.exitCode} signal=${bootResult.signal} timedOut=${bootResult.timedOut} bundles=${JSON.stringify(bundleNames(home))} output=${bootResult.output}`,
+  );
   const removeResult = remove(home, 'dsh-fixture-normal');
   expect(removeResult.exitCode === 0, `normal remove failed: ${removeResult.output}`);
   expect(!bundleNames(home).includes('dsh-fixture-normal'), 'normal bundle remains after removal');
