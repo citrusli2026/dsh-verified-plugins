@@ -30,6 +30,8 @@ test('a prefetch failure produces a valid report without execution claims', () =
   assert.equal(report.dimensions.L1_install.status, 'blocked');
   assert.equal(report.dimensions.L2_load.status, 'skip');
   assert.equal(report.container.imageDigest, 'sha256:abc');
+  assert.equal(report.container.prefetchAttempts, 1);
+  assert.equal(report.container.executionAttempts, 0);
 });
 
 test('a killed execution produces timeout conclusions backed by its exit code', () => {
@@ -41,5 +43,7 @@ test('a killed execution produces timeout conclusions backed by its exit code', 
   }
   assert.equal(report.evidence.at(-1).exitCode, 124);
   assert.match(report.container.notes, /2 execution attempt/);
+  assert.equal(report.container.prefetchAttempts, 0);
+  assert.equal(report.container.executionAttempts, 2);
   assert.equal(report.verdict, 'partial');
 });

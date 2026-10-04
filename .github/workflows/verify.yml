@@ -29,6 +29,11 @@ on:
         required: false
         default: 'dsh-cost-meter@1.8.8'
         type: string
+      exercise_retry:
+        description: 'Force the first isolated execution container to fail once, then verify the real subject'
+        required: false
+        default: false
+        type: boolean
   schedule:
     # Nightly regression of the pinned sample. Catalogue freshness is checked
     # separately; this schedule does not update published reports.
@@ -120,10 +125,43 @@ jobs:
           docker build --build-arg "DSH_VERSION=${DSH_VERSION:-0.2.0-rc.2}" \
             -t "dsh-verifier:${DSH_VERSION:-0.2.0-rc.2}" packages/runner/container
 
+      - name: First-party fixture integration acceptance
+        run: |
+          set -euo pipefail
+          mkdir -p .verify/fixture-acceptance
+          chmod 777 .verify/fixture-acceptance
+          unset GITHUB_TOKEN GH_TOKEN ACTIONS_RUNTIME_TOKEN \
+                ACTIONS_ID_TOKEN_REQUEST_TOKEN ACTIONS_ID_TOKEN_REQUEST_URL || true
+          docker run --rm --network none --read-only \
+            --cpus 2 --memory 2g --memory-swap 2g --pids-limit 256 \
+            --tmpfs /tmp:rw,size=256m,mode=1777 \
+            --tmpfs /home/verifier:rw,size=256m,uid=10001,gid=10001 \
+            --tmpfs /work/dsh-home:rw,size=1g,uid=10001,gid=10001 \
+            --entrypoint node \
+            -e DSH_HOME=/work/dsh-home \
+            -e FIXTURE_ROOT=/work/fixture-plugins \
+            -e FIXTURE_SAMPLER=/work/host-sampler.mjs \
+            -e FIXTURE_ACCEPTANCE_OUT=/work/fixture-out/acceptance.json \
+            -v "$PWD/tools/acceptance/fixtures.mjs:/work/fixture-acceptance.mjs:ro" \
+            -v "$PWD/packages/runner/fixtures/plugins:/work/fixture-plugins:ro" \
+            -v "$PWD/packages/runner/src/host-sampler.mjs:/work/host-sampler.mjs:ro" \
+            -v "$PWD/.verify/fixture-acceptance:/work/fixture-out:rw" \
+            "dsh-verifier:${DSH_VERSION:-0.2.0-rc.2}" /work/fixture-acceptance.mjs
+
+      - name: Upload first-party fixture evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: first-party-fixture-acceptance
+          path: .verify/fixture-acceptance/acceptance.json
+          if-no-files-found: warn
+          retention-days: 30
+
       - name: Verify each subject
         env:
           DSH_VERSION: ${{ inputs.dsh_version }}
           VERIFY_SPECS: ${{ inputs.verify_specs }}
+          VERIFY_FORCE_TRANSIENT_EXECUTION_FAILURE: ${{ inputs.exercise_retry }}
           # Provenance: the report records the commit that produced it. Set here
           # so a run on main cites a main commit rather than a pull-request head.
           DSH_VERIFY_COMMIT: ${{ github.sha }}

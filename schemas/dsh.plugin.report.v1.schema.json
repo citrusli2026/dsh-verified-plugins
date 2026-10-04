@@ -154,6 +154,14 @@
         "dockerfileCommit": {
           "type": "string"
         },
+        "prefetchAttempts": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "executionAttempts": {
+          "type": "integer",
+          "minimum": 0
+        },
         "notes": {
           "type": "string"
         }

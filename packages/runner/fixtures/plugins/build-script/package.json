@@ -1,0 +1,13 @@
+{
+  "name": "dsh-fixture-build-script",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "node postinstall.mjs"
+  },
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": { "patch": "./cordis.patch.yml" }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "dsh-fixture-peer-incompatible",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": { "patch": "./cordis.patch.yml" }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh": "^99.0.0"
+  }
+}

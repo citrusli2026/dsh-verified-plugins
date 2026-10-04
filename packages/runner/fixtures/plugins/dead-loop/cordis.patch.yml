@@ -1,0 +1,3 @@
+- insert:
+    - id: dsh-fixture-dead-loop
+      name: dsh-fixture-dead-loop

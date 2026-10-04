@@ -27,6 +27,7 @@ SPECS="${1:?usage: run-suite.sh <spec,spec,...> [out-root]}"
 OUTROOT="${2:-.verify/reports}"
 IMAGE="${IMAGE:-dsh-verifier:local}"
 PER_SUBJECT_TIMEOUT_S="${PER_SUBJECT_TIMEOUT_S:-420}"
+FORCE_TRANSIENT_EXECUTION_FAILURE="${VERIFY_FORCE_TRANSIENT_EXECUTION_FAILURE:-0}"
 
 mkdir -p "$OUTROOT"
 : > "$OUTROOT/timings.tsv"
@@ -140,7 +141,7 @@ for raw in "${LIST[@]}"; do
     [ -f "$dir/prefetch.log" ] && print_excerpt "$dir/prefetch.log"
     node packages/report/src/orchestration-failure.ts "$dir/static.json" "$dir/report.json" \
       prefetch "$prefetch_rc" "$(( ($(date +%s) - started) * 1000 ))" \
-      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}" "$prefetch_attempts"
+      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}" "$prefetch_attempts" 0
     docker rm -f "$cacheholder" >/dev/null
     docker volume rm -f "$cachevol" >/dev/null
     FAILED=$((FAILED + 1))
@@ -153,7 +154,7 @@ for raw in "${LIST[@]}"; do
     echo "   subject ceiling reached before execution"
     node packages/report/src/orchestration-failure.ts "$dir/static.json" "$dir/report.json" \
       execution 124 "$(( ($(date +%s) - started) * 1000 ))" \
-      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}" 0
+      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}" 0 "$prefetch_attempts"
     docker rm -f "$cacheholder" >/dev/null
     docker volume rm -f "$cachevol" >/dev/null
     FAILED=$((FAILED + 1))
@@ -171,6 +172,18 @@ for raw in "${LIST[@]}"; do
     cname="suite-$DONE-$execution_attempts"
     docker rm -f "$cname" >/dev/null 2>&1 || true
     execution_rc=0
+    probe_failure_env=()
+    force_first=0
+    case "$FORCE_TRANSIENT_EXECUTION_FAILURE" in
+      1|true|TRUE|yes|YES) force_first=1 ;;
+    esac
+    if [ "$execution_attempts" -eq 1 ] && [ "$force_first" -eq 1 ]; then
+      # Maintainer-triggered acceptance only: the first isolated execution
+      # container exits before the probe starts. The next iteration must run
+      # the real subject, proving the infrastructure retry rather than a unit
+      # test that merely increments a counter.
+      probe_failure_env=(-e VERIFY_FAIL_BEFORE_PROBE=1)
+    fi
     timeout --signal=KILL "$remaining" docker run --name "$cname" --network none \
     --read-only --cpus 2 --memory 2g --memory-swap 2g --pids-limit 256 \
     --tmpfs /tmp:rw,size=256m,mode=1777 \
@@ -188,6 +201,7 @@ for raw in "${LIST[@]}"; do
     -e "OUT_DIR=/work/out/exec" \
     -e "SAMPLER_PATH=/work/host-sampler.mjs" \
     -e "L3_OVERLAY=/work/fixtures/replay/l3-overlay.yml" \
+    "${probe_failure_env[@]}" \
     -v "$PWD/packages/runner/src/execution-probe.ts:/work/execution-probe.ts:ro" \
     -v "$PWD/packages/runner/src/host-sampler.mjs:/work/host-sampler.mjs:ro" \
     -v "$PWD/packages/runner/fixtures:/work/fixtures:ro" \
@@ -206,7 +220,7 @@ for raw in "${LIST[@]}"; do
     print_excerpt "$dir/execution.log"
     node packages/report/src/orchestration-failure.ts "$dir/static.json" "$dir/report.json" \
       execution "$execution_rc" "$(( ($(date +%s) - started) * 1000 ))" \
-      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}" "$execution_attempts"
+      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}" "$execution_attempts" "$prefetch_attempts"
     FAILED=$((FAILED + 1))
     printf '%s\texecution-failed\t%s\n' "$spec" "$(( $(date +%s) - started ))" >> "$OUTROOT/timings.tsv"
     continue

@@ -32,6 +32,15 @@ if (SPEC === '') {
   process.exit(2);
 }
 
+// Maintainer-triggered retry acceptance: fail before any subject package is
+// installed or loaded. The orchestration must discard this isolated attempt
+// and run the real probe exactly once more; this is not a plugin fixture or a
+// unit-test-only counter.
+if (process.env.VERIFY_FAIL_BEFORE_PROBE === '1') {
+  process.stderr.write('execution-probe: injected transient acceptance failure\n');
+  process.exit(75);
+}
+
 interface StepResult {
   name: string;
   command: string;

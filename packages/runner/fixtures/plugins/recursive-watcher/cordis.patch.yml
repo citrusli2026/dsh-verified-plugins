@@ -1,0 +1,3 @@
+- insert:
+    - id: dsh-fixture-recursive-watcher
+      name: dsh-fixture-recursive-watcher
