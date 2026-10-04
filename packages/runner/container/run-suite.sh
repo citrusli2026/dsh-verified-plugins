@@ -96,12 +96,16 @@ for raw in "${LIST[@]}"; do
   # Resolve and download without executing the subject. The cache belongs to
   # this subject only and is removed before artifacts are uploaded.
   cachevol="dsh-verify-cache-${GITHUB_RUN_ID:-local}-$$-$DONE"
-  docker volume create "$cachevol" >/dev/null
-  docker run --rm --network none --user root --entrypoint /bin/chown \
-    -v "$cachevol:/work/cache" "$IMAGE" 10001:10001 /work/cache >/dev/null
+  # A 3 GiB tmpfs store plus 2 GiB of bounded writable mounts below is the
+  # subject's 5 GiB disk ceiling. A read-only root prevents bypassing it.
+  docker volume create --driver local --opt type=tmpfs --opt device=tmpfs \
+    --opt o=size=3g,uid=10001,gid=10001 "$cachevol" >/dev/null || exit 1
   deadline=$((started + PER_SUBJECT_TIMEOUT_S))
   remaining=$((deadline - $(date +%s)))
   if [ "$remaining" -le 0 ] || ! timeout --signal=KILL "$remaining" docker run --rm \
+    --read-only --cpus 2 --memory 2g --memory-swap 2g --pids-limit 256 \
+    --tmpfs /tmp:rw,size=256m,mode=1777 \
+    --tmpfs /home/verifier:rw,size=256m,uid=10001,gid=10001 \
     --entrypoint /bin/bash \
     -e XDG_CACHE_HOME=/work/cache/xdg \
     -v "$PWD/packages/runner/container/prefetch.sh:/work/prefetch.sh:ro" \
@@ -128,7 +132,13 @@ for raw in "${LIST[@]}"; do
   # The subject can execute only here, with Docker's network namespace absent.
   cname="suite-$DONE"
   docker rm -f "$cname" >/dev/null 2>&1 || true
-  timeout --signal=KILL "$remaining" docker run --name "$cname" --network none --entrypoint node \
+  timeout --signal=KILL "$remaining" docker run --name "$cname" --network none \
+    --read-only --cpus 2 --memory 2g --memory-swap 2g --pids-limit 256 \
+    --tmpfs /tmp:rw,size=256m,mode=1777 \
+    --tmpfs /home/verifier:rw,size=256m,uid=10001,gid=10001 \
+    --tmpfs /work/dsh-home:rw,size=1g,uid=10001,gid=10001 \
+    --tmpfs /work/out:rw,size=512m,uid=10001,gid=10001 \
+    --entrypoint node \
     -e npm_config_offline=true \
     -e npm_config_store_dir=/work/cache/store \
     -e XDG_CACHE_HOME=/work/cache/xdg \

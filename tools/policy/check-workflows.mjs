@@ -17,6 +17,7 @@
  *   R8  every workflow must declare top-level `permissions:` explicitly
  *   R9  a plugin-executing workflow must disable checkout credential persistence
  *   R10 the batch runner keeps its fetch/execute network split
+ *   R11 the batch runner applies hard execution resource ceilings
  *
  * Usage: node tools/policy/check-workflows.mjs [--verbose]
  * Exit:  0 = policy clean and self-test green, 1 = violation or broken self-test.
@@ -250,12 +251,15 @@ function selfTest() {
       ok = false;
     }
   }
-  const safeSuite = 'docker run --name "$cname" --network none --entrypoint node -e npm_config_offline=true';
+  const safeSuite = 'docker volume create --opt type=tmpfs --opt device=tmpfs --opt o=size=3g,uid=10001,gid=10001 "$cachevol"\n' +
+    'docker run --name "$cname" --network none --read-only --cpus 2 --memory 2g --memory-swap 2g --pids-limit 256 ' +
+    '--tmpfs /work/dsh-home:rw,size=1g --tmpfs /work/out:rw,size=512m --entrypoint node -e npm_config_offline=true';
   const safeFetch = 'pnpm add --lockfile-only --ignore-scripts\npnpm fetch --prod';
   if (runnerBoundaryErrors(safeSuite, safeFetch).length !== 0 ||
       runnerBoundaryErrors(safeSuite.replace('--network none', ''), safeFetch).length === 0 ||
-      runnerBoundaryErrors(safeSuite, safeFetch.replace('--ignore-scripts', '')).length === 0) {
-    console.error('  SELFTEST FAIL R10 did not detect a removed network or script gate');
+      runnerBoundaryErrors(safeSuite, safeFetch.replace('--ignore-scripts', '')).length === 0 ||
+      runnerBoundaryErrors(safeSuite.replace('--memory 2g', ''), safeFetch).length === 0) {
+    console.error('  SELFTEST FAIL R10/R11 did not detect a removed network, script or resource gate');
     ok = false;
   }
   return ok;
@@ -263,13 +267,22 @@ function selfTest() {
 
 function runnerBoundaryErrors(suite, prefetch) {
   const errors = [];
-  if (!/docker run --name "\$cname" --network none --entrypoint node/.test(suite) ||
-      !/-e npm_config_offline=true/.test(suite)) {
+  const execution = /docker run --name "\$cname"[\s\S]*/.exec(suite)?.[0] ?? '';
+  if (!execution.includes('--network none') || !execution.includes('--entrypoint node') ||
+      !execution.includes('-e npm_config_offline=true')) {
     errors.push('R10 execution container must have --network none and pnpm offline mode');
   }
   if (!/pnpm add --lockfile-only --ignore-scripts/.test(prefetch) ||
       !/pnpm fetch --prod/.test(prefetch)) {
     errors.push('R10 networked fetch must use lockfile-only resolution and pnpm fetch');
+  }
+  const required = [
+    '--read-only', '--cpus 2', '--memory 2g', '--memory-swap 2g',
+    '--pids-limit 256', '--tmpfs /work/dsh-home:', '--tmpfs /work/out:',
+  ];
+  if (required.some((flag) => !execution.includes(flag)) ||
+      !/docker volume create[^\n]*--opt type=tmpfs[^\n]*--opt device=tmpfs[\s\S]*--opt o=size=3g/.test(suite)) {
+    errors.push('R11 execution container must have CPU, memory, process and bounded writable storage limits');
   }
   return errors;
 }
