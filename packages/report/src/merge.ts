@@ -115,7 +115,7 @@ function evidenceFromStep(id: string, step: ExecutionStep | undefined, fallbackC
   return {
     id,
     kind: 'command',
-    command: step?.command ?? fallbackCommand,
+    command: redactRunText(step?.command ?? fallbackCommand),
     ...(step?.exitCode !== null && step?.exitCode !== undefined ? { exitCode: step.exitCode } : {}),
     ...(step ? { durationMs: step.durationMs } : {}),
     excerpt: capped.text,

@@ -222,10 +222,11 @@ interface L2Outcome {
  * dsh-cost-meter prints its own success line ("loaded, ledger: ...") on startup
  * and was duly reported as a load failure. Plugins log; that is not an error.
  *
- * The test is therefore failure-shaped text. The composition's own diagnostics
- * are the authority: DSH names a skipped bundle and a failed entry, so their
- * absence while the app stays alive is evidence the bundle was neither skipped
- * nor rejected.
+ * The test is therefore loader-failure-shaped text. A plugin may report an
+ * optional fetch failure while loading successfully in the network-denied
+ * container; matching any line containing the subject and "failed" made L2
+ * falsely fail. DSH's skipped-bundle and failed-entry diagnostics are the
+ * signals used here. The fiber phase remains unobserved directly.
  */
 const FAILURE_SHAPES = [
   /failed to load/i,
@@ -237,17 +238,13 @@ const FAILURE_SHAPES = [
   /\bat\s+\S+\s+\(.*:\d+:\d+\)/,
 ];
 
-function failureDiagnostics(text: string, subjectName: string): string[] {
+function failureDiagnostics(text: string): string[] {
   if (text.trim() === '') return [];
   return text
     .split('\n')
     .map((line) => line.trim())
     .filter((line) => line !== '')
-    .filter(
-      (line) =>
-        FAILURE_SHAPES.some((re) => re.test(line)) ||
-        (subjectName !== '' && line.includes(subjectName) && /fail|skip|deny|error|refus/i.test(line)),
-    );
+    .filter((line) => FAILURE_SHAPES.some((re) => re.test(line)));
 }
 
 /**
@@ -259,9 +256,9 @@ function failureDiagnostics(text: string, subjectName: string): string[] {
  * failed *required* entry exits non-zero. The classifier keys on failure-shaped
  * diagnostics, never on the mere presence of output.
  */
-function classifyBoot(step: StepResult, subjectName: string): L2Outcome {
+function classifyBoot(step: StepResult): L2Outcome {
   const text = step.excerpt.trim();
-  const failures = failureDiagnostics(text, subjectName);
+  const failures = failureDiagnostics(text);
 
   if (failures.length > 0) {
     return {
@@ -665,8 +662,7 @@ let l3: L3Outcome = {
 if (l1.status === 'pass') {
   for (let i = 0; i < SAMPLE_RUNS; i++) activatedRuns.push(sampleOnce(PROFILE, 'activated', i));
 
-  const subjectNameForBoot = subjectName;
-  l2 = classifyBoot(run('l2-boot', ['--profile', PROFILE], BOOT_BOUND_MS), subjectNameForBoot);
+  l2 = classifyBoot(run('l2-boot', ['--profile', PROFILE], BOOT_BOUND_MS));
 
   // --- L3: a keyless session ----------------------------------------------
   // The subject is installed into a headless profile too, so the session that

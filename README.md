@@ -183,7 +183,7 @@ correction cannot misdescribe itself, and an amendment that drops evidence is
 refused. See [docs/appeals.md](docs/appeals.md).
 
 Every failure this verifier has actually had is listed by incident in
-[docs/method.md](docs/method.md) § 6 — eight false positives, four false
+[docs/method.md](docs/method.md) § 6 — nine false positives, four false
 negatives, and three false passes, two of them fixed.
 
 ## Known limitations

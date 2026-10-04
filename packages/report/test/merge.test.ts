@@ -206,7 +206,7 @@ test('merge: execution evidence does not publish container paths, tokens or sess
     steps: [
       step('l1-install', { excerpt: 'at /usr/local/lib/tool.js TOKEN=private-value' }),
       step('l2-boot'),
-      step('l3-session', { excerpt: '{"type":"final","text":"secret transcript","sessionId":"abc"}' }),
+      step('l3-session', { command: 'dsh --patch /work/fixtures/replay/l3-overlay.yml', excerpt: '{"type":"final","text":"secret transcript","sessionId":"abc"}' }),
       step('l6-remove'),
     ],
   });

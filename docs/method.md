@@ -333,6 +333,7 @@ also wrote.
 | FP-6 | `writes_outside_workspace` as "writes" | the detector matches path **resolution** (`os.homedir()`, `DSH_HOME`), which a regex cannot distinguish from a write; resolving `~/.dsh` is normal | probing six real packages | **fixed** — the label and note now state what actually matched |
 | FP-7 | "package manager error" | pnpm's `Ignored build scripts:` list was not parsed, discarding the finding the method says to report | the 20-subject batch | **fixed** — the block is rejoined (pnpm wraps inside a package name) and the four packages are named |
 | FP-8 | `dist/` files as build output | the branch existed but returned `unknown`, so the documented behaviour was dead code | probing real packages | **fixed** — the code now matches the documentation |
+| FP-9 | L2 failure on `dsh-cost-meter` in the network-denied container | an optional OpenRouter price refresh logged `fetch failed` under the subject's prefix; the classifier treated any subject line with “failed” as a loader failure even though the process stayed alive to the boot bound | isolated CI run 37168938885 | **fixed** — only loader-shaped diagnostics can fail L2; direct fiber-phase observation remains open |
 
 ### False negatives
 
