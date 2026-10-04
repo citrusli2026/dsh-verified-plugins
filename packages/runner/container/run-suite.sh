@@ -166,6 +166,7 @@ for raw in "${LIST[@]}"; do
     -e XDG_CACHE_HOME=/work/cache/xdg \
     -e COREPACK_DEFAULT_TO_LATEST=0 \
     -e COREPACK_ENABLE_NETWORK=0 \
+    -e NARB_DISABLE_NATIVE_CACHE=1 \
     -e "PROBE_SPEC=$exact_spec" \
     -e "OUT_DIR=/work/out/exec" \
     -e "SAMPLER_PATH=/work/host-sampler.mjs" \
