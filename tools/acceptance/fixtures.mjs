@@ -115,6 +115,28 @@ function fixture(name) {
   return join(FIXTURE_ROOT, name);
 }
 
+function packedFixture(name) {
+  const destination = join(WORK, 'packed-fixtures');
+  mkdirSync(destination, { recursive: true });
+  const result = spawnSync('npm', [
+    'pack',
+    '--ignore-scripts',
+    '--pack-destination',
+    destination,
+    fixture(name),
+  ], {
+    cwd: WORK,
+    encoding: 'utf8',
+    timeout: 30_000,
+    maxBuffer: 512 * 1024,
+    env: safeEnv(join(WORK, 'pack-home')),
+  });
+  expect(result.status === 0, `could not pack ${name}: ${result.stdout ?? ''}${result.stderr ?? ''}`);
+  const packageName = result.stdout.trim().split('\n').pop();
+  expect(packageName?.endsWith('.tgz') === true, `npm pack returned no tarball for ${name}: ${result.stdout ?? ''}`);
+  return join(destination, packageName);
+}
+
 function expect(condition, message) {
   if (!condition) throw new Error(message);
 }
@@ -183,7 +205,10 @@ function peerIncompatible() {
 function buildScriptPending() {
   const { home, dir } = newCase('build-script');
   const marker = join(dir, 'postinstall-ran.txt');
-  const addResult = add(home, 'build-script', { FIXTURE_BUILD_MARKER: marker });
+  const tarball = packedFixture('build-script');
+  const addResult = runDsh(home, ['plugin', '--profile', 'verify', 'add', tarball], {
+    FIXTURE_BUILD_MARKER: marker,
+  }, 30_000);
   expect(addResult.exitCode === 0, `build-script add failed: ${addResult.output}`);
   expect(!existsSync(marker), 'build script executed without an approval decision');
   expect(/Ignored build scripts|build script|approve/i.test(addResult.output), `pending build script was not visible: ${addResult.output}`);
