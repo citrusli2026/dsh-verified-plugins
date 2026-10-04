@@ -38,7 +38,7 @@ function clean(text, max = 1024) {
   return `…(trimmed)…\n${value.slice(-max)}`;
 }
 
-function runDsh(home, args, extraEnv = {}, timeout = 30_000) {
+function runDsh(home, args, extraEnv = {}, timeout = 30_000, { captureOutput = true } = {}) {
   const caseHome = join(home, 'process-home');
   mkdirSync(caseHome, { recursive: true });
   // GNU timeout creates a process group for the command and tears down the
@@ -56,6 +56,7 @@ function runDsh(home, args, extraEnv = {}, timeout = 30_000) {
     encoding: 'utf8',
     timeout: timeout + 10_000,
     maxBuffer: 4 * 1024 * 1024,
+    stdio: captureOutput ? ['ignore', 'pipe', 'pipe'] : 'ignore',
     env: {
       ...safeEnv(caseHome),
       DSH_HOME: home,
@@ -63,7 +64,8 @@ function runDsh(home, args, extraEnv = {}, timeout = 30_000) {
       ...extraEnv,
     },
   });
-  const timedOut = result.error?.code === 'ETIMEDOUT' || [124, 137, 143].includes(result.status);
+  const timedOut = result.error?.code === 'ETIMEDOUT' || [124, 137, 143].includes(result.status) ||
+    result.signal === 'SIGTERM' || result.signal === 'SIGKILL';
   return {
     args: args.map((arg) => arg.replaceAll(FIXTURE_ROOT, '<fixtures>')),
     exitCode: result.status,
@@ -172,7 +174,7 @@ function remove(home, packageName) {
 }
 
 function boot(home, env = {}, timeout = 8_000) {
-  return runDsh(home, ['--profile', 'verify'], env, timeout);
+  return runDsh(home, ['--profile', 'verify'], env, timeout, { captureOutput: false });
 }
 
 function normal() {
