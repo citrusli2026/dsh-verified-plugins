@@ -69,6 +69,7 @@ function safeEnv(home) {
     PATH: process.env.PATH,
     LANG: process.env.LANG,
     TMPDIR: process.env.TMPDIR,
+    NARB_DISABLE_NATIVE_CACHE: '1',
     HOME: home,
     XDG_CONFIG_HOME: join(home, '.config'),
     NPM_CONFIG_USERCONFIG: join(home, 'missing.npmrc'),
