@@ -41,6 +41,24 @@ echo "suite: $TOTAL subject(s), image=$IMAGE, per-subject ceiling ${PER_SUBJECT_
 FAILED=0
 DONE=0
 
+print_excerpt() {
+  node --input-type=module - "$1" <<'NODE'
+import { readFileSync } from 'node:fs';
+import { makeExcerpt } from './packages/report/src/redact.ts';
+const bytes = readFileSync(process.argv[2]);
+const tail = new TextDecoder().decode(bytes.subarray(-2048));
+const excerpt = makeExcerpt(tail, {
+  paths: [
+    { from: process.cwd(), to: '<work>' },
+    { from: '/work', to: '<work>' },
+    { from: '/home/verifier', to: '<home>' },
+  ],
+  maxBytes: 2048,
+});
+process.stdout.write(`${excerpt.text}\n`);
+NODE
+}
+
 for raw in "${LIST[@]}"; do
   spec="$(printf '%s' "$raw" | tr -d '[:space:]')"
   [ -z "$spec" ] && continue
@@ -89,6 +107,7 @@ for raw in "${LIST[@]}"; do
     "$IMAGE" /work/prefetch.sh "$exact_spec" "${DSH_VERSION:-0.2.0-rc.2}" \
     >"$dir/prefetch.log" 2>&1; then
     echo "   prefetch BLOCKED — see $dir/prefetch.log"
+    print_excerpt "$dir/prefetch.log"
     docker volume rm -f "$cachevol" >/dev/null
     FAILED=$((FAILED + 1))
     printf '%s\tprefetch-blocked\t%s\n' "$spec" "$(( $(date +%s) - started ))" >> "$OUTROOT/timings.tsv"
@@ -125,6 +144,7 @@ for raw in "${LIST[@]}"; do
 
   if [ ! -f "$dir/execution.json" ]; then
     echo "   execution produced no result — see $dir/execution.log"
+    print_excerpt "$dir/execution.log"
     FAILED=$((FAILED + 1))
     printf '%s\texecution-failed\t%s\n' "$spec" "$(( $(date +%s) - started ))" >> "$OUTROOT/timings.tsv"
     continue
