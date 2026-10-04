@@ -41,10 +41,20 @@ function clean(text, max = 1024) {
 function runDsh(home, args, extraEnv = {}, timeout = 30_000) {
   const caseHome = join(home, 'process-home');
   mkdirSync(caseHome, { recursive: true });
-  const result = spawnSync('dsh', args, {
+  // GNU timeout creates a process group for the command and tears down the
+  // group after the bound. DSH may mount a Host in a child process; Node's
+  // spawnSync timeout only kills its direct child and left the dead-loop and
+  // watcher fixtures behind in the acceptance container.
+  const result = spawnSync('/usr/bin/timeout', [
+    '--signal=TERM',
+    '--kill-after=1s',
+    `${Math.max(1, Math.ceil(timeout / 1000))}s`,
+    'dsh',
+    ...args,
+  ], {
     cwd: WORK,
     encoding: 'utf8',
-    timeout,
+    timeout: timeout + 10_000,
     maxBuffer: 4 * 1024 * 1024,
     env: {
       ...safeEnv(caseHome),
@@ -53,11 +63,12 @@ function runDsh(home, args, extraEnv = {}, timeout = 30_000) {
       ...extraEnv,
     },
   });
+  const timedOut = result.error?.code === 'ETIMEDOUT' || [124, 137, 143].includes(result.status);
   return {
     args: args.map((arg) => arg.replaceAll(FIXTURE_ROOT, '<fixtures>')),
     exitCode: result.status,
     signal: result.signal ?? null,
-    timedOut: result.error?.code === 'ETIMEDOUT' || result.signal === 'SIGTERM' || result.signal === 'SIGKILL',
+    timedOut,
     output: clean(`${result.stdout ?? ''}${result.stderr ?? ''}`)
       .replaceAll(FIXTURE_ROOT, '<fixtures>')
       .replaceAll(WORK, '<temp>'),
