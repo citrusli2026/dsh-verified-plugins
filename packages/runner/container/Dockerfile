@@ -30,8 +30,9 @@ RUN apt-get update \
 #
 # FINDING (recorded in docs/evidence/V0.md): npm's install-script gating blocks
 # install scripts by default. A plain `npm install -g @deepseek-ai/dsh` reports
-# five packages whose scripts did not run, two of them native modules
-# (node-pty, koffi). `dsh --version` still answers, so the gap is invisible
+# six packages whose scripts did not run, three of them native modules
+# (node-pty, koffi, node-addon-require-builtin). `dsh --version` still answers,
+# so the gap is invisible
 # until a feature needing those natives is exercised.
 #
 # We allow them explicitly rather than silently: this is the FIRST-PARTY DSH
@@ -50,7 +51,7 @@ RUN mkdir -p /opt/dsh-runtime-facts
 COPY runtime-facts.mjs /opt/dsh-runtime-facts/runtime-facts.mjs
 
 RUN npm install --global \
-      --allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs \
+      --allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,node-addon-require-builtin,@google/genai,protobufjs \
       "@deepseek-ai/dsh@${DSH_VERSION}" > /opt/dsh-runtime-facts/npm-install.log 2>&1 \
  && node /opt/dsh-runtime-facts/runtime-facts.mjs \
  && npm cache clean --force \
