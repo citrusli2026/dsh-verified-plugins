@@ -108,31 +108,46 @@ bypass the check; it is a user decision and the verifier never takes it.
 
 **Question:** do the Host and Client halves actually come up?
 
-Pass requires the loader entries for the subject to reach the `active` fiber
-phase with no error. The supporting fact, documented by DSH itself: **a profile
-whose own plugins fail to load exits before the agent runner mounts**, keeping
-only the loader's stderr diagnostics. Load failure is therefore observable in
-an exit status and a log, with no model call.
+Pass requires the loader entries declared by the subject's bundle to reach the
+`active` fiber phase with no error **and** no unobserved browser half. The verifier mounts its own read-only
+inventory fixture alongside the subject. Once the Loader settles, that fixture
+reads `pluginManager.listBundles()` for the subject's declared rows and
+`pluginManager.listPlugins()` for each row's live `fiberPhase`. The report links
+both the boot command and the inventory snapshot. A missing inventory is
+`inconclusive`; process lifetime by itself cannot earn a pass.
 
 `pluginInventory/list` gives the phase (`pending`, `loading`, `active`,
 `failed`, `unloading`, `null`). It is a point-in-time projection with **no
 history**, so an absent row is not evidence of a clean load.
 
-**How the current implementation observes it, and its limits.** The executor
-boots the profile under a wall-clock bound and classifies the outcome from
-failure-shaped diagnostics — DSH's own *failed to load*, skipped-bundle and
-entry-failure reports, `ERR_` codes, stack frames:
+The executor also checks failure-shaped diagnostics — DSH's own *failed to
+load*, skipped-bundle and entry-failure reports, `ERR_` codes, stack frames:
 
-- no failure diagnostics while the process stays alive to the bound → pass;
-- a failure diagnostic, or a non-zero exit → fail.
+- every enabled declared row has a live entry whose fiber is `active`, with no
+  failure diagnostic, and the package declares no browser client → pass;
+- when `dsh.client` is declared, the verifier installs the exact subject into
+  the Web profile, starts the real `dsh --profile web` surface inside the same
+  network-denied container, and opens its authenticated startup URL in the
+  approved Chromium harness. Pass additionally requires a subject-owned UI
+  marker to be visible and zero page errors, console errors, failed requests,
+  or HTTP error responses;
+- an absent subject bundle, failed fiber, missing declared row, browser error,
+  missing browser marker, or non-zero early exit → fail;
+- missing inventory, no directly observable enabled rows, a row still loading
+  when the Loader settles, or a declared `dsh.client` whose Web surface could
+  not be started or measured reliably → `inconclusive`.
 
 Two traps this had to learn from real runs, both of which produced **false
 failures** before they were fixed: DSH installs a SIGTERM handler that shuts
 down gracefully with exit **0**, so hitting the bound is not an early exit; and
 plugins log on success (`[dsh-cost-meter] 已加载…`), so the presence of output
-is not an error. The fiber phase is therefore **not read directly**, and every
-report says so in `limits[]`. Reading it directly needs the plugin-inventory
-projection or a host-side loader probe, and remains open.
+is not an error. The 24 historical reports were produced by the older
+exit-and-diagnostics inference; see `docs/security.md` § 7. Rows contributed
+only through a later agent-preset composition are outside this boot snapshot,
+so a subject with no directly observable rows remains `inconclusive`. The
+browser probe records only sanitized origin/path URLs and error counts; it
+never publishes the startup token or page/session content. A Host row becoming
+active by itself does not prove that its JavaScript registered in a browser.
 
 ### L3 — Run
 
@@ -317,7 +332,7 @@ evidence into a claim.
 |---|---|---|---|---|
 | FP-1 | L6 "removed without residue" | the profile was read from `$DSH_HOME/<name>` instead of `$DSH_HOME/profiles/<name>`, so the directory it cleared was never the one it inspected | first execution run | **fixed** — L6 reports `inconclusive` when the profile cannot be read |
 | FP-2 | L1–L6 all `pass` on `@morlay/session-branch` | the package declares no bundle, installs as a plain dependency, is never composed; every dimension measured the subject's absence and called it success | first 4-subject batch | **fixed** — the L0 pre-filter forces `skip` in the merge *and* before a container starts |
-| FP-3 | L2 "booted, mounted and stayed alive" | inferred from the *absence* of failure diagnostics, not from a read fiber phase; a plugin can load and misbehave | by construction, on review | **open** — stated in every report's `limits[]` |
+| FP-3 | L2 "booted, mounted and stayed alive" | inferred from the *absence* of failure diagnostics, not from a read fiber phase; a plugin can load and misbehave | by construction, on review | **corrected for new measurements** — the running plugin manager supplies Host fiber phases, and declared browser clients require a real Web-surface marker with clean browser diagnostics. Historical reports are unchanged. |
 
 The pattern in FP-1 and FP-2 is identical: **a pass derived from the absence of
 a failure rather than the presence of the subject.** Both were found by running
@@ -333,6 +348,7 @@ also wrote.
 | FP-6 | `writes_outside_workspace` as "writes" | the detector matches path **resolution** (`os.homedir()`, `DSH_HOME`), which a regex cannot distinguish from a write; resolving `~/.dsh` is normal | probing six real packages | **fixed** — the label and note now state what actually matched |
 | FP-7 | "package manager error" | pnpm's `Ignored build scripts:` list was not parsed, discarding the finding the method says to report | the 20-subject batch | **fixed** — the block is rejoined (pnpm wraps inside a package name) and the four packages are named |
 | FP-8 | `dist/` files as build output | the branch existed but returned `unknown`, so the documented behaviour was dead code | probing real packages | **fixed** — the code now matches the documentation |
+| FP-9 | L2 failure on `dsh-cost-meter` in the network-denied container | an optional OpenRouter price refresh logged `fetch failed` under the subject's prefix; the classifier treated any subject line with “failed” as a loader failure even though the process stayed alive to the boot bound | isolated CI run 37168938885 | **fixed** — only loader-shaped diagnostics can fail L2; direct fiber-phase observation remains open |
 
 ### False negatives
 

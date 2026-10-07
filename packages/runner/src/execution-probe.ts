@@ -11,8 +11,7 @@
  * evidence in docs/evidence/V3.md). Nothing is assumed about a pre-1.0 internal
  * API — the executor drives the published CLI and reads what it prints.
  *
- * L5 (overhead sampling) is deliberately NOT implemented here yet: it is V3's
- * subject, and reporting a number this round would mean inventing one.
+ * L5 samples the running Host through the first-party sampler fixture.
  */
 
 import { spawnSync } from 'node:child_process';
@@ -31,6 +30,15 @@ const MAX_EXCERPT = 2048;
 if (SPEC === '') {
   process.stderr.write('execution-probe: no spec given\n');
   process.exit(2);
+}
+
+// Maintainer-triggered retry acceptance: fail before any subject package is
+// installed or loaded. The orchestration must discard this isolated attempt
+// and run the real probe exactly once more; this is not a plugin fixture or a
+// unit-test-only counter.
+if (process.env.VERIFY_FAIL_BEFORE_PROBE === '1') {
+  process.stderr.write('execution-probe: injected transient acceptance failure\n');
+  process.exit(75);
 }
 
 interface StepResult {
@@ -54,20 +62,24 @@ function excerpt(text: string, max = MAX_EXCERPT): string {
   return `…(trimmed)…\n${new TextDecoder('utf-8', { fatal: false }).decode(buf)}`;
 }
 
-function run(name: string, args: string[], timeoutMs: number): StepResult {
+function run(name: string, args: string[], timeoutMs: number, extraEnv: Record<string, string> = {}): StepResult {
+  return runCommand('dsh', name, args, timeoutMs, extraEnv);
+}
+
+function runCommand(executable: string, name: string, args: string[], timeoutMs: number, extraEnv: Record<string, string> = {}): StepResult {
   const started = performance.now();
-  const result = spawnSync('dsh', args, {
+  const result = spawnSync(executable, args, {
     encoding: 'utf8',
     timeout: timeoutMs,
     maxBuffer: 32 * 1024 * 1024,
-    env: { ...process.env, DSH_HOME, CI: '1' },
+    env: { ...process.env, ...extraEnv, DSH_HOME, CI: '1' },
   });
   const durationMs = Math.round(performance.now() - started);
   const signal = result.signal ?? null;
   const errorCode = (result.error as NodeJS.ErrnoException | undefined)?.code ?? null;
   const step: StepResult = {
     name,
-    command: `dsh ${args.join(' ')}`,
+    command: `${executable} ${args.join(' ')}`,
     exitCode: result.status ?? null,
     signal,
     durationMs,
@@ -81,6 +93,10 @@ function run(name: string, args: string[], timeoutMs: number): StepResult {
   };
   steps.push(step);
   return step;
+}
+
+function runNode(name: string, args: string[], timeoutMs: number, extraEnv: Record<string, string> = {}): StepResult {
+  return runCommand('node', name, args, timeoutMs, extraEnv);
 }
 
 // DSH keeps profiles under $DSH_HOME/profiles/<name>. Getting this wrong made
@@ -99,7 +115,7 @@ function readProfilePackageJson(): Record<string, any> | null {
 }
 
 interface L1Outcome {
-  status: 'pass' | 'fail' | 'timeout';
+  status: 'pass' | 'fail' | 'timeout' | 'inconclusive';
   reason: string;
   detail: string;
   declaredPeers: Record<string, string> | null;
@@ -179,13 +195,17 @@ function classifyInstall(step: StepResult): L1Outcome {
   const peerRejected = /installation rejected/i.test(text) && /incompatible with/i.test(text);
   const pnpmError = /ERR_PNPM_[A-Z_]+/.exec(text)?.[0] ?? null;
   const buildsBlocked = pending.length > 0 && (pnpmError === 'ERR_PNPM_IGNORED_BUILDS' || /Ignored build scripts:/i.test(text));
+  const offlineMissing = process.env.npm_config_offline === 'true' &&
+    /NO_OFFLINE_META|META_FETCH_FAIL|FETCH_\d+|ERR_PNPM_NO_MATCHING_VERSION_INSIDE_WORKSPACE|ENETUNREACH|EAI_AGAIN|network is unreachable|network access disabled|offline/i.test(text);
 
   return {
-    status: 'fail',
+    status: offlineMissing && !peerRejected && !buildsBlocked ? 'inconclusive' : 'fail',
     reason: buildsBlocked
       ? 'installation blocked pending dependency build-script approval'
       : peerRejected
         ? 'peer-incompatible with the pinned runtime'
+        : offlineMissing
+          ? 'offline artifact resolution was incomplete'
         : pnpmError
           ? `package manager error (${pnpmError})`
           : 'install failed',
@@ -193,6 +213,8 @@ function classifyInstall(step: StepResult): L1Outcome {
       ? `pnpm refused to run build scripts for ${pending.length} package(s) and the install did not complete. This verifier never approves them: approval permits commands with the host user's permissions, which is the user's decision and a finding rather than a chore. The requested scripts are listed in the metrics.`
       : peerRejected
         ? `DSH refused the install: the plugin's declared peerDependencies on @deepseek-ai/dsh* do not match the runtime. An exact-version exemption would bypass this check; granting one is a user decision and is not done here.`
+        : offlineMissing
+          ? 'the fetch phase did not make every required artifact available offline; no install conclusion can be drawn from this attempt'
         : `the CLI exited ${step.exitCode}`,
     declaredPeers,
     bundlesAfter: bundles,
@@ -202,10 +224,35 @@ function classifyInstall(step: StepResult): L1Outcome {
 }
 
 interface L2Outcome {
-  status: 'pass' | 'fail' | 'timeout' | 'skip';
+  status: 'pass' | 'fail' | 'timeout' | 'skip' | 'inconclusive';
   reason: string;
   detail: string;
   diagnostics: string;
+  observation?: L2Observation | null;
+}
+
+interface L2Observation {
+  found?: boolean;
+  enabled?: boolean;
+  error?: string | null;
+  browserClientDeclared?: boolean | null;
+  browser?: {
+    status: 'pass' | 'fail' | 'inconclusive';
+    browserClientActivated: boolean;
+    markerText: string | null;
+    startupUrl: string | null;
+    finalUrl: string | null;
+    title: string;
+    consoleErrors: string[];
+    pageErrors: string[];
+    failedRequests: string[];
+    httpErrors: string[];
+    diagnostics?: string;
+    webOutput?: string;
+    durationMs: number;
+  } | null;
+  overrides?: string[];
+  rows: Array<{ rowId: string; entryId: string | null; enabled: boolean; fiberPhase: string | null }>;
 }
 
 /**
@@ -216,10 +263,12 @@ interface L2Outcome {
  * dsh-cost-meter prints its own success line ("loaded, ledger: ...") on startup
  * and was duly reported as a load failure. Plugins log; that is not an error.
  *
- * The test is therefore failure-shaped text. The composition's own diagnostics
- * are the authority: DSH names a skipped bundle and a failed entry, so their
- * absence while the app stays alive is evidence the bundle was neither skipped
- * nor rejected.
+ * The test is therefore loader-failure-shaped text. A plugin may report an
+ * optional fetch failure while loading successfully in the network-denied
+ * container; matching any line containing the subject and "failed" made L2
+ * falsely fail. DSH's skipped-bundle and failed-entry diagnostics are the
+ * signals used here. A separate inventory fixture supplies direct Host fiber
+ * phases; diagnostics still catch startup errors outside the subject rows.
  */
 const FAILURE_SHAPES = [
   /failed to load/i,
@@ -231,31 +280,25 @@ const FAILURE_SHAPES = [
   /\bat\s+\S+\s+\(.*:\d+:\d+\)/,
 ];
 
-function failureDiagnostics(text: string, subjectName: string): string[] {
+function failureDiagnostics(text: string): string[] {
   if (text.trim() === '') return [];
   return text
     .split('\n')
     .map((line) => line.trim())
     .filter((line) => line !== '')
-    .filter(
-      (line) =>
-        FAILURE_SHAPES.some((re) => re.test(line)) ||
-        (subjectName !== '' && line.includes(subjectName) && /fail|skip|deny|error|refus/i.test(line)),
-    );
+    .filter((line) => FAILURE_SHAPES.some((re) => re.test(line)));
 }
 
 /**
  * Load: boot the profile under a wall-clock bound.
  *
- * Observed behaviour (evidence in docs/evidence/V3.md): a healthy composition
- * boots, mounts and waits, so the bound reaches it and DSH shuts down
- * gracefully. A composition whose plugins fail to load reports them, and a
- * failed *required* entry exits non-zero. The classifier keys on failure-shaped
- * diagnostics, never on the mere presence of output.
+ * A healthy composition stays alive until the bound. Passing now also requires
+ * a direct active-fiber snapshot for every declared Host row. Missing browser
+ * execution keeps a dual-face plugin inconclusive.
  */
-function classifyBoot(step: StepResult, subjectName: string): L2Outcome {
+function classifyBoot(step: StepResult, observation: L2Observation | null): L2Outcome {
   const text = step.excerpt.trim();
-  const failures = failureDiagnostics(text, subjectName);
+  const failures = failureDiagnostics(text);
 
   if (failures.length > 0) {
     return {
@@ -263,34 +306,71 @@ function classifyBoot(step: StepResult, subjectName: string): L2Outcome {
       reason: 'the composition reported a failure',
       detail: `${failures.length} failure-shaped diagnostic line(s); the composition names what it could not load`,
       diagnostics: failures.join('\n'),
+      observation,
     };
   }
-
-  if (step.timedOut) {
+  if (!step.timedOut && step.exitCode !== 0) {
     return {
-      status: 'pass',
-      reason: 'booted, mounted and stayed alive',
-      detail:
-        'the process was still running when the wall-clock bound reached it and reported no failure diagnostics, so the bundle was neither skipped nor rejected',
+      status: 'fail',
+      reason: `the composition exited with code ${step.exitCode}`,
+      detail: 'the profile exited before the bounded observation completed',
+      diagnostics: text,
+      observation,
+    };
+  }
+  if (!observation) {
+    return {
+      status: 'inconclusive',
+      reason: 'the loader inventory could not be read',
+      detail: 'process lifetime and clean diagnostics alone do not prove that the subject fiber became active',
       diagnostics: text,
     };
   }
-
-  if (step.exitCode === 0) {
+  if (!observation.found || observation.error) return {
+    status: observation.error ? 'inconclusive' : 'fail',
+    reason: observation.error ? 'the loader inventory probe failed' : 'the subject bundle is absent from the inventory',
+    detail: observation.error ?? 'the running plugin manager did not report the subject bundle', diagnostics: text, observation,
+  };
+  if (!observation.enabled || observation.rows.length === 0 || observation.rows.some((row) => !row.enabled)) return {
+    status: 'inconclusive', reason: 'no complete enabled subject row set was observed',
+    detail: 'the subject has no directly observable enabled rows, or one was intentionally disabled', diagnostics: text, observation,
+  };
+  const inactive = observation.rows.filter((row) => !row.entryId || row.fiberPhase !== 'active');
+  if (inactive.length > 0) return {
+    status: inactive.some((row) => row.fiberPhase === 'failed' || !row.entryId) ? 'fail' : 'inconclusive',
+    reason: `${inactive.length} subject loader row(s) did not reach active`,
+    detail: 'each declared bundle row must map to a live Loader entry with an active fiber', diagnostics: text, observation,
+  };
+  if (observation.browserClientDeclared === true) {
+    if (!observation.browser) return {
+      status: 'inconclusive', reason: 'Host loader rows active; browser client was not run',
+      detail: 'the subject declares dsh.client, but no isolated browser result was recorded',
+      diagnostics: text, observation,
+    };
+    if (observation.browser.status !== 'pass') return {
+      status: observation.browser.status === 'fail' ? 'fail' : 'inconclusive',
+      reason: observation.browser.status === 'fail'
+        ? 'the browser client reported an error or did not activate'
+        : 'the isolated browser run was inconclusive',
+      detail: observation.browser.browserClientActivated
+        ? 'the client marker was observed, but the browser recorded an error'
+        : 'the subject client marker was not observed in the real Web surface',
+      diagnostics: text, observation,
+    };
     return {
-      status: 'pass',
-      reason: 'the composition booted and exited cleanly',
-      detail: `exit code 0 with no failure diagnostics, before the wall-clock bound`,
-      diagnostics: text,
+      status: 'pass', reason: `${observation.rows.length} Host row(s) active and browser client activated`,
+      detail: 'the Host rows were active and the real Web surface displayed the subject-owned Notifications section without browser errors',
+      diagnostics: text, observation,
     };
   }
-
+  if (observation.browserClientDeclared !== false) return {
+    status: 'inconclusive', reason: 'Host loader rows active; browser client not observed',
+    detail: 'the subject declares dsh.client or its manifest could not be read; no browser client fiber was measured',
+    diagnostics: text, observation,
+  };
   return {
-    status: 'fail',
-    reason: `the composition exited with code ${step.exitCode}`,
-    detail:
-      'a profile whose plugins fail to load exits before the agent runner mounts, so a non-zero exit is the load-failure signal',
-    diagnostics: text,
+    status: 'pass', reason: `${observation.rows.length} subject loader row(s) active`,
+    detail: 'the plugin manager projected every declared subject row as enabled with an active fiber', diagnostics: text, observation,
   };
 }
 
@@ -347,15 +427,22 @@ function classifyRun(step: StepResult): L3Outcome {
   const textEvents = parsed.filter((e) => e.type === 'text').map((e) => e.text);
 
   const events = {
-    session: parsed.find((e) => e.type === 'session')?.sessionId ?? null,
     turnEndReason: turnEndReason ?? null,
-    finalText: final?.text ?? null,
+    finalEventSeen: Boolean(final),
     textEventCount: textEvents.length,
-    error: errorEvent?.message ?? null,
+    errorEventSeen: Boolean(errorEvent),
     exitCode: step.exitCode,
     durationMs: step.durationMs,
     eventCount: parsed.length,
   };
+
+  // The parser has finished with the raw stream. Remove session identifiers
+  // and content before the step is serialized into execution.json. The
+  // committed report records the event shape and completion, not a transcript.
+  step.excerpt = step.excerpt.replace(
+    /"(?:text|content|sessionId|message)"\s*:\s*"(?:\\.|[^"\\])*"/g,
+    (field) => `${field.slice(0, field.indexOf(':') + 1)}"[redacted:session-content]"`,
+  );
 
   if (step.timedOut) {
     return { status: 'fail', reason: 'the session did not finish within the bound', detail: 'no terminal event was reached before the wall-clock ceiling', ...base, events };
@@ -652,8 +739,43 @@ let l3: L3Outcome = {
 if (l1.status === 'pass') {
   for (let i = 0; i < SAMPLE_RUNS; i++) activatedRuns.push(sampleOnce(PROFILE, 'activated', i));
 
-  const subjectNameForBoot = subjectName;
-  l2 = classifyBoot(run('l2-boot', ['--profile', PROFILE], BOOT_BOUND_MS), subjectNameForBoot);
+  const l2Overlay = process.env.L2_OVERLAY ?? '/work/fixtures/load/l2-overlay.yml';
+  const l2Snapshot = join(OUT_DIR, 'l2-inventory.json');
+  const l2Step = run('l2-boot', ['--profile', PROFILE, '--patch', l2Overlay], BOOT_BOUND_MS, {
+    DSH_VERIFY_SUBJECT: subjectName,
+    DSH_VERIFY_L2_OUT: l2Snapshot,
+  });
+  let observation: L2Observation | null = null;
+  try { observation = JSON.parse(readFileSync(l2Snapshot, 'utf8')) as L2Observation; } catch { /* no observation */ }
+  if (observation) {
+    try {
+      const manifest = JSON.parse(readFileSync(join(profileDir, 'node_modules', subjectName, 'package.json'), 'utf8'));
+      observation.browserClientDeclared = Boolean(manifest.dsh?.client);
+    } catch { observation.browserClientDeclared = null; }
+  }
+  if (observation?.browserClientDeclared === true) {
+    const browserInstall = run('l2-browser-install', ['plugin', '--profile', 'web', 'add', SPEC], 240_000);
+    if (browserInstall.exitCode === 0) {
+      const browserSnapshot = join(OUT_DIR, 'l2-browser.json');
+      runNode('l2-browser', ['/work/browser-probe.mjs', SPEC, browserSnapshot], 120_000, {
+        DSH_VERIFY_BROWSER_PORT: '8765',
+      });
+      try {
+        observation.browser = JSON.parse(readFileSync(browserSnapshot, 'utf8')) as NonNullable<L2Observation['browser']>;
+      } catch {
+        observation.browser = null;
+      }
+    } else {
+      observation.browser = {
+        status: 'inconclusive', browserClientActivated: false, markerText: null,
+        startupUrl: null, finalUrl: null, title: '', consoleErrors: [], pageErrors: [],
+        failedRequests: [], httpErrors: [],
+        diagnostics: 'the subject could not be installed into the web profile',
+        durationMs: browserInstall.durationMs,
+      };
+    }
+  }
+  l2 = classifyBoot(l2Step, observation);
 
   // --- L3: a keyless session ----------------------------------------------
   // The subject is installed into a headless profile too, so the session that
@@ -771,6 +893,7 @@ const execution = {
     'no dependency build script was approved by this executor',
     'overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta',
     'sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test',
+    'L3 session identifiers and text are redacted before execution evidence is written',
   ],
 };
 

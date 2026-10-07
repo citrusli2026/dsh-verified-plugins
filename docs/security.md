@@ -28,16 +28,13 @@ credentials.
 
 ### S2 — Network is denied by default
 
-Execution phases run with `--network none`. Only the artifact-fetch phase has
-network, and it may reach only the package registry and the subject's own git
-host. Attempted-but-denied egress is recorded in the report so a reader can see
-what the plugin tried to reach.
-
-Honest limitation: full egress allowlisting needs a proxy or sidecar. DSH does
-not ship one, and this project does not build a second network stack. What is
-implemented is the achievable strong version — **fetched with network, executed
-without** — and any gap between that and a true allowlist is stated in the
-report rather than glossed.
+Execution phases run with `--network none`. The artifact-fetch phase has
+network access but runs no plugin code or dependency build script; it rejects
+lockfiles with local, git or non-registry tarball references. Docker does not
+allowlist the fetch container's destinations, and the offline namespace does
+not expose attempted destination hosts. Reports therefore make **no claim** to
+list every attempted-but-denied host. This remains a measurement gap, not a
+quietly inferred finding.
 
 ### S3 — Zero credentials
 
@@ -55,9 +52,10 @@ API key in CI**.
 
 ### S4 — Hard resource ceilings
 
-CPU, memory, disk and wall-clock are all bounded. Exceeding a ceiling yields a
-`timeout` conclusion, which is *not* a failure verdict and is never reported as
-one. A plugin that hangs is a result, not an error.
+CPU, memory, disk and wall-clock are bounded in the corrected executor. A wall
+clock breach is `timeout`; a container that produces no phase result after a
+resource stop is `inconclusive`. Neither is a plugin failure verdict. A plugin
+that hangs is a result, not an error.
 
 ### S5 — Verification is not an endorsement
 
@@ -141,11 +139,18 @@ that runs untrusted code.
 
 | Resource | Default | On breach |
 |---|---|---|
-| Wall clock, whole verification | 300 s | `timeout` conclusion |
-| Wall clock, single phase | 120 s | phase `timeout`, verification continues |
-| Memory | 2 GiB | container killed, `timeout`/`inconclusive` |
-| CPUs | 2 | — |
-| Disk | 5 GiB | `inconclusive` |
+| Wall clock, one subject including prefetch | 420 s | `timeout` conclusion |
+| Wall clock, individual execution steps | 25–240 s by step | phase `timeout` or `inconclusive` |
+| Memory and swap | 2 GiB total | missing phase result recorded as `inconclusive` |
+| CPUs | 2 | throttled |
+| Processes | 256 | missing phase result recorded as `inconclusive` |
+| Writable storage | 5 GiB across bounded mounts, read-only root | missing phase result recorded as `inconclusive` |
+
+The private package cache is a 3 GiB tmpfs volume; `/work/dsh-home` is 1 GiB,
+`/work/out` 512 MiB, `/tmp` 256 MiB and the unprivileged home 256 MiB. An idle
+first-party container keeps the cache mounted between prefetch and execution,
+then all three containers and the volume are removed. The execution image's
+content-addressed local ID is recorded in each new report.
 
 ## 4. Data handling
 
@@ -190,6 +195,31 @@ around it — when any of these holds:
 | actions pinned to commit SHAs | same (R4) |
 | zero configured secrets | `tools/audit/no-secrets.sh` (outside CI, where it is provable) |
 | reports do not overclaim | `packages/report` (verdict derived from dimensions, rejected if declared otherwise) |
+
+## 7. Historical network incident
+
+The 24 reports committed before 2026-10-04 were produced by an executor whose
+`docker run` command did **not** pass `--network none`. Those executions had
+network access. All 24 also contain absolute **container** paths in published
+evidence, and 20 contain text from the verifier-authored replay fixture. No
+user session or credential was involved, but this still violates the stated
+data-handling contract. Their L0–L6 observations remain records of what ran;
+they do **not** demonstrate the no-egress or redaction conditions described
+above. The site marks these historical reports. Their badges are dimension
+summaries, not evidence that the execution environment met S2 or § 4.
+
+The executor now resolves and downloads package files in a separate networked
+container using pnpm lockfile-only resolution and `pnpm fetch`, both without
+install scripts. It then runs `dsh plugin` in a fresh container with
+`--network none` and an isolated per-subject package store. If the offline
+store lacks a dependency, L1 is inconclusive rather than an install failure.
+The merge now redacts container paths and sensitive strings from execution
+evidence, and strips replay text and session identifiers. The corrected path
+passed Docker CI isolation and resource acceptance; the approved browser
+harness now measures declared `dsh.client` entries inside the same
+network-denied container. A browser result earns no pass unless the real Web
+surface displays a subject-owned marker with no browser errors. See
+`docs/evidence/V7.md`.
 
 The policy checker carries **self-test fixtures**: if a rule stops firing, CI
 fails. A guardrail that cannot be shown to trigger is theatre.

@@ -24,19 +24,19 @@ on:
         required: false
         default: '0.2.0-rc.2'
         type: string
-      probe_spec:
-        description: 'Subject for the execution reconnaissance probe'
-        required: false
-        default: 'dsh-find-plugin@0.4.0'
-        type: string
       verify_specs:
         description: 'Comma-separated subjects for a batch verification'
         required: false
         default: 'dsh-cost-meter@1.8.8'
         type: string
+      exercise_retry:
+        description: 'Force the first isolated execution container to fail once, then verify the real subject'
+        required: false
+        default: false
+        type: boolean
   schedule:
-    # Nightly: catches a plugin that was republished underneath a published
-    # report. Maintainer-controlled, so it may execute plugin code.
+    # Nightly regression of the pinned sample. Catalogue freshness is checked
+    # separately; this schedule does not update published reports.
     - cron: '17 3 * * *'
 
 permissions: {}
@@ -89,71 +89,17 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: v0-baseline
-          path: .verify/baseline
+          path: |
+            .verify/baseline/v0-baseline.json
+            .verify/baseline/cold-start-ms.txt
+            .verify/baseline/offline-rc.txt
+            .verify/baseline/online-rc.txt
           if-no-files-found: warn
           retention-days: 30
 
-  # Reconnaissance for the execution dimensions. Not the verifier: it runs the
-  # real CLI against a real subject and dumps what actually happens, so L1/L2/L5
-  # and L6 are written against observed behaviour instead of assumptions about a
-  # pre-1.0 internal boot API.
-  exec-probe:
-    name: exec-probe
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: '24'
-
-      - name: Probe executor behaviour in a one-off container
-        env:
-          DSH_VERSION: ${{ inputs.dsh_version }}
-          PROBE_SPEC: ${{ inputs.probe_spec }}
-        run: |
-          set -uo pipefail
-          unset GITHUB_TOKEN GH_TOKEN ACTIONS_RUNTIME_TOKEN \
-                ACTIONS_ID_TOKEN_REQUEST_TOKEN ACTIONS_ID_TOKEN_REQUEST_URL || true
-
-          IMAGE="dsh-verifier:${DSH_VERSION:-0.2.0-rc.2}"
-          SPEC="${PROBE_SPEC:-dsh-find-plugin@0.4.0}"
-
-          docker build --build-arg "DSH_VERSION=${DSH_VERSION:-0.2.0-rc.2}" \
-            -t "$IMAGE" packages/runner/container
-
-          docker rm -f probe-run >/dev/null 2>&1 || true
-          # One container, one subject, discarded afterwards. The script is
-          # mounted read-only; the container never mounts the host home.
-          # --entrypoint is required: the image entrypoint is `node`, so
-          # without it /bin/bash is handed to node as a script path and node
-          # tries to parse an ELF binary as JavaScript.
-          docker run --name probe-run --entrypoint /bin/bash \
-            -v "$PWD/packages/runner/container/probe.sh:/work/probe.sh:ro" \
-            "$IMAGE" /work/probe.sh "$SPEC" /work/out/probe
-
-          mkdir -p .verify/probe
-          docker cp probe-run:/work/out/probe/. .verify/probe/
-          docker rm -f probe-run >/dev/null 2>&1 || true
-
-          echo "=== captured ==="
-          ls -la .verify/probe
-
-      - name: Upload probe evidence
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: exec-probe
-          path: .verify/probe
-          if-no-files-found: warn
-          retention-days: 30
-
-  # The execution dimensions end to end: static L0+L4 on the runner, L1+L2+L6
-  # inside a one-off container, then the merge that produces the published
-  # report. Nothing here holds a credential.
+  # The execution dimensions end to end: static L0+L4 on the runner, then a
+  # networked fetch with no subject execution, followed by L1/L2/L3/L5/L6 in
+  # a network-denied container. Nothing here holds a credential.
   exec-verify:
     name: exec-verify
     runs-on: ubuntu-latest
@@ -179,10 +125,43 @@ jobs:
           docker build --build-arg "DSH_VERSION=${DSH_VERSION:-0.2.0-rc.2}" \
             -t "dsh-verifier:${DSH_VERSION:-0.2.0-rc.2}" packages/runner/container
 
+      - name: First-party fixture integration acceptance
+        run: |
+          set -euo pipefail
+          mkdir -p .verify/fixture-acceptance
+          chmod 777 .verify/fixture-acceptance
+          unset GITHUB_TOKEN GH_TOKEN ACTIONS_RUNTIME_TOKEN \
+                ACTIONS_ID_TOKEN_REQUEST_TOKEN ACTIONS_ID_TOKEN_REQUEST_URL || true
+          docker run --rm --network none --read-only \
+            --cpus 2 --memory 2g --memory-swap 2g --pids-limit 256 \
+            --tmpfs /tmp:rw,size=256m,mode=1777 \
+            --tmpfs /home/verifier:rw,size=256m,uid=10001,gid=10001 \
+            --tmpfs /work/dsh-home:rw,size=1g,uid=10001,gid=10001 \
+            --entrypoint node \
+            -e DSH_HOME=/work/dsh-home \
+            -e FIXTURE_ROOT=/work/fixture-plugins \
+            -e FIXTURE_SAMPLER=/work/host-sampler.mjs \
+            -e FIXTURE_ACCEPTANCE_OUT=/work/fixture-out/acceptance.json \
+            -v "$PWD/tools/acceptance/fixtures.mjs:/work/fixture-acceptance.mjs:ro" \
+            -v "$PWD/packages/runner/fixtures/plugins:/work/fixture-plugins:ro" \
+            -v "$PWD/packages/runner/src/host-sampler.mjs:/work/host-sampler.mjs:ro" \
+            -v "$PWD/.verify/fixture-acceptance:/work/fixture-out:rw" \
+            "dsh-verifier:${DSH_VERSION:-0.2.0-rc.2}" /work/fixture-acceptance.mjs
+
+      - name: Upload first-party fixture evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: first-party-fixture-acceptance
+          path: .verify/fixture-acceptance/acceptance.json
+          if-no-files-found: warn
+          retention-days: 30
+
       - name: Verify each subject
         env:
           DSH_VERSION: ${{ inputs.dsh_version }}
           VERIFY_SPECS: ${{ inputs.verify_specs }}
+          VERIFY_FORCE_TRANSIENT_EXECUTION_FAILURE: ${{ inputs.exercise_retry }}
           # Provenance: the report records the commit that produced it. Set here
           # so a run on main cites a main commit rather than a pull-request head.
           DSH_VERIFY_COMMIT: ${{ github.sha }}
@@ -192,7 +171,7 @@ jobs:
                 ACTIONS_ID_TOKEN_REQUEST_TOKEN ACTIONS_ID_TOKEN_REQUEST_URL || true
           IMAGE="dsh-verifier:${DSH_VERSION:-0.2.0-rc.2}" \
             packages/runner/container/run-suite.sh \
-            "${VERIFY_SPECS:-dsh-cost-meter@1.8.8}" .verify/reports || true
+            "${VERIFY_SPECS:-dsh-cost-meter@1.8.8}" .verify/reports
 
       - name: Report outcomes
         if: always()
@@ -221,102 +200,8 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: exec-reports
-          path: .verify/reports
-          if-no-files-found: warn
-          retention-days: 30
-
-  # L3 reconnaissance. The project previously concluded L3 was blocked; that
-  # conclusion was tested against the version npm's `latest` tag points at,
-  # which predates the pinned runtime. This probes the correctly-versioned
-  # official replay plugin.
-  l3-probe:
-    name: l3-probe
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: '24'
-
-      - name: Probe the keyless replay path in a one-off container
-        env:
-          DSH_VERSION: ${{ inputs.dsh_version }}
-        run: |
-          set -uo pipefail
-          unset GITHUB_TOKEN GH_TOKEN ACTIONS_RUNTIME_TOKEN \
-                ACTIONS_ID_TOKEN_REQUEST_TOKEN ACTIONS_ID_TOKEN_REQUEST_URL || true
-
-          IMAGE="dsh-verifier:${DSH_VERSION:-0.2.0-rc.2}"
-          docker build --build-arg "DSH_VERSION=${DSH_VERSION:-0.2.0-rc.2}" \
-            -t "$IMAGE" packages/runner/container
-
-          docker rm -f l3-run >/dev/null 2>&1 || true
-          docker run --name l3-run --entrypoint /bin/bash \
-            -v "$PWD/packages/runner/container/probe-l3.sh:/work/probe-l3.sh:ro" \
-            "$IMAGE" /work/probe-l3.sh /work/out/l3
-
-          mkdir -p .verify/l3
-          docker cp l3-run:/work/out/l3/. .verify/l3/
-          docker rm -f l3-run >/dev/null 2>&1 || true
-          ls -la .verify/l3
-
-      - name: Upload L3 evidence
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: l3-probe
-          path: .verify/l3
-          if-no-files-found: warn
-          retention-days: 30
-
-  # Attempt an actual keyless session: headless profile, the official replay
-  # adapter at the version matching the pinned runtime, mounted by overlay,
-  # driven by a fixture authored in this repository. No credential is used.
-  l3-run:
-    name: l3-run
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: '24'
-
-      - name: Drive a keyless session in a one-off container
-        env:
-          DSH_VERSION: ${{ inputs.dsh_version }}
-        run: |
-          set -uo pipefail
-          unset GITHUB_TOKEN GH_TOKEN ACTIONS_RUNTIME_TOKEN \
-                ACTIONS_ID_TOKEN_REQUEST_TOKEN ACTIONS_ID_TOKEN_REQUEST_URL || true
-
-          IMAGE="dsh-verifier:${DSH_VERSION:-0.2.0-rc.2}"
-          docker build --build-arg "DSH_VERSION=${DSH_VERSION:-0.2.0-rc.2}" \
-            -t "$IMAGE" packages/runner/container
-
-          docker rm -f l3run >/dev/null 2>&1 || true
-          docker run --name l3run --entrypoint /bin/bash \
-            -v "$PWD/packages/runner/container/probe-l3-run.sh:/work/probe-l3-run.sh:ro" \
-            -v "$PWD/packages/runner/fixtures:/work/fixtures:ro" \
-            "$IMAGE" /work/probe-l3-run.sh /work/out/l3run
-
-          mkdir -p .verify/l3run
-          docker cp l3run:/work/out/l3run/. .verify/l3run/
-          docker rm -f l3run >/dev/null 2>&1 || true
-          ls -la .verify/l3run
-
-      - name: Upload L3 run evidence
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: l3-run
-          path: .verify/l3run
+          path: |
+            .verify/reports/*/report.json
+            .verify/reports/timings.tsv
           if-no-files-found: warn
           retention-days: 30

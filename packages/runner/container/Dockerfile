@@ -13,10 +13,15 @@ FROM node:24-bookworm-slim
 
 ARG DSH_VERSION=0.2.0-rc.2
 ARG PNPM_VERSION=10.33.2
+ARG PLAYWRIGHT_VERSION=1.55.0
 
+# The native loader otherwise copies its verified binary into /tmp; the
+# execution tier's transient filesystem is intentionally not executable.
 ENV DEBIAN_FRONTEND=noninteractive \
     npm_config_cache=/tmp/npm-cache \
     DSH_HOME=/work/dsh-home \
+    NARB_DISABLE_NATIVE_CACHE=1 \
+    PLAYWRIGHT_BROWSERS_PATH=/opt/playwright \
     CI=1
 
 # `passwd` is not in bookworm-slim and provides useradd; without it the
@@ -30,8 +35,9 @@ RUN apt-get update \
 #
 # FINDING (recorded in docs/evidence/V0.md): npm's install-script gating blocks
 # install scripts by default. A plain `npm install -g @deepseek-ai/dsh` reports
-# five packages whose scripts did not run, two of them native modules
-# (node-pty, koffi). `dsh --version` still answers, so the gap is invisible
+# six packages whose scripts did not run, three of them native modules
+# (node-pty, koffi, node-addon-require-builtin). `dsh --version` still answers,
+# so the gap is invisible
 # until a feature needing those natives is exercised.
 #
 # We allow them explicitly rather than silently: this is the FIRST-PARTY DSH
@@ -39,16 +45,36 @@ RUN apt-get update \
 # The decision is recorded, not absorbed. Third-party subject plugins never get
 # this treatment — their pending build scripts are a reportable finding.
 # ---------------------------------------------------------------------------
-RUN corepack enable \
- && corepack prepare "pnpm@${PNPM_VERSION}" --activate
+# The unprivileged executor has a different HOME from the build user. A
+# Corepack shim therefore looked up a default pnpm version online even after
+# `corepack prepare` had populated root's cache. Install the pinned binary
+# directly so the offline executor never needs Corepack's registry lookup.
+RUN corepack disable \
+ && npm install --global "pnpm@${PNPM_VERSION}"
 
 RUN mkdir -p /opt/dsh-runtime-facts
 COPY runtime-facts.mjs /opt/dsh-runtime-facts/runtime-facts.mjs
 
 RUN npm install --global \
-      --allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs \
+      --allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,node-addon-require-builtin,@google/genai,protobufjs \
       "@deepseek-ai/dsh@${DSH_VERSION}" > /opt/dsh-runtime-facts/npm-install.log 2>&1 \
+ && cd /usr/local/lib/node_modules/@deepseek-ai/dsh/node_modules/node-addon-require-builtin \
+ && npm rebuild --foreground-scripts \
+ && NARB_PLATFORM_VERSION="$(node -p "require('./package.json').optionalDependencies['node-addon-require-builtin-linux-x64-gnu']")" \
+ && npm install --global --ignore-scripts "node-addon-require-builtin-linux-x64-gnu@${NARB_PLATFORM_VERSION}" \
+ && node -e "console.log(require.resolve('node-addon-require-builtin-linux-x64-gnu', { paths: ['/usr/local/lib/node_modules/@deepseek-ai/dsh/node_modules/node-addon-require-builtin'] }))" \
+ && node -e "const binding = require('node-addon-require-builtin-linux-x64-gnu'); if (typeof binding.requireBuiltin !== 'function') process.exit(1)" \
  && node /opt/dsh-runtime-facts/runtime-facts.mjs \
+ && npm cache clean --force \
+ && rm -rf /tmp/npm-cache
+
+# Browser-client evidence is an explicit, maintainer-approved CI dependency.
+# It is installed in the verifier image, never in the repository runtime, and
+# the browser is only launched inside the same network-denied subject container.
+# The exact Playwright version pins the Chromium revision downloaded below.
+RUN npm install --global --ignore-scripts "@playwright/test@${PLAYWRIGHT_VERSION}" \
+ && playwright install --with-deps chromium \
+ && chmod -R a+rX /opt/playwright \
  && npm cache clean --force \
  && rm -rf /tmp/npm-cache
 

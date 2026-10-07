@@ -5,13 +5,23 @@ Evidence-linked, reproducible, not another star list.
 
 [Site](https://citrusli2026.github.io/dsh-verified-plugins/) · [Method](docs/method.md) · [Report schema](docs/schema.md) · [Security](docs/security.md) · [Appeals](docs/appeals.md) · [Catalog](catalog/index.json)
 
-> **Status: V0–V6 done.** All seven dimensions run end to end, batches are
-> supported, reports are published and freshness is tracked —
+> **Status: isolated execution accepted in CI; browser-client execution is measured in the approved Chromium harness.**
+> All seven dimensions are represented, batches are supported, reports are published and freshness is tracked —
 > **[browse the site](https://citrusli2026.github.io/dsh-verified-plugins/)**.
-> 24 reports: 19 `verified`, 4 `partial`, 1 `not-installable`, 1 now **stale**.
+> This branch has 25 reports: 19 `verified`, 5 `partial`, 1 `not-installable`; 12 are now **stale**.
 > Sessions run against a replayed transcript, never a credential. Dispute a
 > report via [docs/appeals.md](docs/appeals.md). Read
 > [docs/security.md](docs/security.md) first.
+
+**Security correction:** the 24 historical execution reports were produced in
+containers with network access and include container paths; 20 include replay
+fixture text. They remain evidence of the measured dimensions, but do not
+satisfy the stated no-egress and redaction conditions. The executor now separates package
+fetch from network-denied execution and passed Docker CI acceptance. Declared
+browser clients are executed only in the approved Chromium harness inside that
+same isolated container; a report remains `inconclusive` when the browser
+cannot be measured reliably. See [the incident](docs/security.md#7-historical-network-incident)
+and [V7 evidence](docs/evidence/V7.md).
 
 ---
 
@@ -57,7 +67,7 @@ lose `verified`. There is **no score and no ranking** — that is the whole poin
 
 ## What is published
 
-`catalog/` holds one JSON report per verified subject plus a generated
+`catalog/` holds one JSON report per measured subject plus a generated
 `index.json`:
 
 ```
@@ -67,7 +77,7 @@ catalog/
 ```
 
 `index.json` carries the current counts and the per-subject dimension statuses.
-At the time of writing: **19 `verified`, 4 `partial`, 1 `not-installable`**.
+At the time of writing: **19 `verified`, 5 `partial`, 1 `not-installable`**.
 
 
 Layout note: the contract proposed `catalog/<owner>/<repo>.json`. The subject is
@@ -94,7 +104,7 @@ node packages/cli/src/main.ts validate <report.json> [...]   # schema + verdict 
 node packages/cli/src/main.ts catalog [--check]              # rebuild / check index freshness
 ```
 
-Specs are exact: `name@1.2.3`, or a bare name (resolves to latest). Static-only
+Specs must be exact: `name@1.2.3`; bare names, tags and ranges are refused. Static-only
 runs execute no plugin code, which is why they are safe to run anywhere — and
 why their verdict is capped at `partial`.
 
@@ -165,9 +175,10 @@ Registry metadata only; no container, no credential, 26 seconds.
 
 ## Freshness and corrections
 
-A report is a snapshot. `catalog/staleness.json` records which subjects have
-been republished since, and the site marks them — a **stale** report is not a
-wrong report, it describes a version that is no longer the latest.
+A report is a snapshot. `catalog/staleness.json` checks each report's version,
+runtime and exact package integrity against the registry. The site marks stale
+or unknown results. A changed latest tag does not make an older report wrong;
+a same-version integrity mismatch needs investigation.
 
 Corrections are additive and mechanically guarded: `supersedes` plus a
 `changelog` entry whose description is **computed from both reports**, so a
@@ -175,7 +186,7 @@ correction cannot misdescribe itself, and an amendment that drops evidence is
 refused. See [docs/appeals.md](docs/appeals.md).
 
 Every failure this verifier has actually had is listed by incident in
-[docs/method.md](docs/method.md) § 6 — eight false positives, four false
+[docs/method.md](docs/method.md) § 6 — nine false positives, four false
 negatives, and three false passes, two of them fixed.
 
 ## Known limitations

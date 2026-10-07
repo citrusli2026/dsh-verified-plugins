@@ -11,6 +11,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { gzipSync } from 'node:zlib';
+import { createServer } from 'node:http';
 
 import { readTarGz, findRootManifest, isSafeEntryPath } from '../src/tar.ts';
 import { scanCapabilities, classifyAttribution } from '../src/capability.ts';
@@ -19,6 +20,46 @@ import { qualify, readDeclaredManifest } from '../src/qualify.ts';
 import { parseSpec, selectVersion, RegistryError } from '../src/registry.ts';
 import { rowFromManifest } from '../src/survey.ts';
 import { compareVersions, evaluateDshPeers, parseVersion, satisfies } from '../src/semver.ts';
+import { assessStaleness } from '../src/staleness.ts';
+
+test('staleness checks the exact artifact integrity as well as the latest tag', async () => {
+  const server = createServer((request, response) => {
+    const path = request.url ?? '';
+    const manifests: Record<string, unknown> = {
+      '/same/latest': { version: '1.0.0' },
+      '/same/1.0.0': { dist: { integrity: 'sha512-same' } },
+      '/changed/latest': { version: '1.0.0' },
+      '/changed/1.0.0': { dist: { integrity: 'sha512-new' } },
+      '/newer/latest': { version: '2.0.0' },
+      '/newer/1.0.0': { dist: { integrity: 'sha512-same' } },
+      '/unknown/latest': { version: '1.0.0' },
+    };
+    if (!(path in manifests)) {
+      response.writeHead(404).end();
+      return;
+    }
+    response.setHeader('content-type', 'application/json');
+    response.end(JSON.stringify(manifests[path]));
+  });
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address !== 'string');
+    const report = await assessStaleness(
+      ['same', 'changed', 'newer', 'unknown'].map((name) => ({
+        reportId: `npm:${name}@1.0.0`, name, version: '1.0.0',
+        runtimeVersion: '0.2.0-rc.2', integrity: 'sha512-same',
+      })),
+      { registry: `http://127.0.0.1:${address.port}`, runtimeVersion: '0.2.0-rc.2' },
+    );
+    assert.deepEqual(report.entries.map((entry) => entry.status), ['current', 'stale', 'stale', 'unknown']);
+    assert.deepEqual(report.entries.map((entry) => entry.integrityStatus), ['match', 'mismatch', 'match', 'unknown']);
+    assert.match(report.entries[1]!.reasons.join(' '), /integrity.*differs/);
+    assert.deepEqual(report.counts, { checked: 4, current: 1, stale: 2, unknown: 1 });
+  } finally {
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});
 
 /* --------------------------------------------------------------- tar helper */
 
@@ -244,18 +285,21 @@ test('checking a report never trusts a declared engines.dsh as compatibility', (
 
 /* ------------------------------------------------------------------ registry */
 
-test('spec parsing handles scoped names and bare names', () => {
+test('spec parsing requires an exact version for scoped and bare names', () => {
   assert.deepEqual(parseSpec('@scope/name@1.2.3'), { name: '@scope/name', range: '1.2.3' });
   assert.deepEqual(parseSpec('name@1.2.3'), { name: 'name', range: '1.2.3' });
-  assert.deepEqual(parseSpec('name'), { name: 'name', range: 'latest' });
+  assert.throws(() => parseSpec('name'), RegistryError);
+  assert.throws(() => parseSpec('@scope/name'), RegistryError);
+  assert.throws(() => parseSpec('name@latest'), RegistryError);
+  assert.throws(() => parseSpec('name@^1.2.3'), RegistryError);
   assert.throws(() => parseSpec(''), RegistryError);
 });
 
-test('version selection picks the newest match and refuses an impossible range', () => {
+test('version selection uses the exact artifact, never a tag or range', () => {
   const versions = { '0.1.0': {}, '0.2.0': {}, '0.2.0-rc.2': {}, '0.3.0': {} };
-  assert.equal(selectVersion(versions, 'latest'), '0.3.0');
   assert.equal(selectVersion(versions, '0.2.0'), '0.2.0');
-  assert.equal(selectVersion(versions, '^0.2.0'), '0.2.0');
+  assert.throws(() => selectVersion(versions, 'latest'), RegistryError);
+  assert.throws(() => selectVersion(versions, '^0.2.0'), RegistryError);
   assert.throws(() => selectVersion(versions, '9.9.9'), RegistryError);
 });
 

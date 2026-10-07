@@ -56,6 +56,13 @@ test('badge: each verdict has its own colour and the disclaimer travels in the t
   assert.equal(seen.size, BADGE_VOCABULARY.length, 'the four states must be visually distinct');
 });
 
+test('badge: a historical execution carries its method limitation when shared alone', () => {
+  const svg = renderBadge('verified', { historicalMethod: true });
+  assert.match(svg, /Historical method limitation: this execution had network access/);
+  assert.match(svg, /aria-label="dsh plugin: verified; historical method limitation"/);
+  assert.doesNotMatch(renderBadge('verified'), /Historical method limitation/);
+});
+
 test('badge: interpolated values are escaped', () => {
   const svg = renderBadge('verified', { subject: '<script>alert(1)</script>' });
   assert.ok(!svg.includes('<script>'), 'a package name must not become markup');
@@ -138,6 +145,13 @@ test('report page: the verdict is rendered and no score appears in the visible t
   assert.match(html, /partial/);
   const text = visibleText(html.replace(/<style>[\s\S]*?<\/style>/g, ' '));
   assert.ok(!/\bscore\b|\brating\b|\d+\s*\/\s*10|\d+\s*%/.test(text), `visible text implies a score: ${text.slice(0, 200)}`);
+});
+
+test('historical report page discloses the network isolation incident', () => {
+  const old = report();
+  old.generatedAt = '2026-10-03T15:56:06.201Z';
+  assert.match(renderReportPage(old, 'example'), /no-egress and redaction conditions were not met/);
+  assert.doesNotMatch(renderReportPage(report(), 'example'), /no-egress and redaction conditions were not met/);
 });
 
 test('index page: every entry is listed with a link and an inline badge', () => {

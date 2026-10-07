@@ -41,51 +41,26 @@ export function defaultRegistry(): string {
   return process.env.DSH_VERIFY_REGISTRY ?? 'https://registry.npmjs.org';
 }
 
-/** Splits `@scope/name@1.2.3` into its parts. A bare name resolves to latest. */
+/** Splits an exact `@scope/name@1.2.3` spec. Tags and ranges are not evidence. */
 export function parseSpec(spec: string): { name: string; range: string } {
   const trimmed = spec.trim();
   if (trimmed === '') throw new RegistryError('empty spec', 'invalid-spec');
 
   const at = trimmed.lastIndexOf('@');
-  if (at <= 0) return { name: trimmed, range: 'latest' };
+  if (at <= 0) throw new RegistryError(`an exact name@version is required: "${spec}"`, 'invalid-spec');
 
   const name = trimmed.slice(0, at);
   const range = trimmed.slice(at + 1);
-  if (name === '') throw new RegistryError(`invalid spec "${spec}"`, 'invalid-spec');
-  return { name, range: range === '' ? 'latest' : range };
-}
-
-function compareVersions(a: string, b: string): number {
-  const parse = (v: string) => v.split('-')[0].split('.').map((n) => Number.parseInt(n, 10) || 0);
-  const [aMain, bMain] = [parse(a), parse(b)];
-  for (let i = 0; i < 3; i++) {
-    if ((aMain[i] ?? 0) !== (bMain[i] ?? 0)) return (aMain[i] ?? 0) - (bMain[i] ?? 0);
+  if (name === '' || !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(range)) {
+    throw new RegistryError(`an exact name@version is required: "${spec}"`, 'invalid-spec');
   }
-  // A prerelease sorts below the release it precedes.
-  const aPre = a.includes('-');
-  const bPre = b.includes('-');
-  if (aPre !== bPre) return aPre ? -1 : 1;
-  return a.localeCompare(b);
+  return { name, range };
 }
 
-/**
- * Version selection is deliberately simple: `latest`, an exact version, or the
- * highest published version satisfying a `^`/`~`/bare prefix. Anything more
- * exotic is rejected rather than half-implemented — a verification report must
- * name one exact version.
- */
+/** Select only a version explicitly present in the full registry packument. */
 export function selectVersion(versions: Record<string, unknown>, range: string): string {
-  const all = Object.keys(versions);
-  if (all.length === 0) throw new RegistryError('package publishes no versions', 'not-found');
-
-  if (range === 'latest' || range === '*') return all.sort(compareVersions).pop() as string;
-  if (all.includes(range)) return range;
-
-  const prefix = range.replace(/^[\^~]/, '');
-  const matching = all.filter((v) => v === prefix || v.startsWith(`${prefix}.`));
-  if (matching.length > 0) return matching.sort(compareVersions).pop() as string;
-
-  throw new RegistryError(`no published version satisfies range "${range}"`, 'not-found');
+  if (Object.hasOwn(versions, range)) return range;
+  throw new RegistryError(`exact version "${range}" is not published`, 'not-found');
 }
 
 export async function resolveSubject(spec: string, registry = defaultRegistry()): Promise<ResolvedSubject> {

@@ -1,0 +1,3 @@
+- insert:
+    - id: dsh-verified-load-probe
+      name: /work/fixtures/load/inventory-probe.mjs

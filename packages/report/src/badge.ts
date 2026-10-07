@@ -21,6 +21,10 @@ export const BADGE_VOCABULARY = ['verified', 'partial', 'inconclusive', 'not-ins
 
 export type BadgeVerdict = (typeof BADGE_VOCABULARY)[number];
 
+export function hasHistoricalMethod(generatedAt: unknown): boolean {
+  return typeof generatedAt === 'string' && generatedAt < '2026-10-04T00:00:00.000Z';
+}
+
 /**
  * Colour by verdict only. Deliberately not a gradient or a scale: four states,
  * four colours, no implication that `verified` is "better" than `partial` —
@@ -65,6 +69,8 @@ export interface BadgeOptions {
   href?: string;
   /** Extra context for the tooltip, e.g. the exact name@version. */
   subject?: string;
+  /** The report predates the network-isolation correction. */
+  historicalMethod?: boolean;
 }
 
 /**
@@ -82,12 +88,15 @@ export function renderBadge(verdict: string, options: BadgeOptions = {}): string
   const messageWidth = textWidth(message) + 10;
   const totalWidth = labelWidth + messageWidth;
 
+  const historicalNote = options.historicalMethod
+    ? ' Historical method limitation: this execution had network access and published container paths and replay fixture text.'
+    : '';
   const tooltip =
     state === 'inconclusive' && !isBadgeVerdict(verdict)
       ? `dsh-verified: unknown verdict ${JSON.stringify(verdict)}`
-      : `dsh-verified: ${state}${options.subject ? ` — ${options.subject}` : ''}. ${DISCLAIMER}`;
+      : `dsh-verified: ${state}${options.subject ? ` — ${options.subject}` : ''}. ${DISCLAIMER}${historicalNote}`;
 
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="20" role="img" aria-label="${escapeXml(`${label}: ${message}`)}">
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="20" role="img" aria-label="${escapeXml(`${label}: ${message}${options.historicalMethod ? '; historical method limitation' : ''}`)}">
   <title>${escapeXml(tooltip)}</title>
   <linearGradient id="s" x2="0" y2="100%">
     <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>

@@ -13,6 +13,7 @@ import { createHash } from 'node:crypto';
 
 import type { Dimension, EvidenceEntry } from './validate.ts';
 import { deriveVerdict, DISCLAIMER, type DimensionKey } from './validate.ts';
+import { makeExcerpt, redactPaths, redactSecrets } from './redact.ts';
 
 export interface ExecutionStep {
   name: string;
@@ -44,7 +45,27 @@ export interface ExecutionResult {
     pendingBuildScripts: string[];
     logPath: string | null;
   };
-  L2_load: { status: string; reason: string; detail: string; diagnostics: string };
+  L2_load: {
+    status: string; reason: string; detail: string; diagnostics: string;
+    observation?: { found?: boolean; enabled?: boolean; error?: string | null; overrides?: string[];
+      browserClientDeclared?: boolean | null;
+      browser?: {
+        status: 'pass' | 'fail' | 'inconclusive';
+        browserClientActivated: boolean;
+        markerText: string | null;
+        startupUrl: string | null;
+        finalUrl: string | null;
+        title: string;
+        consoleErrors: string[];
+        pageErrors: string[];
+        failedRequests: string[];
+        httpErrors: string[];
+        diagnostics?: string;
+        webOutput?: string;
+        durationMs: number;
+      } | null;
+      rows: Array<{ rowId: string; entryId: string | null; enabled: boolean; fiberPhase: string | null }> } | null;
+  };
   L3_run?: {
     status: string;
     reason: string;
@@ -75,6 +96,24 @@ export interface ExecutionResult {
 }
 
 const MAX_EXCERPT_BYTES = 2048;
+const RUN_PATHS = [
+  { from: '/home/verifier', to: '<home>' },
+  { from: '/usr/local', to: '<runtime>' },
+  { from: '/work', to: '<work>' },
+  { from: '/tmp', to: '<tmp>' },
+  { from: '/opt', to: '<runtime>' },
+];
+
+function redactRunText(value: string): string {
+  return redactSecrets(redactPaths(value, { paths: RUN_PATHS }).text).text;
+}
+
+function redactSessionFields(value: string): string {
+  return value.replace(
+    /"(?:text|content|sessionId|message)"\s*:\s*"(?:\\.|[^"\\])*"/g,
+    (field) => `${field.slice(0, field.indexOf(':') + 1)}"[redacted:session-content]"`,
+  );
+}
 
 function capExcerpt(text: string): { excerpt: string; bytes: number; truncated: boolean } {
   const bytes = Buffer.byteLength(text, 'utf8');
@@ -89,14 +128,17 @@ function stepFor(execution: ExecutionResult, name: string): ExecutionStep | unde
 }
 
 function evidenceFromStep(id: string, step: ExecutionStep | undefined, fallbackCommand: string): EvidenceEntry {
-  const capped = capExcerpt(step?.excerpt ?? '');
+  const raw = step?.excerpt ?? '';
+  const capped = makeExcerpt(id === 'e-l3-session' ? redactSessionFields(raw) : raw, {
+    paths: RUN_PATHS, maxBytes: MAX_EXCERPT_BYTES,
+  });
   return {
     id,
     kind: 'command',
-    command: step?.command ?? fallbackCommand,
+    command: redactRunText(step?.command ?? fallbackCommand),
     ...(step?.exitCode !== null && step?.exitCode !== undefined ? { exitCode: step.exitCode } : {}),
     ...(step ? { durationMs: step.durationMs } : {}),
-    excerpt: capped.excerpt,
+    excerpt: capped.text,
     excerptBytes: capped.bytes,
     truncated: capped.truncated,
     sha256: createHash('sha256').update(step?.excerpt ?? '').digest('hex'),
@@ -107,10 +149,10 @@ function l5Skipped(): Dimension {
   return {
     id: 'L5',
     status: 'skip',
-    summary: 'not run: differential overhead sampling is not implemented yet',
+    summary: 'not run: the execution result carried no overhead samples',
     evidenceRefs: [],
     notes: [
-      'reporting an overhead figure here would mean inventing one; the dimension stays visible as not having run',
+      'reporting an overhead figure without samples would mean inventing one',
     ],
   };
 }
@@ -150,10 +192,22 @@ export function mergeExecution(
   const evidence: EvidenceEntry[] = report.evidence;
   const l1Step = stepFor(execution, 'l1-install');
   const l2Step = stepFor(execution, 'l2-boot');
+  const l2BrowserStep = stepFor(execution, 'l2-browser');
   const l6Step = stepFor(execution, 'l6-remove');
 
   evidence.push(evidenceFromStep('e-l1-install', l1Step, `dsh plugin --profile verify add ${execution.spec}`));
   if (l2Step) evidence.push(evidenceFromStep('e-l2-boot', l2Step, 'dsh --profile verify'));
+  if (l2BrowserStep) evidence.push(evidenceFromStep('e-l2-browser', l2BrowserStep, 'node /work/browser-probe.mjs <subject> <out>'));
+  if (execution.L2_load.observation) {
+    const inventory = makeExcerpt(JSON.stringify(execution.L2_load.observation), {
+      paths: RUN_PATHS, maxBytes: MAX_EXCERPT_BYTES,
+    });
+    evidence.push({
+      id: 'e-l2-inventory', kind: 'sample',
+      command: 'pluginManager.listBundles() + pluginManager.listPlugins() in the running Host',
+      excerpt: inventory.text, excerptBytes: inventory.bytes, truncated: inventory.truncated,
+    });
+  }
   if (l6Step) evidence.push(evidenceFromStep('e-l6-remove', l6Step, 'dsh plugin --profile verify remove <subject>'));
 
   // A decisive status must cite evidence. If the execution result claims one but
@@ -199,7 +253,7 @@ export function mergeExecution(
   const l1 = execution.L1_install;
   const l1Status: Dimension['status'] = !l1Step
     ? 'inconclusive'
-    : (['pass', 'fail', 'timeout'] as const).includes(l1.status as 'pass')
+    : (['pass', 'fail', 'timeout', 'inconclusive'] as const).includes(l1.status as 'pass')
       ? (l1.status as Dimension['status'])
       : 'inconclusive';
   dims.L1_install = {
@@ -213,24 +267,29 @@ export function mergeExecution(
       bundlesAfterInstall: l1.bundlesAfter,
       pendingBuildScripts: l1.pendingBuildScripts,
       buildScriptsApproved: 0,
-      diagnosticsLog: l1.logPath,
+      diagnosticsLog: l1.logPath ? redactRunText(l1.logPath) : null,
     },
     evidenceRefs: l1Step ? ['e-l1-install'] : [],
     notes: [
-      l1.detail,
+      redactRunText(l1.detail),
       ...(l1Step ? [] : missingStepNote('L1_install')),
       'no dependency build script was approved by the verifier; approval permits commands with the host user permissions',
     ],
   };
 
   const l2 = execution.L2_load;
+  const browserPass = l2.observation?.browserClientDeclared !== true || l2.observation?.browser?.status === 'pass';
+  const observedLoadPass = l2.observation?.found && l2.observation.enabled && !l2.observation.error &&
+    browserPass &&
+    l2.observation.rows.length > 0 && l2.observation.rows.every((row) =>
+      row.entryId && row.enabled && row.fiberPhase === 'active');
   if (l2.status === 'skip') {
     dims.L2_load = {
       id: 'L2',
       status: 'skip',
       summary: l2.reason,
       evidenceRefs: [],
-      notes: [l2.detail],
+      notes: [redactRunText(l2.detail)],
     };
   } else if (!l2Step) {
     dims.L2_load = {
@@ -243,24 +302,37 @@ export function mergeExecution(
   } else {
     dims.L2_load = {
       id: 'L2',
-      status: l2.status as Dimension['status'],
-      summary: l2.reason,
+      status: l2.status === 'pass' && !observedLoadPass ? 'inconclusive' : l2.status as Dimension['status'],
+      summary: l2.status === 'pass' && !observedLoadPass ? 'active subject fibers were not evidenced' : l2.reason,
       metrics: {
         bootBoundMs: execution.environment.bootBoundMs ?? null,
         durationMs: l2Step.durationMs,
         signal: l2Step.signal,
+        observedRows: l2.observation?.rows.length ?? null,
+        activeRows: l2.observation?.rows.filter((row) => row.enabled && row.fiberPhase === 'active').length ?? null,
+        browserClientDeclared: l2.observation?.browserClientDeclared ?? null,
+        browserClientActivated: l2.observation?.browser?.browserClientActivated ?? null,
+        browserStatus: l2.observation?.browser?.status ?? null,
+        browserErrorCount: l2.observation?.browser
+          ? l2.observation.browser.consoleErrors.length + l2.observation.browser.pageErrors.length +
+            l2.observation.browser.failedRequests.length + l2.observation.browser.httpErrors.length
+          : null,
       },
-      evidenceRefs: ['e-l2-boot'],
+      evidenceRefs: ['e-l2-boot', ...(l2.observation ? ['e-l2-inventory'] : []), ...(l2BrowserStep ? ['e-l2-browser'] : [])],
       notes: [
-        l2.detail,
-        'the fiber phase is not read directly: an early exit with diagnostics is the load-failure signal, and a boot that settles and waits is the success signal',
+        redactRunText(l2.detail),
+        l2.observation?.browserClientDeclared === true
+          ? 'Host bundle rows were read from the running plugin manager; the browser result records the real Web surface marker and browser error counts'
+          : l2.observation
+            ? 'Host bundle rows were read from the running plugin manager; the subject declares no browser client'
+            : 'the loader inventory was unavailable; process lifetime alone did not earn a load pass',
       ],
     };
   }
 
   const l6 = execution.L6_uninstall;
   if (l6.status === 'skip') {
-    dims.L6_uninstall = { id: 'L6', status: 'skip', summary: l6.reason, evidenceRefs: [], notes: [l6.detail] };
+    dims.L6_uninstall = { id: 'L6', status: 'skip', summary: l6.reason, evidenceRefs: [], notes: [redactRunText(l6.detail)] };
   } else if (!l6Step) {
     dims.L6_uninstall = {
       id: 'L6',
@@ -274,9 +346,9 @@ export function mergeExecution(
       id: 'L6',
       status: l6.status as Dimension['status'],
       summary: l6.reason,
-      metrics: { residue: l6.residue, durationMs: l6Step.durationMs },
+      metrics: { residue: l6.residue.map(redactRunText), durationMs: l6Step.durationMs },
       evidenceRefs: ['e-l6-remove'],
-      notes: [l6.detail],
+      notes: [redactRunText(l6.detail)],
     };
   }
 
@@ -290,16 +362,21 @@ export function mergeExecution(
       notes: ['a session was not attempted'],
     };
   } else if (l3.status === 'skip') {
-    dims.L3_run = { id: 'L3', status: 'skip', summary: l3.reason, evidenceRefs: [], notes: [l3.detail] };
+    dims.L3_run = { id: 'L3', status: 'skip', summary: l3.reason, evidenceRefs: [], notes: [redactRunText(l3.detail)] };
   } else {
     dims.L3_run = {
       id: 'L3',
       status: l3.status as Dimension['status'],
       summary: l3.reason,
-      metrics: { replayAdapter: l3.replayAdapter, probeTask: l3.task, events: l3.events },
+      metrics: {
+        replayAdapter: l3.replayAdapter,
+        probeTask: l3.task,
+        events: l3.events ? Object.fromEntries(Object.entries(l3.events).filter(([key]) =>
+          ['turnEndReason', 'finalEventSeen', 'textEventCount', 'errorEventSeen', 'exitCode', 'durationMs', 'eventCount'].includes(key))) : null,
+      },
       evidenceRefs: l3Step ? ['e-l3-session'] : [],
       notes: [
-        l3.detail,
+        redactRunText(l3.detail),
         `probe task, stated verbatim: ${JSON.stringify(l3.task)}`,
         ...(l3Step ? [] : missingStepNote('L3_run')),
       ],
@@ -394,7 +471,13 @@ export function mergeExecution(
     ...report.container,
     image: process.env.VERIFIER_IMAGE ?? report.container?.image ?? 'unknown',
     imageDigest: process.env.VERIFIER_IMAGE_DIGEST ?? null,
-    notes: 'executed in a one-off container; the subject was installed, booted and removed there',
+    prefetchAttempts: Number.isInteger(Number(process.env.VERIFIER_PREFETCH_ATTEMPTS))
+      ? Number(process.env.VERIFIER_PREFETCH_ATTEMPTS)
+      : 1,
+    executionAttempts: Number.isInteger(Number(process.env.VERIFIER_EXECUTION_ATTEMPTS))
+      ? Number(process.env.VERIFIER_EXECUTION_ATTEMPTS)
+      : 1,
+    notes: `network-denied execution container; install outcome: ${l1Status}; fetch attempts: ${process.env.VERIFIER_PREFETCH_ATTEMPTS ?? 1}; execution attempts: ${process.env.VERIFIER_EXECUTION_ATTEMPTS ?? 1}; later phases ran only where their dimensions say so`,
   };
 
   report.verdict = deriveVerdict(dims as Record<DimensionKey, Dimension>);
@@ -408,8 +491,9 @@ export function mergeExecution(
           'L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model',
         ]
       : []),
-    'the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase',
-    ...execution.notes,
+    ...(l2.observation ? [] : ['L2 loader inventory was unavailable; no active-fiber claim is made']),
+    'network egress was denied; attempted destination hosts were not observable in this run',
+    ...execution.notes.map(redactRunText),
   ].filter((l: string, i: number, all: string[]) => all.indexOf(l) === i);
 
   report.disclaimers = [DISCLAIMER];

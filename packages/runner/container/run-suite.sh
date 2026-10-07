@@ -5,7 +5,8 @@
 # one-off container, then the merge that produces the published report.
 #
 # Cost control, which is V4's subject:
-#   * one container per subject, always discarded, never reused;
+#   * one networked fetch container and one offline execution container per
+#     subject, both discarded, with a store used by no other subject;
 #   * a per-subject wall-clock ceiling, so one pathological subject cannot hold
 #     the batch;
 #   * a failure on one subject does not abort the others — it is recorded and
@@ -26,6 +27,7 @@ SPECS="${1:?usage: run-suite.sh <spec,spec,...> [out-root]}"
 OUTROOT="${2:-.verify/reports}"
 IMAGE="${IMAGE:-dsh-verifier:local}"
 PER_SUBJECT_TIMEOUT_S="${PER_SUBJECT_TIMEOUT_S:-420}"
+FORCE_TRANSIENT_EXECUTION_FAILURE="${VERIFY_FORCE_TRANSIENT_EXECUTION_FAILURE:-0}"
 
 mkdir -p "$OUTROOT"
 : > "$OUTROOT/timings.tsv"
@@ -37,8 +39,27 @@ for raw in "${LIST[@]}"; do
 done
 
 echo "suite: $TOTAL subject(s), image=$IMAGE, per-subject ceiling ${PER_SUBJECT_TIMEOUT_S}s"
+IMAGE_ID=$(docker image inspect "$IMAGE" --format '{{.Id}}') || exit 1
 FAILED=0
 DONE=0
+
+print_excerpt() {
+  node --input-type=module - "$1" <<'NODE'
+import { readFileSync } from 'node:fs';
+import { makeExcerpt } from './packages/report/src/redact.ts';
+const bytes = readFileSync(process.argv[2]);
+const tail = new TextDecoder().decode(bytes.subarray(-2048));
+const excerpt = makeExcerpt(tail, {
+  paths: [
+    { from: process.cwd(), to: '<work>' },
+    { from: '/work', to: '<work>' },
+    { from: '/home/verifier', to: '<home>' },
+  ],
+  maxBytes: 2048,
+});
+process.stdout.write(`${excerpt.text}\n`);
+NODE
+}
 
 for raw in "${LIST[@]}"; do
   spec="$(printf '%s' "$raw" | tr -d '[:space:]')"
@@ -58,43 +79,157 @@ for raw in "${LIST[@]}"; do
     continue
   fi
 
-  # L0 pre-filter: a package with no bundle declaration is not a plugin. It
-  # still installs — as a plain dependency that is never composed — so running
-  # the execution dimensions would burn a container to measure the absence of
-  # the subject, and report it as a pass. The static report is already a valid
-  # final report for this case.
-  declares=$(node -p "const r=JSON.parse(require('node:fs').readFileSync(process.argv[1],'utf8')); (r.dimensions.L0_qualification.metrics?.patchPaths ?? []).length" "$dir/static.json" 2>/dev/null || echo 1)
-  if [ "$declares" = "0" ]; then
+  # L0 pre-filter: an absent bundle or missing patch cannot be composed.
+  # Installing it would measure the absence of the subject, not its behaviour.
+  l0_status=$(node -p "JSON.parse(require('node:fs').readFileSync(process.argv[1],'utf8')).dimensions.L0_qualification.status" "$dir/static.json" 2>/dev/null || echo inconclusive)
+  if [ "$l0_status" != "pass" ]; then
     cp "$dir/static.json" "$dir/report.json"
     secs=$(( $(date +%s) - started ))
-    echo "   -> not a bundle; L0 pre-filtered, no container started (${secs}s)"
-    printf '%s\tnot-a-bundle\t%s\n' "$spec" "$secs" >> "$OUTROOT/timings.tsv"
+    echo "   -> L0 $l0_status; no container started (${secs}s)"
+    printf '%s\tL0-%s\t%s\n' "$spec" "$l0_status" "$secs" >> "$OUTROOT/timings.tsv"
     continue
   fi
 
-  # One container, one subject, discarded. Mounts are read-only.
-  cname="suite-$DONE"
-  docker rm -f "$cname" >/dev/null 2>&1 || true
-  timeout --signal=KILL "$PER_SUBJECT_TIMEOUT_S" docker run --name "$cname" --entrypoint node \
-    -e "PROBE_SPEC=$spec" \
+  # Never pass a tag or range into either phase. The static fetch resolved and
+  # hashed an exact artifact; execution must target that same name@version.
+  exact_spec=$(node -p "const s=JSON.parse(require('node:fs').readFileSync(process.argv[1],'utf8')).subject; s.name+'@'+s.version" "$dir/static.json")
+
+  # Resolve and download without executing the subject. The cache belongs to
+  # this subject only and is removed before artifacts are uploaded.
+  cachevol="dsh-verify-cache-${GITHUB_RUN_ID:-local}-$$-$DONE"
+  # A 3 GiB tmpfs store plus 2 GiB of bounded writable mounts below is the
+  # subject's 5 GiB disk ceiling. A read-only root prevents bypassing it.
+  docker volume create --driver local --opt type=tmpfs --opt device=tmpfs \
+    --opt o=size=3g,uid=10001,gid=10001 "$cachevol" >/dev/null || exit 1
+  # Keep the tmpfs mounted between phases; Docker discards its contents after
+  # the last container releases the volume. This holder runs no plugin code.
+  cacheholder="cache-$DONE"
+  docker rm -f "$cacheholder" >/dev/null 2>&1 || true
+  docker run -d --name "$cacheholder" --network none --read-only \
+    --cpus 0.25 --memory 128m --memory-swap 128m --pids-limit 32 \
+    --entrypoint node -v "$cachevol:/work/cache" "$IMAGE" \
+    -e 'setInterval(() => {}, 60000)' >/dev/null || {
+      docker volume rm -f "$cachevol" >/dev/null 2>&1 || true
+      exit 1
+    }
+  deadline=$((started + PER_SUBJECT_TIMEOUT_S))
+  prefetch_attempts=0
+  prefetch_rc=124
+  while [ "$prefetch_attempts" -lt 2 ]; do
+    remaining=$((deadline - $(date +%s)))
+    [ "$remaining" -gt 0 ] || break
+    prefetch_attempts=$((prefetch_attempts + 1))
+    prefetch_rc=0
+    prefetch_name="fetch-$DONE"
+    docker rm -f "$prefetch_name" >/dev/null 2>&1 || true
+    timeout --signal=KILL "$remaining" docker run --rm --name "$prefetch_name" \
+    --read-only --cpus 2 --memory 2g --memory-swap 2g --pids-limit 256 \
+    --tmpfs /tmp:rw,size=256m,mode=1777 \
+    --tmpfs /home/verifier:rw,size=256m,uid=10001,gid=10001 \
+    --entrypoint /bin/bash \
+    -e XDG_CACHE_HOME=/work/cache/xdg \
+    -v "$PWD/packages/runner/container/prefetch.sh:/work/prefetch.sh:ro" \
+    -v "$cachevol:/work/cache" \
+      "$IMAGE" /work/prefetch.sh "$exact_spec" "${DSH_VERSION:-0.2.0-rc.2}" \
+      >"$dir/prefetch.log" 2>&1 || prefetch_rc=$?
+    docker rm -f "$prefetch_name" >/dev/null 2>&1 || true
+    # A policy refusal is deterministic; only operational fetch failures retry.
+    [ "$prefetch_rc" -ne 0 ] && [ "$prefetch_rc" -ne 4 ] || break
+  done
+  if [ "$prefetch_rc" -ne 0 ]; then
+    echo "   prefetch BLOCKED — see $dir/prefetch.log"
+    [ -f "$dir/prefetch.log" ] && print_excerpt "$dir/prefetch.log"
+    node packages/report/src/orchestration-failure.ts "$dir/static.json" "$dir/report.json" \
+      prefetch "$prefetch_rc" "$(( ($(date +%s) - started) * 1000 ))" \
+      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}" "$prefetch_attempts" 0
+    docker rm -f "$cacheholder" >/dev/null
+    docker volume rm -f "$cachevol" >/dev/null
+    FAILED=$((FAILED + 1))
+    printf '%s\tprefetch-blocked\t%s\n' "$spec" "$(( $(date +%s) - started ))" >> "$OUTROOT/timings.tsv"
+    continue
+  fi
+
+  remaining=$((deadline - $(date +%s)))
+  if [ "$remaining" -le 0 ]; then
+    echo "   subject ceiling reached before execution"
+    node packages/report/src/orchestration-failure.ts "$dir/static.json" "$dir/report.json" \
+      execution 124 "$(( ($(date +%s) - started) * 1000 ))" \
+      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}" 0 "$prefetch_attempts"
+    docker rm -f "$cacheholder" >/dev/null
+    docker volume rm -f "$cachevol" >/dev/null
+    FAILED=$((FAILED + 1))
+    printf '%s\ttimeout\t%s\n' "$spec" "$(( $(date +%s) - started ))" >> "$OUTROOT/timings.tsv"
+    continue
+  fi
+
+  # The subject can execute only here, with Docker's network namespace absent.
+  execution_attempts=0
+  execution_rc=0
+  while [ "$execution_attempts" -lt 2 ]; do
+    remaining=$((deadline - $(date +%s)))
+    if [ "$remaining" -le 0 ]; then execution_rc=124; break; fi
+    execution_attempts=$((execution_attempts + 1))
+    cname="suite-$DONE-$execution_attempts"
+    docker rm -f "$cname" >/dev/null 2>&1 || true
+    execution_rc=0
+    probe_failure_env=()
+    force_first=0
+    case "$FORCE_TRANSIENT_EXECUTION_FAILURE" in
+      1|true|TRUE|yes|YES) force_first=1 ;;
+    esac
+    if [ "$execution_attempts" -eq 1 ] && [ "$force_first" -eq 1 ]; then
+      # Maintainer-triggered acceptance only: the first isolated execution
+      # container exits before the probe starts. The next iteration must run
+      # the real subject, proving the infrastructure retry rather than a unit
+      # test that merely increments a counter.
+      probe_failure_env=(-e VERIFY_FAIL_BEFORE_PROBE=1)
+    fi
+    timeout --signal=KILL "$remaining" docker run --name "$cname" --network none \
+    --read-only --cpus 2 --memory 2g --memory-swap 2g --pids-limit 256 \
+    --tmpfs /tmp:rw,size=256m,mode=1777 \
+    --tmpfs /home/verifier:rw,size=256m,uid=10001,gid=10001 \
+    --tmpfs /work/dsh-home:rw,size=1g,uid=10001,gid=10001 \
+    --tmpfs /work/out:rw,size=512m,uid=10001,gid=10001 \
+    --entrypoint node \
+    -e npm_config_offline=true \
+    -e npm_config_store_dir=/work/cache/store \
+    -e XDG_CACHE_HOME=/work/cache/xdg \
+    -e COREPACK_DEFAULT_TO_LATEST=0 \
+    -e COREPACK_ENABLE_NETWORK=0 \
+    -e NARB_DISABLE_NATIVE_CACHE=1 \
+    -e "PROBE_SPEC=$exact_spec" \
     -e "OUT_DIR=/work/out/exec" \
     -e "SAMPLER_PATH=/work/host-sampler.mjs" \
     -e "L3_OVERLAY=/work/fixtures/replay/l3-overlay.yml" \
+    "${probe_failure_env[@]}" \
     -v "$PWD/packages/runner/src/execution-probe.ts:/work/execution-probe.ts:ro" \
+    -v "$PWD/packages/runner/src/browser-probe.mjs:/work/browser-probe.mjs:ro" \
     -v "$PWD/packages/runner/src/host-sampler.mjs:/work/host-sampler.mjs:ro" \
     -v "$PWD/packages/runner/fixtures:/work/fixtures:ro" \
-    "$IMAGE" /work/execution-probe.ts "$spec" >"$dir/execution.log" 2>&1
-  docker cp "$cname:/work/out/exec/execution.json" "$dir/execution.json" >/dev/null 2>&1
-  docker rm -f "$cname" >/dev/null 2>&1 || true
+    -v "$cachevol:/work/cache" \
+      "$IMAGE" /work/execution-probe.ts "$exact_spec" >"$dir/execution.json" 2>"$dir/execution.log" || execution_rc=$?
+    docker rm -f "$cname" >/dev/null 2>&1 || true
+    if [ "$execution_rc" -eq 0 ] && node -e "JSON.parse(require('node:fs').readFileSync(process.argv[1], 'utf8'))" "$dir/execution.json" >/dev/null 2>&1; then
+      break
+    fi
+  done
+  docker rm -f "$cacheholder" >/dev/null
+  docker volume rm -f "$cachevol" >/dev/null
 
-  if [ ! -f "$dir/execution.json" ]; then
+  if [ "$execution_rc" -ne 0 ] || ! node -e "JSON.parse(require('node:fs').readFileSync(process.argv[1], 'utf8'))" "$dir/execution.json" >/dev/null 2>&1; then
     echo "   execution produced no result — see $dir/execution.log"
+    print_excerpt "$dir/execution.log"
+    node packages/report/src/orchestration-failure.ts "$dir/static.json" "$dir/report.json" \
+      execution "$execution_rc" "$(( ($(date +%s) - started) * 1000 ))" \
+      "$IMAGE" "$IMAGE_ID" "${DSH_VERSION:-0.2.0-rc.2}" "$execution_attempts" "$prefetch_attempts"
     FAILED=$((FAILED + 1))
     printf '%s\texecution-failed\t%s\n' "$spec" "$(( $(date +%s) - started ))" >> "$OUTROOT/timings.tsv"
     continue
   fi
 
-  if ! node packages/cli/src/main.ts merge "$dir/static.json" "$dir/execution.json" \
+  if ! VERIFIER_IMAGE="$IMAGE" VERIFIER_IMAGE_DIGEST="$IMAGE_ID" \
+        VERIFIER_PREFETCH_ATTEMPTS="$prefetch_attempts" VERIFIER_EXECUTION_ATTEMPTS="$execution_attempts" \
+        node packages/cli/src/main.ts merge "$dir/static.json" "$dir/execution.json" \
         --out "$dir/report.json" >>"$dir/merge.log" 2>&1; then
     echo "   merge FAILED — see $dir/merge.log"
     FAILED=$((FAILED + 1))

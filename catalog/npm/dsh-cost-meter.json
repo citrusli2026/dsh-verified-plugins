@@ -1,11 +1,11 @@
 {
   "schema": "dsh.plugin.report.v1",
   "reportId": "npm:dsh-cost-meter@1.8.8",
-  "generatedAt": "2026-10-03T15:56:06.201Z",
+  "generatedAt": "2026-10-04T17:45:51.544Z",
   "verifier": {
     "name": "dsh-verified",
-    "version": "0.1.0",
-    "commit": "b07a7e8d009344208b960388aa24a9c5f8ec674c"
+    "version": "0.2.0",
+    "commit": "f78b5c4b87a98b36a3bde51d3f2f198a17c2f0eb"
   },
   "subject": {
     "spec": "dsh-cost-meter@1.8.8",
@@ -27,11 +27,13 @@
     "arch": "x64"
   },
   "container": {
-    "image": "none",
-    "imageDigest": null,
-    "notes": "executed in a one-off container; the subject was installed, booted and removed there"
+    "image": "dsh-verifier:0.2.0-rc.2",
+    "imageDigest": "sha256:3fd6657657966a9cf3033f594771b82601be9b516fc9dfd46c021ca265bd4617",
+    "notes": "network-denied execution container; install outcome: pass; fetch attempts: 1; execution attempts: 2; later phases ran only where their dimensions say so",
+    "prefetchAttempts": 1,
+    "executionAttempts": 2
   },
-  "verdict": "verified",
+  "verdict": "partial",
   "dimensions": {
     "L0_qualification": {
       "id": "L0",
@@ -61,7 +63,7 @@
       "status": "pass",
       "summary": "installed",
       "metrics": {
-        "durationMs": 2167,
+        "durationMs": 1194,
         "exitCode": 0,
         "declaredPeers": null,
         "bundlesAfterInstall": [
@@ -82,19 +84,23 @@
     },
     "L2_load": {
       "id": "L2",
-      "status": "pass",
-      "summary": "booted, mounted and stayed alive",
+      "status": "inconclusive",
+      "summary": "Host loader rows active; browser client not observed",
       "metrics": {
         "bootBoundMs": 25000,
-        "durationMs": 25076,
-        "signal": null
+        "durationMs": 25063,
+        "signal": null,
+        "observedRows": 1,
+        "activeRows": 1,
+        "browserClientDeclared": true
       },
       "evidenceRefs": [
-        "e-l2-boot"
+        "e-l2-boot",
+        "e-l2-inventory"
       ],
       "notes": [
-        "the process was still running when the wall-clock bound reached it and reported no failure diagnostics, so the bundle was neither skipped nor rejected",
-        "the fiber phase is not read directly: an early exit with diagnostics is the load-failure signal, and a boot that settles and waits is the success signal"
+        "the subject declares dsh.client or its manifest could not be read; no browser client fiber was measured",
+        "Host bundle rows were read from the running plugin manager; browser client execution requires separate evidence"
       ]
     },
     "L3_run": {
@@ -105,15 +111,14 @@
         "replayAdapter": "@deepseek-ai/dsh-llm-replay@0.2.0-rc.2",
         "probeTask": "reply with any text",
         "events": {
-          "session": "session-14e766aa-eeda-41ea-8d02-9b3d64ed818d",
           "turnEndReason": {
             "kind": "completed"
           },
-          "finalText": "Replay fixture: no provider was called.",
+          "finalEventSeen": true,
           "textEventCount": 1,
-          "error": null,
+          "errorEventSeen": false,
           "exitCode": 0,
-          "durationMs": 1350,
+          "durationMs": 1326,
           "eventCount": 7
         }
       },
@@ -150,10 +155,10 @@
       "metrics": {
         "samples": 6,
         "baseline": {
-          "atMs": 8037,
-          "rss": 199241728,
-          "heapUsed": 68563264,
-          "external": 5188103,
+          "atMs": 8041,
+          "rss": 200003584,
+          "heapUsed": 58514200,
+          "external": 4426614,
           "activeTotal": 10,
           "watchers": 7,
           "timers": 0,
@@ -162,28 +167,28 @@
           "fds": 20
         },
         "activated": {
-          "atMs": 8052,
-          "rss": 231596032,
-          "heapUsed": 84778808,
-          "external": 7737982,
+          "atMs": 8036,
+          "rss": 206131200,
+          "heapUsed": 75146424,
+          "external": 4651664,
           "activeTotal": 11,
           "watchers": 8,
           "timers": 0,
-          "libuvHandles": 24,
-          "libuvActiveHandles": 20,
-          "fds": 21
+          "libuvHandles": 23,
+          "libuvActiveHandles": 19,
+          "fds": 20
         },
         "delta": {
-          "atMs": 15,
-          "rss": 32354304,
-          "heapUsed": 16215544,
-          "external": 2549879,
+          "atMs": -5,
+          "rss": 6127616,
+          "heapUsed": 16632224,
+          "external": 225050,
           "activeTotal": 1,
           "watchers": 1,
           "timers": 0,
-          "libuvHandles": 2,
-          "libuvActiveHandles": 3,
-          "fds": 1
+          "libuvHandles": 1,
+          "libuvActiveHandles": 2,
+          "fds": 0
         }
       },
       "evidenceRefs": [
@@ -201,7 +206,7 @@
       "summary": "removed without residue",
       "metrics": {
         "residue": [],
-        "durationMs": 294
+        "durationMs": 521
       },
       "evidenceRefs": [
         "e-l6-remove"
@@ -328,7 +333,7 @@
       "kind": "command",
       "command": "resolve dsh-cost-meter@1.8.8 -> dsh-cost-meter@1.8.8",
       "exitCode": 0,
-      "durationMs": 128,
+      "durationMs": 146,
       "excerpt": "{\n  \"name\": \"dsh-cost-meter\",\n  \"version\": \"1.8.8\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/dsh-cost-meter/-/dsh-cost-meter-1.8.8.tgz\",\n  \"advertisedIntegrity\": \"sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==\",\n  \"publishedAt\": \"2026-10-03T10:59:09.474Z\"\n}"
     },
     {
@@ -336,7 +341,7 @@
       "kind": "artifact",
       "command": "fetch https://registry.npmjs.org/dsh-cost-meter/-/dsh-cost-meter-1.8.8.tgz",
       "exitCode": 0,
-      "durationMs": 27,
+      "durationMs": 49,
       "excerpt": "{\n  \"bytes\": 411843,\n  \"resolvedIntegrity\": \"sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==\",\n  \"advertisedIntegrity\": \"sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"21e4fd0d9655707fddb328ce8cb93cc49a8d21f304f946ae7674b336bba51080\"\n}",
       "excerptBytes": 383,
       "sha256": "21e4fd0d9655707fddb328ce8cb93cc49a8d21f304f946ae7674b336bba51080"
@@ -368,50 +373,58 @@
       "kind": "command",
       "command": "dsh plugin --profile verify add dsh-cost-meter@1.8.8",
       "exitCode": 0,
-      "durationMs": 2167,
-      "excerpt": "Progress: resolved 0, reused 0, downloaded 1, added 0\nAdded 1 entry to minimumReleaseAgeExclude in pnpm-workspace.yaml (set minimumReleaseAgeStrict to true to gate these updates with a prompt):\n  dsh-cost-meter@1.8.8\nPackages are hard linked from the content-addressable store to the virtual store.\n  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nPackages: +2\n++\nProgress: resolved 2, reused 0, downloaded 2, added 2, done\n[WARN] Issues with peer dependencies found. Run \"pnpm peers check\" to list them.\n\ndependencies:\n+ dsh-cost-meter 1.8.8\n\nDone in 442ms using pnpm v12.8.1\ndsh: initialized profile verify at /work/dsh-home/profiles/verify\n",
-      "excerptBytes": 726,
+      "durationMs": 1194,
+      "excerpt": "Progress: resolved 1, reused 0, downloaded 0, added 0\n WARN  Issues with peer dependencies found\n.\n└─┬ dsh-cost-meter 1.8.8\n  ├── ✕ missing peer @deepseek-ai/dsh-home-paths@\"^0.1.0-rc.6 || ^0.1.1-0 || ^0.1.2-0 || ^0.1.3-0 || ^0.1.5-0 || >=0.2.0-rc.1 <0.3.0-0\"\n  └── ✕ missing peer @deepseek-ai/dsh-credentials@\"^0.1.0-rc.6 || ^0.1.1-0 || ^0.1.2-0 || ^0.1.3-0 || ^0.1.5-0 || >=0.2.0-rc.1 <0.3.0-0\"\nPeer dependencies that should be installed:\n  @deepseek-ai/dsh-credentials@\"^0.1.0-rc.6 || ^0.1.1-0 || ^0.1.2-0 || ^0.1.3-0 || ^0.1.5-0 || >=0.2.0-rc.1 <0.3.0-0\"\n  @deepseek-ai/dsh-home-paths@\"^0.1.0-rc.6 || ^0.1.1-0 || ^0.1.2-0 || ^0.1.3-0 || ^0.1.5-0 || >=0.2.0-rc.1 <0.3.0-0\"\n\ndependencies:\n+ dsh-cost-meter 1.8.8\n\nPackages: +2\n++\nProgress: resolved 2, reused 2, downloaded 0, added 2, done\nDone in 469ms using pnpm v10.33.2\ndsh: initialized profile verify at <work>/dsh-home/profiles/verify\n",
+      "excerptBytes": 918,
       "truncated": false,
-      "sha256": "c262ce8b45f2933805a27888b4411429a860a37f82c044b5c696676100aec627"
+      "sha256": "97cb7c48f57a216816246d9004b4f2b149c780dac536abe8fc3f06beaf682da3"
     },
     {
       "id": "e-l2-boot",
       "kind": "command",
-      "command": "dsh --profile verify",
+      "command": "dsh --profile verify --patch <work>/fixtures/load/l2-overlay.yml",
       "exitCode": 0,
-      "durationMs": 25076,
-      "excerpt": "[dsh-cost-meter] 已加载,账本:/work/dsh-home/storages/cost-meter/ledger.json\n",
-      "excerptBytes": 81,
+      "durationMs": 25063,
+      "excerpt": "[dsh-cost-meter] 已加载,账本:<work>/dsh-home/storages/cost-meter/ledger.json\n[dsh-cost-meter] OpenRouter 价格刷新失败(保留本地价格): fetch failed\n",
+      "excerptBytes": 163,
       "truncated": false,
-      "sha256": "b37b4d82a390b632670cc77945abac7a05117e689a689935276b0037363614dd"
+      "sha256": "d093b95e64c1b896ecce2600b68d66b13a1e21c7477ed55712e20a02f4535fad"
+    },
+    {
+      "id": "e-l2-inventory",
+      "kind": "sample",
+      "command": "pluginManager.listBundles() + pluginManager.listPlugins() in the running Host",
+      "excerpt": "{\"found\":true,\"enabled\":true,\"error\":null,\"overrides\":[],\"rows\":[{\"rowId\":\"cost-meter\",\"entryId\":\"include:cost-meter\",\"enabled\":true,\"fiberPhase\":\"active\"}],\"browserClientDeclared\":true}",
+      "excerptBytes": 186,
+      "truncated": false
     },
     {
       "id": "e-l6-remove",
       "kind": "command",
       "command": "dsh plugin --profile verify remove dsh-cost-meter",
       "exitCode": 0,
-      "durationMs": 294,
-      "excerpt": "Packages: -2\n--\n\ndependencies:\n- dsh-cost-meter 1.8.8\n\nDone in 21ms using pnpm v12.8.1\n",
-      "excerptBytes": 87,
+      "durationMs": 521,
+      "excerpt": "\ndependencies:\n- dsh-cost-meter 1.8.8\n\nAlready up to date\nDone in 328ms using pnpm v10.33.2\n",
+      "excerptBytes": 92,
       "truncated": false,
-      "sha256": "b1134264fce6b02f48594f99b38db6a26c7eaaceb4c1b7e25e06f20559ea77e8"
+      "sha256": "af6b75b887da6eefd173219c40644dd0b2000daa46a3030b9788a99d01c0f9d6"
     },
     {
       "id": "e-l5-overhead",
       "kind": "sample",
       "command": "dsh --profile <baseline|activated> with the host sampler injected via NODE_OPTIONS=--import",
-      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8037,\n    \"rss\": 199241728,\n    \"heapUsed\": 68563264,\n    \"external\": 5188103,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8052,\n    \"rss\": 231596032,\n    \"heapUsed\": 84778808,\n    \"external\": 7737982,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 24,\n    \"libuvActiveHandles\": 20,\n    \"fds\": 21\n  },\n  \"delta\": {\n    \"atMs\": 15,\n    \"rss\": 32354304,\n    \"heapUsed\": 16215544,\n    \"external\": 2549879,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 2,\n    \"libuvActiveHandles\": 3,\n    \"fds\": 1\n  },\n  \"significant\": []\n}"
+      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8041,\n    \"rss\": 200003584,\n    \"heapUsed\": 58514200,\n    \"external\": 4426614,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8036,\n    \"rss\": 206131200,\n    \"heapUsed\": 75146424,\n    \"external\": 4651664,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 23,\n    \"libuvActiveHandles\": 19,\n    \"fds\": 20\n  },\n  \"delta\": {\n    \"atMs\": -5,\n    \"rss\": 6127616,\n    \"heapUsed\": 16632224,\n    \"external\": 225050,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 1,\n    \"libuvActiveHandles\": 2,\n    \"fds\": 0\n  },\n  \"significant\": []\n}"
     },
     {
       "id": "e-l3-session",
       "kind": "command",
-      "command": "dsh --profile l3 --patch /work/fixtures/replay/l3-overlay.yml --json reply with any text",
+      "command": "dsh --profile l3 --patch <work>/fixtures/replay/l3-overlay.yml --json reply with any text",
       "exitCode": 0,
-      "durationMs": 1350,
-      "excerpt": "[dsh-cost-meter] 已加载,账本:/work/dsh-home/storages/cost-meter/ledger.json\n{\"type\":\"session\",\"sessionId\":\"session-14e766aa-eeda-41ea-8d02-9b3d64ed818d\",\"cwd\":\"/work\"}\n{\"type\":\"status\",\"phase\":\"turn_start\",\"turn\":1}\n{\"type\":\"status\",\"phase\":\"step_start\",\"turn\":1,\"step\":1}\n{\"type\":\"text\",\"text\":\"Replay fixture: no provider was called.\"}\n{\"type\":\"status\",\"phase\":\"step_end\",\"turn\":1,\"step\":1}\n{\"type\":\"status\",\"phase\":\"turn_end\",\"turn\":1,\"reason\":{\"kind\":\"completed\"}}\n{\"type\":\"final\",\"text\":\"Replay fixture: no provider was called.\"}\n",
-      "excerptBytes": 540,
+      "durationMs": 1326,
+      "excerpt": "[dsh-cost-meter] 已加载,账本:<work>/dsh-home/storages/cost-meter/ledger.json\n{\"type\":\"session\",\"sessionId\":\"[redacted:session-content]\",\"cwd\":\"<work>\"}\n{\"type\":\"status\",\"phase\":\"turn_start\",\"turn\":1}\n{\"type\":\"status\",\"phase\":\"step_start\",\"turn\":1,\"step\":1}\n{\"type\":\"text\",\"text\":\"[redacted:session-content]\"}\n{\"type\":\"status\",\"phase\":\"step_end\",\"turn\":1,\"step\":1}\n{\"type\":\"status\",\"phase\":\"turn_end\",\"turn\":1,\"reason\":{\"kind\":\"completed\"}}\n{\"type\":\"final\",\"text\":\"[redacted:session-content]\"}\n",
+      "excerptBytes": 498,
       "truncated": false,
-      "sha256": "45c022952c9db8495dda6d20236631c20ca877eb280301d9425af11c7fdbd465"
+      "sha256": "8c43cf11f896c9dc851d92f6a8ac5c60bc61c8d95982c1e08b192a0a83977a0c"
     }
   ],
   "redactions": [],
@@ -423,10 +436,11 @@
     "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
     "static analysis cannot see dynamically constructed code or prove intent",
     "L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model",
-    "the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase",
+    "network egress was denied; attempted destination hosts were not observable in this run",
     "no dependency build script was approved by this executor",
     "overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta",
-    "sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test"
+    "sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test",
+    "L3 session identifiers and text are redacted before execution evidence is written"
   ],
   "bundlePatch": {
     "path": "cordis.patch.yml",
@@ -457,10 +471,10 @@
     "status": "no-significant-delta",
     "samples": 6,
     "baseline": {
-      "atMs": 8037,
-      "rss": 199241728,
-      "heapUsed": 68563264,
-      "external": 5188103,
+      "atMs": 8041,
+      "rss": 200003584,
+      "heapUsed": 58514200,
+      "external": 4426614,
       "activeTotal": 10,
       "watchers": 7,
       "timers": 0,
@@ -469,28 +483,28 @@
       "fds": 20
     },
     "activated": {
-      "atMs": 8052,
-      "rss": 231596032,
-      "heapUsed": 84778808,
-      "external": 7737982,
+      "atMs": 8036,
+      "rss": 206131200,
+      "heapUsed": 75146424,
+      "external": 4651664,
       "activeTotal": 11,
       "watchers": 8,
       "timers": 0,
-      "libuvHandles": 24,
-      "libuvActiveHandles": 20,
-      "fds": 21
+      "libuvHandles": 23,
+      "libuvActiveHandles": 19,
+      "fds": 20
     },
     "delta": {
-      "atMs": 15,
-      "rss": 32354304,
-      "heapUsed": 16215544,
-      "external": 2549879,
+      "atMs": -5,
+      "rss": 6127616,
+      "heapUsed": 16632224,
+      "external": 225050,
       "activeTotal": 1,
       "watchers": 1,
       "timers": 0,
-      "libuvHandles": 2,
-      "libuvActiveHandles": 3,
-      "fds": 1
+      "libuvHandles": 1,
+      "libuvActiveHandles": 2,
+      "fds": 0
     },
     "significant": [],
     "resourceKinds": {

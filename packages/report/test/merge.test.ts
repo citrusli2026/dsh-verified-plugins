@@ -74,7 +74,11 @@ function execution(overrides: Partial<ExecutionResult> = {}): ExecutionResult {
       pendingBuildScripts: [],
       logPath: null,
     },
-    L2_load: { status: 'pass', reason: 'booted and settled', detail: 'no diagnostics', diagnostics: '' },
+    L2_load: {
+      status: 'pass', reason: 'one subject row active', detail: 'inventory read', diagnostics: '',
+      observation: { found: true, enabled: true, error: null, overrides: [], browserClientDeclared: false,
+        rows: [{ rowId: 'subject', entryId: 'subject', enabled: true, fiberPhase: 'active' }] },
+    },
     L6_uninstall: { status: 'pass', reason: 'removed without residue', detail: 'clean', residue: [] },
     steps: [step('l1-install'), step('l2-boot', { signal: 'SIGKILL', timedOut: true, exitCode: null }), step('l6-remove')],
     notes: [],
@@ -94,6 +98,63 @@ test('merge: execution replaces the skipped dimensions with real statuses', () =
   assert.equal(dims.L2_load.status, 'pass');
   assert.equal(dims.L6_uninstall.status, 'pass');
   assert.equal(merged.runtime.dshVersion, '0.2.0-rc.2');
+});
+
+test('merge: a load pass without active subject fiber evidence is downgraded', () => {
+  const result = execution();
+  delete result.L2_load.observation;
+  const merged = mergeExecution(staticReport(), result);
+  assert.equal(merged.dimensions.L2_load.status, 'inconclusive');
+  assert.deepEqual(validateReport(merged, SCHEMA), []);
+});
+
+test('merge: Host fibers cannot earn L2 pass for an unobserved browser client', () => {
+  const result = execution();
+  result.L2_load.observation!.browserClientDeclared = true;
+  const merged = mergeExecution(staticReport(), result);
+  assert.equal(merged.dimensions.L2_load.status, 'inconclusive');
+  assert.deepEqual(validateReport(merged, SCHEMA), []);
+});
+
+test('merge: a browser marker and clean browser result can earn L2 pass', () => {
+  const result = execution();
+  result.L2_load.observation!.browserClientDeclared = true;
+  result.L2_load.observation!.browser = {
+    status: 'pass',
+    browserClientActivated: true,
+    markerText: 'Notifications',
+    startupUrl: 'http://127.0.0.1:8765/',
+    finalUrl: 'http://127.0.0.1:8765/',
+    title: 'dsh',
+    consoleErrors: [],
+    pageErrors: [],
+    failedRequests: [],
+    httpErrors: [],
+    durationMs: 1000,
+  };
+  result.steps.push(step('l2-browser', { command: 'node /work/browser-probe.mjs' }));
+  const merged = mergeExecution(staticReport(), result);
+  assert.equal(merged.dimensions.L2_load.status, 'pass');
+  assert.deepEqual(merged.dimensions.L2_load.metrics.browserClientActivated, true);
+  assert.ok(merged.dimensions.L2_load.evidenceRefs.includes('e-l2-browser'));
+  assert.deepEqual(validateReport(merged, SCHEMA), []);
+});
+
+test('merge: an offline cache miss cannot become an install failure', () => {
+  const exec = execution({
+    L1_install: {
+      status: 'inconclusive', reason: 'offline artifact resolution was incomplete',
+      detail: 'the required package was absent from the offline store',
+      declaredPeers: null, bundlesAfter: null, pendingBuildScripts: [], logPath: null,
+    },
+    L2_load: { status: 'skip', reason: 'not installed', detail: 'not run', diagnostics: '' },
+    L6_uninstall: { status: 'skip', reason: 'not installed', detail: 'not run', residue: [] },
+    steps: [step('l1-install', { exitCode: 1, excerpt: 'ERR_PNPM_NO_OFFLINE_META' })],
+  });
+  const merged = mergeExecution(staticReport(), exec);
+  assert.equal(merged.dimensions.L1_install.status, 'inconclusive');
+  assert.equal(merged.verdict, 'partial');
+  assert.deepEqual(validateReport(merged, SCHEMA), []);
 });
 
 test('merge: a peer-incompatible install is a failure, and skips load and uninstall', () => {
@@ -164,6 +225,7 @@ test('merge: a completed keyless session is an L3 pass with its probe task publi
   assert.equal(l3.status, 'pass');
   assert.deepEqual(l3.evidenceRefs, ['e-l3-session']);
   assert.equal(l3.metrics?.probeTask, 'reply with any text');
+  assert.equal((l3.metrics?.events as Record<string, unknown>).finalText, undefined);
   // The detailed claim lives once, in the dimension notes...
   assert.ok(l3.notes?.some((n) => /served by the replay adapter/.test(n)));
   // ...and the report says plainly what a replayed session does not establish.
@@ -171,6 +233,35 @@ test('merge: a completed keyless session is an L3 pass with its probe task publi
     (merged.limits as string[]).some((l) => /not against a provider/.test(l)),
     'a replayed L3 must carry its own limitation',
   );
+  assert.deepEqual(validateReport(merged, SCHEMA), []);
+});
+
+test('merge: execution evidence does not publish container paths, tokens or session text', () => {
+  const exec = execution({
+    L1_install: {
+      ...execution().L1_install,
+      logPath: '/work/dsh-home/profiles/verify/pnpm.log',
+    },
+    L3_run: {
+      status: 'pass', reason: 'completed', detail: 'fixture', task: 'reply with any text',
+      events: { finalText: 'secret transcript', finalEventSeen: true },
+      replayAdapter: '@deepseek-ai/dsh-llm-replay@0.2.0-rc.2',
+    },
+    steps: [
+      step('l1-install', { excerpt: 'at /usr/local/lib/tool.js TOKEN=private-value' }),
+      step('l2-boot'),
+      step('l3-session', { command: 'dsh --patch /work/fixtures/replay/l3-overlay.yml', excerpt: '{"type":"final","text":"secret transcript","sessionId":"abc"}' }),
+      step('l6-remove'),
+    ],
+  });
+  const merged = mergeExecution(staticReport(), exec);
+  const serialized = JSON.stringify(merged);
+  assert.ok(!serialized.includes('/work/'));
+  assert.ok(!serialized.includes('/usr/local/'));
+  assert.ok(!serialized.includes('private-value'));
+  assert.ok(!serialized.includes('secret transcript'));
+  assert.ok(!serialized.includes('"sessionId":"abc"'));
+  assert.match(serialized, /\[redacted:session-content\]/);
   assert.deepEqual(validateReport(merged, SCHEMA), []);
 });
 
