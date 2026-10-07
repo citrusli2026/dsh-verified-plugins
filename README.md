@@ -3,17 +3,105 @@
 **Execution-verified plugin reports for DeepSeek Harness** — install it, load it, run it, measure it.
 Evidence-linked, reproducible, not another star list.
 
+[中文](#中文) · [English](#english)
+
 [Site](https://citrusli2026.github.io/dsh-verified-plugins/) · [Method](docs/method.md) · [Report schema](docs/schema.md) · [Security](docs/security.md) · [Appeals](docs/appeals.md) · [Catalog](catalog/index.json)
 
 > **Status: isolated execution accepted in CI; browser-client execution is measured in the approved Chromium harness.**
 > All seven dimensions are represented, batches are supported, reports are published and freshness is tracked —
 > **[browse the site](https://citrusli2026.github.io/dsh-verified-plugins/)**.
-> This branch has 25 reports: 19 `verified`, 5 `partial`, 1 `not-installable`; 12 are now **stale**.
+> The published catalogue has 25 reports: 19 `verified`, 5 `partial`, 1 `not-installable`; 12 are now **stale**.
 > The site was republished from merged `main` and end-to-end checked: report,
 > JSON, badge and catalog endpoints all expose the browser-verified result.
 > Sessions run against a replayed transcript, never a credential. Dispute a
 > report via [docs/appeals.md](docs/appeals.md). Read
 > [docs/security.md](docs/security.md) first.
+
+## 中文
+
+### 这是什么
+
+`dsh-verified-plugins` 是 DeepSeek Harness（DSH）插件的执行级验证报告项目。
+它不只是读取 `package.json`，也不按 star 排名；它针对一个精确的
+`name@version`，记录插件在受限环境中实际发生了什么：能否安装、Host/Client
+是否加载、无凭证会话是否完成、代码具备哪些能力、运行开销如何，以及卸载后是否残留。
+
+一句话：插件目录告诉你“有这个包”，本项目告诉你“这个精确版本实际跑出了什么证据”。
+
+### 为什么有价值
+
+DSH 的 Host 代码会在宿主进程内运行，依赖构建脚本也可能获得宿主权限。因此，
+“作者说能用”或“项目 star 很多”不能替代安装前的事实核验。本项目帮助使用者回答：
+
+- 这是可组合的 DSH bundle，还是只被安装成普通依赖？
+- 在指定 DSH 版本上能否安装、加载，声明的 Client 是否真的出现在 Web surface？
+- 代码能触达子进程、端口、凭证形状的环境变量、运行时 patch 或工作区外路径吗？
+- 激活后 watcher、timer、文件描述符、RSS 或启动时间增加了多少？
+- `dsh plugin remove` 后是否还留下 profile 层、文件或孤儿进程？
+
+报告发布的是事实、证据和限制，不是安全背书、恶意软件判断、评分或排行榜。
+
+### 报告包含什么
+
+每份报告包含七个维度（L0–L6）、退出码和耗时、脱敏证据、运行环境、精确包完整性、
+容器镜像标识，以及可由站点链接到的 evidence。声明 `dsh.client` 的插件只有在真实
+浏览器 surface 中看到插件自有 marker 且浏览器错误为零时，L2 才能 `pass`。
+
+当前公开目录是按需验证的切片，不是全集：25 份报告中有 19 份 `verified`、5 份
+`partial`、1 份 `not-installable`；13 份 `current`、12 份 `stale`。未报告的插件
+就是未报告，不代表可疑。精选 600 插件的夜间全量执行已因成本停止，覆盖范围如实公开。
+
+### 如何使用
+
+1. 在[公开站点](https://citrusli2026.github.io/dsh-verified-plugins/)浏览报告，打开具体
+   subject 查看每个结论对应的 evidence；机器读取入口是 [`catalog/index.json`](catalog/index.json)。
+2. 本地做安全的静态复核。它只读取 registry 元数据和发布 tarball，不安装或执行插件：
+
+   ```sh
+   git clone https://github.com/citrusli2026/dsh-verified-plugins
+   cd dsh-verified-plugins
+   node packages/cli/src/main.ts static dsh-find-plugin@0.4.0 --out /tmp/dsh-find-plugin.json
+   node packages/cli/src/main.ts validate /tmp/dsh-find-plugin.json
+   node packages/cli/src/main.ts catalog --check
+   ```
+
+   插件 spec 必须是精确的 `name@version`；不要使用裸包名、tag 或 range。
+3. 申请真实执行验证时，提交精确版本，由维护者通过 `verify.yml` 的
+   `workflow_dispatch` 触发。第三方代码只在一次性、禁网、无凭证、限资源容器中运行；
+   不能可靠测量的维度会保持 `inconclusive`、`blocked` 或 `skip`。
+4. 重新生成站点或 badge：
+
+   ```sh
+   node packages/cli/src/main.ts catalog
+   node packages/cli/src/main.ts stale --out catalog/staleness.json
+   node packages/cli/src/main.ts site --out /tmp/dsh-site
+   node packages/cli/src/main.ts badge catalog/npm/dsh-cost-meter.json
+   ```
+
+### 结论怎么读
+
+```text
+L0 fail              -> not-installable
+七个维度全部 pass    -> verified
+部分维度 pass        -> partial
+没有可判定的 pass     -> inconclusive
+```
+
+`verified` 只表示报告记录的维度在指定环境、指定 DSH 版本和指定时间点得到观察；
+它不表示插件安全、正确、兼容所有平台，或适合你的工作区。
+
+### 安全边界
+
+- 执行阶段使用 `--network none`；取包与运行插件分离，禁网执行也不会声称能列出所有被拒绝的目标 host。
+- CI 不配置 repository、environment、Dependabot 或云凭证；依赖构建脚本不会被静默批准。
+- CPU、内存、进程、磁盘和 wall-clock 均有限；超限是 `timeout`/`inconclusive`，不是插件失败。
+- `engines.dsh` 只是声明；`@deepseek-ai/dsh*` peer 兼容性才由 DSH 实际检查。
+- L3 使用无凭证 replay transcript，不等于真实 provider 行为测试；L4 的能力信号也不等于意图判断。
+
+详细判定标准见 [docs/method.md](docs/method.md)，安全规则见 [docs/security.md](docs/security.md)，
+申诉和加法式修正见 [docs/appeals.md](docs/appeals.md)。
+
+## English
 
 **Security correction:** the 24 historical execution reports were produced in
 containers with network access and include container paths; 20 include replay
