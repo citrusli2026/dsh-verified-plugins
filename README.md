@@ -8,7 +8,7 @@ Evidence-linked, reproducible, not another star list.
 > **Status: isolated execution accepted in CI; browser-client execution is measured in the approved Chromium harness.**
 > All seven dimensions are represented, batches are supported, reports are published and freshness is tracked —
 > **[browse the site](https://citrusli2026.github.io/dsh-verified-plugins/)**.
-> This branch has 25 reports: 18 `verified`, 6 `partial`, 1 `not-installable`; 5 are now **stale**.
+> This branch has 25 reports: 19 `verified`, 5 `partial`, 1 `not-installable`; 12 are now **stale**.
 > Sessions run against a replayed transcript, never a credential. Dispute a
 > report via [docs/appeals.md](docs/appeals.md). Read
 > [docs/security.md](docs/security.md) first.
@@ -77,7 +77,7 @@ catalog/
 ```
 
 `index.json` carries the current counts and the per-subject dimension statuses.
-At the time of writing: **19 `verified`, 4 `partial`, 1 `not-installable`**.
+At the time of writing: **19 `verified`, 5 `partial`, 1 `not-installable`**.
 
 
 Layout note: the contract proposed `catalog/<owner>/<repo>.json`. The subject is

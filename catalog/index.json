@@ -1,11 +1,11 @@
 {
   "schema": "dsh.plugin.catalog.v1",
-  "generatedAt": "2026-10-04T17:49:05.752Z",
+  "generatedAt": "2026-10-07T05:06:23.974Z",
   "counts": {
     "total": 25,
     "byVerdict": {
-      "verified": 18,
-      "partial": 6,
+      "verified": 19,
+      "partial": 5,
       "not-installable": 1
     }
   },
@@ -39,15 +39,15 @@
       "reportId": "npm:@dingyi222666/dsh-session-notification@0.2.2",
       "name": "@dingyi222666/dsh-session-notification",
       "version": "0.2.2",
-      "verdict": "partial",
+      "verdict": "verified",
       "path": "catalog/npm/dingyi222666__dsh-session-notification.json",
-      "generatedAt": "2026-10-04T04:23:37.063Z",
+      "generatedAt": "2026-10-07T05:03:39.395Z",
       "integrity": "sha512-bD1QCZAq4I65qEaekN9LQNnW1mh3S1eHLfd1Cof3pduNcV3KuwoO05PT4nuuO9nCfSlEaUoxHOhSomaSR8r4pw==",
       "dshVersion": "0.2.0-rc.2",
       "dimensions": {
         "L0_qualification": "pass",
         "L1_install": "pass",
-        "L2_load": "inconclusive",
+        "L2_load": "pass",
         "L3_run": "pass",
         "L4_capability": "pass",
         "L5_overhead": "pass",

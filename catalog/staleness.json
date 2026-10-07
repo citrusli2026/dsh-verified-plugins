@@ -1,12 +1,12 @@
 {
   "schema": "dsh.verifier.staleness.v1",
-  "generatedAt": "2026-10-04T04:27:02.841Z",
+  "generatedAt": "2026-10-07T05:06:26.426Z",
   "registry": "https://registry.npmjs.org",
   "runtimeVersion": "0.2.0-rc.2",
   "counts": {
     "checked": 25,
-    "current": 20,
-    "stale": 5,
+    "current": 13,
+    "stale": 12,
     "unknown": 0
   },
   "limits": [
@@ -54,33 +54,39 @@
       "name": "@liustack/modsearch",
       "verifiedVersion": "5.10.5",
       "verifiedRuntime": "0.2.0-rc.2",
-      "currentVersion": "5.10.5",
+      "currentVersion": "5.10.6",
       "currentIntegrity": "sha512-SHeZ5pr0BuCEKBJSDN4no008ETwlBl3GNOuOPfDjLTkVkGriNc5NPeAz1kG91CwmG7klLzzGAvnjTrkLrRqyfw==",
       "integrityStatus": "match",
-      "status": "current",
-      "reasons": []
+      "status": "stale",
+      "reasons": [
+        "the latest tag points at 5.10.6, while this report covers 5.10.5"
+      ]
     },
     {
       "reportId": "npm:@michengai/dsh-archive-manager@1.0.11",
       "name": "@michengai/dsh-archive-manager",
       "verifiedVersion": "1.0.11",
       "verifiedRuntime": "0.2.0-rc.2",
-      "currentVersion": "1.0.11",
+      "currentVersion": "1.0.13",
       "currentIntegrity": "sha512-fg6bs3GMxHjDHdqH9rQsLIC4DKeTxRygIrim/HP+ID8xjhoaF4RYJx6SuODiBPEes7oTLS2GUvljnOssdzuq/Q==",
       "integrityStatus": "match",
-      "status": "current",
-      "reasons": []
+      "status": "stale",
+      "reasons": [
+        "the latest tag points at 1.0.13, while this report covers 1.0.11"
+      ]
     },
     {
       "reportId": "npm:@michengai/dsh-skills-manager@1.1.8",
       "name": "@michengai/dsh-skills-manager",
       "verifiedVersion": "1.1.8",
       "verifiedRuntime": "0.2.0-rc.2",
-      "currentVersion": "1.1.8",
+      "currentVersion": "1.1.10",
       "currentIntegrity": "sha512-Bz8npEazkkVOD7Ku8EOHSzc/CMrypl+UhBbScHjBZZSyt27xgNGL1EaNYEcwuxbDIJPKHF38yOmjh92iy1xM3w==",
       "integrityStatus": "match",
-      "status": "current",
-      "reasons": []
+      "status": "stale",
+      "reasons": [
+        "the latest tag points at 1.1.10, while this report covers 1.1.8"
+      ]
     },
     {
       "reportId": "npm:@morlay/session-branch@0.1.5",
@@ -109,12 +115,12 @@
       "name": "@noob-stupid/dsh-plugin-console",
       "verifiedVersion": "0.5.36",
       "verifiedRuntime": "0.2.0-rc.2",
-      "currentVersion": "0.5.37",
+      "currentVersion": "0.5.42",
       "currentIntegrity": "sha512-KzWzTBrJ4TstXBIxRL+IWnrBFxI695hhiUapbc/2LGk8iT2Wm4iplMWWVRaNZkwQ+sNQADsIc0rj6s05bopqDg==",
       "integrityStatus": "match",
       "status": "stale",
       "reasons": [
-        "the latest tag points at 0.5.37, while this report covers 0.5.36"
+        "the latest tag points at 0.5.42, while this report covers 0.5.36"
       ]
     },
     {
@@ -133,11 +139,13 @@
       "name": "@tt-a1i/archify-dsh",
       "verifiedVersion": "0.1.0",
       "verifiedRuntime": "0.2.0-rc.2",
-      "currentVersion": "0.1.0",
+      "currentVersion": "1.0.0",
       "currentIntegrity": "sha512-D8fDqV6DV/vo80Gj/3rgidd+hwBbhTVncaVoD5Uhh+DbgYlEoQQOmBVbhU5HW33wE5OqJP/2HkTRPJ0hf7W0tA==",
       "integrityStatus": "match",
-      "status": "current",
-      "reasons": []
+      "status": "stale",
+      "reasons": [
+        "the latest tag points at 1.0.0, while this report covers 0.1.0"
+      ]
     },
     {
       "reportId": "npm:@wxg-prc-cpg/browser-skill-dsh-plugin@0.3.2",
@@ -155,11 +163,13 @@
       "name": "@xmanrui/dsh-im",
       "verifiedVersion": "4.34.2",
       "verifiedRuntime": "0.2.0-rc.2",
-      "currentVersion": "4.34.2",
+      "currentVersion": "4.37.0",
       "currentIntegrity": "sha512-6t3Epsq8ZqCqAEhmJzvtBgwjUKC2bBxsfnJj26uqWOAGDt+6jpBlaDZFr/So1RTS0SJ3SbfW9KDJ5verP4iHCQ==",
       "integrityStatus": "match",
-      "status": "current",
-      "reasons": []
+      "status": "stale",
+      "reasons": [
+        "the latest tag points at 4.37.0, while this report covers 4.34.2"
+      ]
     },
     {
       "reportId": "npm:dsh-codex-connect@0.2.0-alpha.1",
@@ -177,12 +187,12 @@
       "name": "dsh-cost-meter",
       "verifiedVersion": "1.8.8",
       "verifiedRuntime": "0.2.0-rc.2",
-      "currentVersion": "1.8.10",
+      "currentVersion": "1.8.13",
       "currentIntegrity": "sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==",
       "integrityStatus": "match",
       "status": "stale",
       "reasons": [
-        "the latest tag points at 1.8.10, while this report covers 1.8.8"
+        "the latest tag points at 1.8.13, while this report covers 1.8.8"
       ]
     },
     {
@@ -201,12 +211,12 @@
       "name": "dsh-free-search",
       "verifiedVersion": "0.7.2",
       "verifiedRuntime": "0.2.0-rc.2",
-      "currentVersion": "0.7.3",
+      "currentVersion": "0.8.1",
       "currentIntegrity": "sha512-keV1VsfTIT10vSU4IfNFhGsDAbEwsoh4EZSriYR4DKb1x/CJsqtMlHOkCIuucDIysIPytCepgyj+FtRQaAkhUQ==",
       "integrityStatus": "match",
       "status": "stale",
       "reasons": [
-        "the latest tag points at 0.7.3, while this report covers 0.7.2"
+        "the latest tag points at 0.8.1, while this report covers 0.7.2"
       ]
     },
     {
@@ -227,12 +237,12 @@
       "name": "dsh-pet",
       "verifiedVersion": "0.3.1",
       "verifiedRuntime": "0.2.0-rc.2",
-      "currentVersion": "0.3.3",
+      "currentVersion": "0.3.6",
       "currentIntegrity": "sha512-7K8jDdoIT9nCX6HN0xhdcdOVAtSygSArE+zAWSBUfivC+gs6k9Szl7T8ozHfPs/QzOg45YRLLWvZVNZZfewcyQ==",
       "integrityStatus": "match",
       "status": "stale",
       "reasons": [
-        "the latest tag points at 0.3.3, while this report covers 0.3.1"
+        "the latest tag points at 0.3.6, while this report covers 0.3.1"
       ]
     },
     {
@@ -240,11 +250,13 @@
       "name": "dsh-plugin-wallpaper-engine",
       "verifiedVersion": "1.2.0",
       "verifiedRuntime": "0.2.0-rc.2",
-      "currentVersion": "1.2.0",
+      "currentVersion": "1.3.1",
       "currentIntegrity": "sha512-WgY1pLh2zbGyLSPJP1aSKq42hntF8PnrAlSeQWqpZwPoLdMByL/9Abth9ELlhw+t0odXNs4Fbiyljju0MF0tfA==",
       "integrityStatus": "match",
-      "status": "current",
-      "reasons": []
+      "status": "stale",
+      "reasons": [
+        "the latest tag points at 1.3.1, while this report covers 1.2.0"
+      ]
     },
     {
       "reportId": "npm:dsh-pocket@2.10.6",
@@ -295,11 +307,13 @@
       "name": "dshmarket",
       "verifiedVersion": "1.66.8",
       "verifiedRuntime": "0.2.0-rc.2",
-      "currentVersion": "1.66.8",
+      "currentVersion": "1.66.9",
       "currentIntegrity": "sha512-zOYCijI/du6qlcmUbx47aaUv6OM7Z/akIQ8n3f9Q2ihtV3U3sbRI5nG0guS+8npsb/vhA2turyEf9Yblg6LweQ==",
       "integrityStatus": "match",
-      "status": "current",
-      "reasons": []
+      "status": "stale",
+      "reasons": [
+        "the latest tag points at 1.66.9, while this report covers 1.66.8"
+      ]
     }
   ]
 }
