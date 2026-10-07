@@ -5,7 +5,7 @@ Evidence-linked, reproducible, not another star list.
 
 [Site](https://citrusli2026.github.io/dsh-verified-plugins/) · [Method](docs/method.md) · [Report schema](docs/schema.md) · [Security](docs/security.md) · [Appeals](docs/appeals.md) · [Catalog](catalog/index.json)
 
-> **Status: isolated execution accepted in CI; browser-client execution remains open.**
+> **Status: isolated execution accepted in CI; browser-client execution is measured in the approved Chromium harness.**
 > All seven dimensions are represented, batches are supported, reports are published and freshness is tracked —
 > **[browse the site](https://citrusli2026.github.io/dsh-verified-plugins/)**.
 > This branch has 25 reports: 18 `verified`, 6 `partial`, 1 `not-installable`; 5 are now **stale**.
@@ -17,9 +17,10 @@ Evidence-linked, reproducible, not another star list.
 containers with network access and include container paths; 20 include replay
 fixture text. They remain evidence of the measured dimensions, but do not
 satisfy the stated no-egress and redaction conditions. The executor now separates package
-fetch from network-denied execution and passed Docker CI acceptance. The new
-`@dingyi222666/dsh-session-notification@0.2.2` report is `partial`: its browser
-client was not executed. See [the incident](docs/security.md#7-historical-network-incident)
+fetch from network-denied execution and passed Docker CI acceptance. Declared
+browser clients are executed only in the approved Chromium harness inside that
+same isolated container; a report remains `inconclusive` when the browser
+cannot be measured reliably. See [the incident](docs/security.md#7-historical-network-incident)
 and [V7 evidence](docs/evidence/V7.md).
 
 ---

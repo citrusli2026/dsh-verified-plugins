@@ -203,6 +203,7 @@ for raw in "${LIST[@]}"; do
     -e "L3_OVERLAY=/work/fixtures/replay/l3-overlay.yml" \
     "${probe_failure_env[@]}" \
     -v "$PWD/packages/runner/src/execution-probe.ts:/work/execution-probe.ts:ro" \
+    -v "$PWD/packages/runner/src/browser-probe.mjs:/work/browser-probe.mjs:ro" \
     -v "$PWD/packages/runner/src/host-sampler.mjs:/work/host-sampler.mjs:ro" \
     -v "$PWD/packages/runner/fixtures:/work/fixtures:ro" \
     -v "$cachevol:/work/cache" \

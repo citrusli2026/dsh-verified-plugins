@@ -125,11 +125,17 @@ load*, skipped-bundle and entry-failure reports, `ERR_` codes, stack frames:
 
 - every enabled declared row has a live entry whose fiber is `active`, with no
   failure diagnostic, and the package declares no browser client → pass;
-- an absent subject bundle, failed fiber, missing declared row, failure
-  diagnostic, or non-zero early exit → fail;
+- when `dsh.client` is declared, the verifier installs the exact subject into
+  the Web profile, starts the real `dsh --profile web` surface inside the same
+  network-denied container, and opens its authenticated startup URL in the
+  approved Chromium harness. Pass additionally requires a subject-owned UI
+  marker to be visible and zero page errors, console errors, failed requests,
+  or HTTP error responses;
+- an absent subject bundle, failed fiber, missing declared row, browser error,
+  missing browser marker, or non-zero early exit → fail;
 - missing inventory, no directly observable enabled rows, a row still loading
-  when the Loader settles, or a declared `dsh.client` whose browser fiber was
-  not executed → `inconclusive`.
+  when the Loader settles, or a declared `dsh.client` whose Web surface could
+  not be started or measured reliably → `inconclusive`.
 
 Two traps this had to learn from real runs, both of which produced **false
 failures** before they were fixed: DSH installs a SIGTERM handler that shuts
@@ -138,9 +144,10 @@ plugins log on success (`[dsh-cost-meter] 已加载…`), so the presence of out
 is not an error. The 24 historical reports were produced by the older
 exit-and-diagnostics inference; see `docs/security.md` § 7. Rows contributed
 only through a later agent-preset composition are outside this boot snapshot,
-so a subject with no directly observable rows remains `inconclusive`. A browser
-client needs a separate isolated browser run; a Host row becoming active does
-not prove that its JavaScript registered in a browser.
+so a subject with no directly observable rows remains `inconclusive`. The
+browser probe records only sanitized origin/path URLs and error counts; it
+never publishes the startup token or page/session content. A Host row becoming
+active by itself does not prove that its JavaScript registered in a browser.
 
 ### L3 — Run
 
@@ -325,7 +332,7 @@ evidence into a claim.
 |---|---|---|---|---|
 | FP-1 | L6 "removed without residue" | the profile was read from `$DSH_HOME/<name>` instead of `$DSH_HOME/profiles/<name>`, so the directory it cleared was never the one it inspected | first execution run | **fixed** — L6 reports `inconclusive` when the profile cannot be read |
 | FP-2 | L1–L6 all `pass` on `@morlay/session-branch` | the package declares no bundle, installs as a plain dependency, is never composed; every dimension measured the subject's absence and called it success | first 4-subject batch | **fixed** — the L0 pre-filter forces `skip` in the merge *and* before a container starts |
-| FP-3 | L2 "booted, mounted and stayed alive" | inferred from the *absence* of failure diagnostics, not from a read fiber phase; a plugin can load and misbehave | by construction, on review | **corrected for new Host measurements** — the running plugin manager supplies fiber phases; declared browser clients remain `inconclusive` until an isolated browser observes them. Historical reports are unchanged. |
+| FP-3 | L2 "booted, mounted and stayed alive" | inferred from the *absence* of failure diagnostics, not from a read fiber phase; a plugin can load and misbehave | by construction, on review | **corrected for new measurements** — the running plugin manager supplies Host fiber phases, and declared browser clients require a real Web-surface marker with clean browser diagnostics. Historical reports are unchanged. |
 
 The pattern in FP-1 and FP-2 is identical: **a pass derived from the absence of
 a failure rather than the presence of the subject.** Both were found by running

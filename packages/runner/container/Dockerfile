@@ -13,6 +13,7 @@ FROM node:24-bookworm-slim
 
 ARG DSH_VERSION=0.2.0-rc.2
 ARG PNPM_VERSION=10.33.2
+ARG PLAYWRIGHT_VERSION=1.55.0
 
 # The native loader otherwise copies its verified binary into /tmp; the
 # execution tier's transient filesystem is intentionally not executable.
@@ -20,6 +21,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     npm_config_cache=/tmp/npm-cache \
     DSH_HOME=/work/dsh-home \
     NARB_DISABLE_NATIVE_CACHE=1 \
+    PLAYWRIGHT_BROWSERS_PATH=/opt/playwright \
     CI=1
 
 # `passwd` is not in bookworm-slim and provides useradd; without it the
@@ -63,6 +65,16 @@ RUN npm install --global \
  && node -e "console.log(require.resolve('node-addon-require-builtin-linux-x64-gnu', { paths: ['/usr/local/lib/node_modules/@deepseek-ai/dsh/node_modules/node-addon-require-builtin'] }))" \
  && node -e "const binding = require('node-addon-require-builtin-linux-x64-gnu'); if (typeof binding.requireBuiltin !== 'function') process.exit(1)" \
  && node /opt/dsh-runtime-facts/runtime-facts.mjs \
+ && npm cache clean --force \
+ && rm -rf /tmp/npm-cache
+
+# Browser-client evidence is an explicit, maintainer-approved CI dependency.
+# It is installed in the verifier image, never in the repository runtime, and
+# the browser is only launched inside the same network-denied subject container.
+# The exact Playwright version pins the Chromium revision downloaded below.
+RUN npm install --global --ignore-scripts "@playwright/test@${PLAYWRIGHT_VERSION}" \
+ && playwright install --with-deps chromium \
+ && chmod -R a+rX /opt/playwright \
  && npm cache clean --force \
  && rm -rf /tmp/npm-cache
 

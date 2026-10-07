@@ -116,6 +116,30 @@ test('merge: Host fibers cannot earn L2 pass for an unobserved browser client', 
   assert.deepEqual(validateReport(merged, SCHEMA), []);
 });
 
+test('merge: a browser marker and clean browser result can earn L2 pass', () => {
+  const result = execution();
+  result.L2_load.observation!.browserClientDeclared = true;
+  result.L2_load.observation!.browser = {
+    status: 'pass',
+    browserClientActivated: true,
+    markerText: 'Notifications',
+    startupUrl: 'http://127.0.0.1:8765/',
+    finalUrl: 'http://127.0.0.1:8765/',
+    title: 'dsh',
+    consoleErrors: [],
+    pageErrors: [],
+    failedRequests: [],
+    httpErrors: [],
+    durationMs: 1000,
+  };
+  result.steps.push(step('l2-browser', { command: 'node /work/browser-probe.mjs' }));
+  const merged = mergeExecution(staticReport(), result);
+  assert.equal(merged.dimensions.L2_load.status, 'pass');
+  assert.deepEqual(merged.dimensions.L2_load.metrics.browserClientActivated, true);
+  assert.ok(merged.dimensions.L2_load.evidenceRefs.includes('e-l2-browser'));
+  assert.deepEqual(validateReport(merged, SCHEMA), []);
+});
+
 test('merge: an offline cache miss cannot become an install failure', () => {
   const exec = execution({
     L1_install: {

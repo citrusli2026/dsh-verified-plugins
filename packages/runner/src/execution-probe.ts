@@ -63,8 +63,12 @@ function excerpt(text: string, max = MAX_EXCERPT): string {
 }
 
 function run(name: string, args: string[], timeoutMs: number, extraEnv: Record<string, string> = {}): StepResult {
+  return runCommand('dsh', name, args, timeoutMs, extraEnv);
+}
+
+function runCommand(executable: string, name: string, args: string[], timeoutMs: number, extraEnv: Record<string, string> = {}): StepResult {
   const started = performance.now();
-  const result = spawnSync('dsh', args, {
+  const result = spawnSync(executable, args, {
     encoding: 'utf8',
     timeout: timeoutMs,
     maxBuffer: 32 * 1024 * 1024,
@@ -75,7 +79,7 @@ function run(name: string, args: string[], timeoutMs: number, extraEnv: Record<s
   const errorCode = (result.error as NodeJS.ErrnoException | undefined)?.code ?? null;
   const step: StepResult = {
     name,
-    command: `dsh ${args.join(' ')}`,
+    command: `${executable} ${args.join(' ')}`,
     exitCode: result.status ?? null,
     signal,
     durationMs,
@@ -89,6 +93,10 @@ function run(name: string, args: string[], timeoutMs: number, extraEnv: Record<s
   };
   steps.push(step);
   return step;
+}
+
+function runNode(name: string, args: string[], timeoutMs: number, extraEnv: Record<string, string> = {}): StepResult {
+  return runCommand('node', name, args, timeoutMs, extraEnv);
 }
 
 // DSH keeps profiles under $DSH_HOME/profiles/<name>. Getting this wrong made
@@ -228,6 +236,21 @@ interface L2Observation {
   enabled?: boolean;
   error?: string | null;
   browserClientDeclared?: boolean | null;
+  browser?: {
+    status: 'pass' | 'fail' | 'inconclusive';
+    browserClientActivated: boolean;
+    markerText: string | null;
+    startupUrl: string | null;
+    finalUrl: string | null;
+    title: string;
+    consoleErrors: string[];
+    pageErrors: string[];
+    failedRequests: string[];
+    httpErrors: string[];
+    diagnostics?: string;
+    webOutput?: string;
+    durationMs: number;
+  } | null;
   overrides?: string[];
   rows: Array<{ rowId: string; entryId: string | null; enabled: boolean; fiberPhase: string | null }>;
 }
@@ -318,6 +341,28 @@ function classifyBoot(step: StepResult, observation: L2Observation | null): L2Ou
     reason: `${inactive.length} subject loader row(s) did not reach active`,
     detail: 'each declared bundle row must map to a live Loader entry with an active fiber', diagnostics: text, observation,
   };
+  if (observation.browserClientDeclared === true) {
+    if (!observation.browser) return {
+      status: 'inconclusive', reason: 'Host loader rows active; browser client was not run',
+      detail: 'the subject declares dsh.client, but no isolated browser result was recorded',
+      diagnostics: text, observation,
+    };
+    if (observation.browser.status !== 'pass') return {
+      status: observation.browser.status === 'fail' ? 'fail' : 'inconclusive',
+      reason: observation.browser.status === 'fail'
+        ? 'the browser client reported an error or did not activate'
+        : 'the isolated browser run was inconclusive',
+      detail: observation.browser.browserClientActivated
+        ? 'the client marker was observed, but the browser recorded an error'
+        : 'the subject client marker was not observed in the real Web surface',
+      diagnostics: text, observation,
+    };
+    return {
+      status: 'pass', reason: `${observation.rows.length} Host row(s) active and browser client activated`,
+      detail: 'the Host rows were active and the real Web surface displayed the subject-owned Notifications section without browser errors',
+      diagnostics: text, observation,
+    };
+  }
   if (observation.browserClientDeclared !== false) return {
     status: 'inconclusive', reason: 'Host loader rows active; browser client not observed',
     detail: 'the subject declares dsh.client or its manifest could not be read; no browser client fiber was measured',
@@ -707,6 +752,28 @@ if (l1.status === 'pass') {
       const manifest = JSON.parse(readFileSync(join(profileDir, 'node_modules', subjectName, 'package.json'), 'utf8'));
       observation.browserClientDeclared = Boolean(manifest.dsh?.client);
     } catch { observation.browserClientDeclared = null; }
+  }
+  if (observation?.browserClientDeclared === true) {
+    const browserInstall = run('l2-browser-install', ['plugin', '--profile', 'web', 'add', SPEC], 240_000);
+    if (browserInstall.exitCode === 0) {
+      const browserSnapshot = join(OUT_DIR, 'l2-browser.json');
+      runNode('l2-browser', ['/work/browser-probe.mjs', SPEC, browserSnapshot], 120_000, {
+        DSH_VERIFY_BROWSER_PORT: '8765',
+      });
+      try {
+        observation.browser = JSON.parse(readFileSync(browserSnapshot, 'utf8')) as NonNullable<L2Observation['browser']>;
+      } catch {
+        observation.browser = null;
+      }
+    } else {
+      observation.browser = {
+        status: 'inconclusive', browserClientActivated: false, markerText: null,
+        startupUrl: null, finalUrl: null, title: '', consoleErrors: [], pageErrors: [],
+        failedRequests: [], httpErrors: [],
+        diagnostics: 'the subject could not be installed into the web profile',
+        durationMs: browserInstall.durationMs,
+      };
+    }
   }
   l2 = classifyBoot(l2Step, observation);
 
