@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>npm:@michengai/dsh-archive-manager@1.0.11</title>
+<style>:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body { margin: 0 auto; max-width: 60rem; padding: 1.5rem 1rem 4rem;
+  font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+h1 { font-size: 1.6rem; margin: 0 0 .25rem; }
+h2 { font-size: 1.05rem; margin: 2rem 0 .5rem; text-transform: uppercase;
+  letter-spacing: .06em; opacity: .65; }
+a { color: inherit; }
+table { border-collapse: collapse; width: 100%; margin: .5rem 0; }
+th, td { text-align: left; padding: .35rem .5rem; border-bottom: 1px solid rgba(128,128,128,.25);
+  vertical-align: top; }
+code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85em; }
+pre { background: rgba(128,128,128,.12); padding: .6rem .75rem; border-radius: 4px; overflow-x: auto; }
+.status { font-weight: 600; }
+.status-pass { color: #1f883d; } .status-fail { color: #cf222e; }
+.status-skip, .status-blocked { color: #6e7781; }
+.status-inconclusive, .status-timeout { color: #bf8700; }
+.muted { opacity: .65; }
+.note { font-size: .9em; opacity: .8; margin: .2rem 0 0; }
+.tag { display: inline-block; border: 1px solid rgba(128,128,128,.45); border-radius: 3px;
+  padding: 0 .35rem; font-size: .8em; margin-right: .25rem; }</style>
+<p><a href="./index.html">← all reports</a></p>
+<h1>npm:@michengai/dsh-archive-manager@1.0.11</h1>
+<p><a href="#top"><svg xmlns="http://www.w3.org/2000/svg" width="131" height="20" role="img" aria-label="dsh plugin: verified; historical method limitation">
+  <title>dsh-verified: verified — npm:@michengai/dsh-archive-manager@1.0.11. Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Historical method limitation: this execution had network access and published container paths and replay fixture text.</title>
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="r"><rect width="131" height="20" rx="3" fill="#fff"/></clipPath>
+  <g clip-path="url(#r)">
+    <rect width="71" height="20" fill="#555"/>
+    <rect x="71" width="60" height="20" fill="#1f883d"/>
+    <rect width="131" height="20" fill="url(#s)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="35.5" y="15" fill="#010101" fill-opacity=".3">dsh plugin</text>
+    <text x="35.5" y="14">dsh plugin</text>
+    <text x="101" y="15" fill="#010101" fill-opacity=".3">verified</text>
+    <text x="101" y="14">verified</text>
+  </g>
+</svg>
+</a></p>
+<p><strong>Stale.</strong> the latest tag points at 1.0.13, while this report covers 1.0.11</p>
+<p><strong>Method limitation.</strong> This historical execution used a container with network access and published container paths and replay fixture text. The no-egress and redaction conditions were not met. See <a href="https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/security.md#7-historical-network-incident">the security incident</a>.</p>
+<p class="muted">sha512-fg6bs3GMxHjDHdqH9rQsLIC4DKeTxRygIrim/HP+ID8xjhoaF4RYJx6SuODiBPEes7oTLS2GUvljnOssdzuq/Q==</p>
+
+<h2>Subject</h2>
+<table>
+<tr><th>name</th><td><code>@michengai/dsh-archive-manager</code></td></tr>
+<tr><th>version</th><td><code>1.0.11</code></td></tr>
+<tr><th>integrity</th><td><code>sha512-fg6bs3GMxHjDHdqH9rQsLIC4DKeTxRygIrim/HP+ID8xjhoaF4RYJx6SuODiBPEes7oTLS2GUvljnOssdzuq/Q==</code></td></tr>
+<tr><th>repository</th><td><a href="git+https://github.com/MichengAI/dsh-archive-manager.git">git+https://github.com/MichengAI/dsh-archive-manager.git</a></td></tr>
+<tr><th>declared bundle patch</th><td><code>&quot;./cordis.patch.yml&quot;</code></td></tr>
+<tr><th>declared engines.dsh</th><td><code>not declared</code> <span class="muted">— declarative and unenforced</span></td></tr>
+</table>
+
+<h2>Environment</h2>
+<table>
+<tr><th>DSH</th><td><code>0.2.0-rc.2</code></td></tr>
+<tr><th>Node</th><td><code>v24.21.0</code></td></tr>
+<tr><th>OS / arch</th><td><code>linux 6.17.0-1022-azure x64</code></td></tr>
+<tr><th>verifier</th><td><code>dsh-verified 0.1.0</code> <code>ec8d77c8d74d</code></td></tr>
+<tr><th>generated</th><td><code>2026-10-03T16:10:38.935Z</code></td></tr>
+</table>
+
+<h2>Dimensions</h2>
+<table>
+<thead><tr><th></th><th>status</th><th>summary</th><th>evidence</th></tr></thead>
+<tbody>
+<tr>
+  <td><code>L0</code></td>
+  <td class="status status-pass">pass</td>
+  <td>declares dsh.bundle.patch and every declared patch path exists (24 files, 1662279 bytes unpacked)
+    <p class="note">dsh.manifestVersion is not declared; the reader does not infer a default</p><p class="note">tarball ships no src/ paths, so capability findings are limited to build output</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;fileCount&quot;: 24,
+  &quot;unpackedBytes&quot;: 1662279,
+  &quot;patchPaths&quot;: [
+    &quot;./cordis.patch.yml&quot;
+  ],
+  &quot;declaredEnginesDsh&quot;: null,
+  &quot;shipsSource&quot;: false
+}</pre></details>
+  </td>
+  <td><a href="#e-e-resolve"><code>e-resolve</code></a>, <a href="#e-e-tarball"><code>e-tarball</code></a>, <a href="#e-e-l0"><code>e-l0</code></a></td>
+</tr>
+<tr>
+  <td><code>L1</code></td>
+  <td class="status status-pass">pass</td>
+  <td>installed
+    <p class="note">the CLI completed the install with exit code 0</p><p class="note">no dependency build script was approved by the verifier; approval permits commands with the host user permissions</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;durationMs&quot;: 2176,
+  &quot;exitCode&quot;: 0,
+  &quot;declaredPeers&quot;: null,
+  &quot;bundlesAfterInstall&quot;: [
+    &quot;@deepseek-ai/dsh-base&quot;,
+    &quot;@michengai/dsh-archive-manager&quot;
+  ],
+  &quot;pendingBuildScripts&quot;: [],
+  &quot;buildScriptsApproved&quot;: 0,
+  &quot;diagnosticsLog&quot;: null
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l1-install"><code>e-l1-install</code></a></td>
+</tr>
+<tr>
+  <td><code>L2</code></td>
+  <td class="status status-pass">pass</td>
+  <td>booted, mounted and stayed alive
+    <p class="note">the process was still running when the wall-clock bound reached it and reported no failure diagnostics, so the bundle was neither skipped nor rejected</p><p class="note">the fiber phase is not read directly: an early exit with diagnostics is the load-failure signal, and a boot that settles and waits is the success signal</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;bootBoundMs&quot;: 25000,
+  &quot;durationMs&quot;: 25070,
+  &quot;signal&quot;: null
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l2-boot"><code>e-l2-boot</code></a></td>
+</tr>
+<tr>
+  <td><code>L3</code></td>
+  <td class="status status-pass">pass</td>
+  <td>a session completed with no credential
+    <p class="note">the model call was served by the official replay adapter from a fixture authored in this repository; no provider was contacted and no credential was present</p><p class="note">probe task, stated verbatim: &quot;reply with any text&quot;</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;replayAdapter&quot;: &quot;@deepseek-ai/dsh-llm-replay@0.2.0-rc.2&quot;,
+  &quot;probeTask&quot;: &quot;reply with any text&quot;,
+  &quot;events&quot;: {
+    &quot;session&quot;: &quot;session-cfb1a1b2-09ca-418f-94f2-49e23a7de350&quot;,
+    &quot;turnEndReason&quot;: {
+      &quot;kind&quot;: &quot;completed&quot;
+    },
+    &quot;finalText&quot;: &quot;Replay fixture: no provider was called.&quot;,
+    &quot;textEventCount&quot;: 1,
+    &quot;error&quot;: null,
+    &quot;exitCode&quot;: 0,
+    &quot;durationMs&quot;: 1271,
+    &quot;eventCount&quot;: 7
+  }
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l3-session"><code>e-l3-session</code></a></td>
+</tr>
+<tr>
+  <td><code>L4</code></td>
+  <td class="status status-pass">pass</td>
+  <td>2 capability signal(s) present across 11 scanned file(s)
+    <p class="note">the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency</p><p class="note">static analysis cannot see dynamically constructed code or prove intent</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;scannedFiles&quot;: 11,
+  &quot;scannedBytes&quot;: 1086465,
+  &quot;skippedFiles&quot;: 0
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l4"><code>e-l4</code></a>, <a href="#e-e-patch"><code>e-patch</code></a></td>
+</tr>
+<tr>
+  <td><code>L5</code></td>
+  <td class="status status-pass">pass</td>
+  <td>no significant delta across 6 sampled run(s)
+    <p class="note">no metric moved beyond the significance thresholds; that is the finding</p><p class="note">differential attribution: baseline profile first, then the subject activated, same container and order</p><p class="note">thresholds are coarse on purpose — order-of-magnitude watcher changes, RSS growth beyond 100 MiB, steady state more than 2 s later</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;samples&quot;: 6,
+  &quot;baseline&quot;: {
+    &quot;atMs&quot;: 8040,
+    &quot;rss&quot;: 199651328,
+    &quot;heapUsed&quot;: 68538392,
+    &quot;external&quot;: 5188103,
+    &quot;activeTotal&quot;: 10,
+    &quot;watchers&quot;: 7,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 22,
+    &quot;libuvActiveHandles&quot;: 17,
+    &quot;fds&quot;: 20
+  },
+  &quot;activated&quot;: {
+    &quot;atMs&quot;: 8039,
+    &quot;rss&quot;: 200302592,
+    &quot;heapUsed&quot;: 75331040,
+    &quot;external&quot;: 5140271,
+    &quot;activeTotal&quot;: 11,
+    &quot;watchers&quot;: 8,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 23,
+    &quot;libuvActiveHandles&quot;: 18,
+    &quot;fds&quot;: 20
+  },
+  &quot;delta&quot;: {
+    &quot;atMs&quot;: -1,
+    &quot;rss&quot;: 651264,
+    &quot;heapUsed&quot;: 6792648,
+    &quot;external&quot;: -47832,
+    &quot;activeTotal&quot;: 1,
+    &quot;watchers&quot;: 1,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 1,
+    &quot;libuvActiveHandles&quot;: 1,
+    &quot;fds&quot;: 0
+  }
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l5-overhead"><code>e-l5-overhead</code></a></td>
+</tr>
+<tr>
+  <td><code>L6</code></td>
+  <td class="status status-pass">pass</td>
+  <td>removed without residue
+    <p class="note">the profile retains no bundle selection, dependency entry or files for the subject</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;residue&quot;: [],
+  &quot;durationMs&quot;: 262
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l6-remove"><code>e-l6-remove</code></a></td>
+</tr>
+</tbody>
+</table>
+
+<h2>Capability (L4, static)</h2>
+<table><thead><tr><th>capability</th><th>confidence</th><th>attribution</th><th>first evidence</th></tr></thead><tbody>
+<tr><td><code>network_egress</code></td><td>medium</td><td>unknown</td><td><code>package/lib/plugin-updater.js:123</code></td></tr>
+<tr><td><code>spawns_process</code></td><td>medium</td><td>unknown</td><td><code>package/lib/plugin-updater.js:2</code></td></tr>
+</tbody></table>
+<p class="note">Capability is not intent. A signature records what the code can reach for, not what it does.</p>
+
+<h2>Overhead (L5, dynamic)</h2>
+<pre>{
+  &quot;status&quot;: &quot;no-significant-delta&quot;,
+  &quot;samples&quot;: 6,
+  &quot;baseline&quot;: {
+    &quot;atMs&quot;: 8040,
+    &quot;rss&quot;: 199651328,
+    &quot;heapUsed&quot;: 68538392,
+    &quot;external&quot;: 5188103,
+    &quot;activeTotal&quot;: 10,
+    &quot;watchers&quot;: 7,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 22,
+    &quot;libuvActiveHandles&quot;: 17,
+    &quot;fds&quot;: 20
+  },
+  &quot;activated&quot;: {
+    &quot;atMs&quot;: 8039,
+    &quot;rss&quot;: 200302592,
+    &quot;heapUsed&quot;: 75331040,
+    &quot;external&quot;: 5140271,
+    &quot;activeTotal&quot;: 11,
+    &quot;watchers&quot;: 8,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 23,
+    &quot;libuvActiveHandles&quot;: 18,
+    &quot;fds&quot;: 20
+  },
+  &quot;delta&quot;: {
+    &quot;atMs&quot;: -1,
+    &quot;rss&quot;: 651264,
+    &quot;heapUsed&quot;: 6792648,
+    &quot;external&quot;: -47832,
+    &quot;activeTotal&quot;: 1,
+    &quot;watchers&quot;: 1,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 1,
+    &quot;libuvActiveHandles&quot;: 1,
+    &quot;fds&quot;: 0
+  },
+  &quot;significant&quot;: []
+}</pre>
+
+<h2>Evidence</h2>
+<table>
+<thead><tr><th>id</th><th>kind</th><th>artifact</th></tr></thead>
+<tbody>
+<tr id="e-e-resolve">
+  <td><code>e-resolve</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">356 ms</span></td>
+  <td><code>resolve @michengai/dsh-archive-manager@1.0.11 -&gt; @michengai/dsh-archive-manager@1.0.11</code>
+    <pre>{
+  &quot;name&quot;: &quot;@michengai/dsh-archive-manager&quot;,
+  &quot;version&quot;: &quot;1.0.11&quot;,
+  &quot;registry&quot;: &quot;https://registry.npmjs.org&quot;,
+  &quot;tarball&quot;: &quot;https://registry.npmjs.org/@michengai/dsh-archive-manager/-/dsh-archive-manager-1.0.11.tgz&quot;,
+  &quot;advertisedIntegrity&quot;: &quot;sha512-fg6bs3GMxHjDHdqH9rQsLIC4DKeTxRygIrim/HP+ID8xjhoaF4RYJx6SuODiBPEes7oTLS2GUvljnOssdzuq/Q==&quot;,
+  &quot;publishedAt&quot;: &quot;2026-10-01T10:44:43.699Z&quot;
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-tarball">
+  <td><code>e-tarball</code></td>
+  <td>artifact <span class="muted">exit 0</span> <span class="muted">199 ms</span></td>
+  <td><code>fetch https://registry.npmjs.org/@michengai/dsh-archive-manager/-/dsh-archive-manager-1.0.11.tgz</code>
+    <pre>{
+  &quot;bytes&quot;: 841746,
+  &quot;resolvedIntegrity&quot;: &quot;sha512-fg6bs3GMxHjDHdqH9rQsLIC4DKeTxRygIrim/HP+ID8xjhoaF4RYJx6SuODiBPEes7oTLS2GUvljnOssdzuq/Q==&quot;,
+  &quot;advertisedIntegrity&quot;: &quot;sha512-fg6bs3GMxHjDHdqH9rQsLIC4DKeTxRygIrim/HP+ID8xjhoaF4RYJx6SuODiBPEes7oTLS2GUvljnOssdzuq/Q==&quot;,
+  &quot;integrityMatchesRegistry&quot;: true,
+  &quot;sha256&quot;: &quot;45dc0aec0a272db99db1119c206fd57f7c727153c8c1448f7d22cbed2c82b83a&quot;
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l0">
+  <td><code>e-l0</code></td>
+  <td>static</td>
+  <td><code>read published package.json and verify declared dsh.bundle.patch paths exist</code>
+    <pre>{
+  &quot;status&quot;: &quot;pass&quot;,
+  &quot;reasons&quot;: [],
+  &quot;declared&quot;: {
+    &quot;manifestVersion&quot;: null,
+    &quot;bundlePatch&quot;: [
+      &quot;./cordis.patch.yml&quot;
+    ],
+    &quot;clientPlatform&quot;: &quot;web&quot;,
+    &quot;enginesDsh&quot;: null,
+    &quot;enginesNode&quot;: &quot;^22.19.0 || &gt;=24.0.0&quot;
+  },
+  &quot;missingPatchPaths&quot;: [],
+  &quot;fileCount&quot;: 24,
+  &quot;unpackedBytes&quot;: 1662279,
+  &quot;shipsSource&quot;: false
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-patch">
+  <td><code>e-patch</code></td>
+  <td>static</td>
+  <td><code>read cordis.patch.yml</code>
+    <pre># 保留官方工作区 UI，仅替换归档需要的后端服务。
+# 自定义侧栏通过优先级覆盖插槽；发布后的安装命令：
+#   dsh plugin --profile web add @michengai/dsh-archive-manager
+#
+# workspace / session-projection-cache：宿主注册表与投影缓存，不是设置页。
+# 换成本插件子类，才能加批量归档、永久删除和安全缓存域。
+# ui-settings-unarchive-sessions：DSH 0.1.6+官方「已归档会话」设置页，只能单条恢复；
+# 禁用后只保留本插件的归档管理入口。旧宿主没有该 id 时补丁被忽略。
+- id: workspace
+  disabled: true
+- id: session-projection-cache
+  disabled: true
+- id: ui-settings-unarchive-sessions
+  disabled: true
+- id: ui-workspace
+  disabled: false
+- insert:
+    - id: workspace-archive-manager
+      name: &apos;@michengai/dsh-archive-manager/workspace&apos;
+    - id: session-projection-cache-archive-manager
+      name: &apos;@michengai/dsh-archive-manager/projcache&apos;
+      config:
+        writeEveryEvents: 200
+        writeIntervalMs: 5000
+    - id: ui-workspace-archive-manager
+      name: &apos;@michengai/dsh-archive-manager&apos;
+</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l4">
+  <td><code>e-l4</code></td>
+  <td>static</td>
+  <td><code>scan 11 shipped source file(s) for capability signatures</code>
+    <pre>{
+  &quot;present&quot;: [
+    {
+      &quot;id&quot;: &quot;network_egress&quot;,
+      &quot;confidence&quot;: &quot;medium&quot;,
+      &quot;attribution&quot;: &quot;unknown&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/lib/plugin-updater.js&quot;,
+        &quot;line&quot;: 123,
+        &quot;snippet&quot;: &quot;const response = await fetch(`https://registry.npmjs.org/${encodeURIComponent(packageName)}/latest`, { signal: AbortSignal.timeout(8e3) });&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;spawns_process&quot;,
+      &quot;confidence&quot;: &quot;medium&quot;,
+      &quot;attribution&quot;: &quot;unknown&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/lib/plugin-updater.js&quot;,
+        &quot;line&quot;: 2,
+        &quot;snippet&quot;: &quot;import { spawn } from \&quot;node:child_process\&quot;;&quot;
+      }
+    }
+  ],
+  &quot;scannedFiles&quot;: 11,
+  &quot;skippedFiles&quot;: 0,
+  &quot;limits&quot;: [
+    &quot;the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency&quot;,
+    &quot;static analysis cannot see dynamically constructed code or prove intent&quot;
+  ]
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l1-install">
+  <td><code>e-l1-install</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">2176 ms</span></td>
+  <td><code>dsh plugin --profile verify add @michengai/dsh-archive-manager@1.0.11</code>
+    <pre>Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11
+  Virtual store is at:             node_modules/.pnpm
+Packages: +1
++
+Progress: resolved 1, reused 0, downloaded 1, added 1, done
+[WARN] Issues with peer dependencies found. Run &quot;pnpm peers check&quot; to list them.
+
+dependencies:
++ @michengai/dsh-archive-manager 1.0.11
+
+Done in 343ms using pnpm v12.8.1
+dsh: initialized profile verify at /work/dsh-home/profiles/verify
+</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l2-boot">
+  <td><code>e-l2-boot</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">25070 ms</span></td>
+  <td><code>dsh --profile verify</code>
+    <pre>dsh: warning: 1 entry did not activate
+ui-workspace-archive-manager (@michengai/dsh-archive-manager): pending (waiting for service: webServer)
+</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l6-remove">
+  <td><code>e-l6-remove</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">262 ms</span></td>
+  <td><code>dsh plugin --profile verify remove @michengai/dsh-archive-manager</code>
+    <pre>Packages: -1
+-
+
+dependencies:
+- @michengai/dsh-archive-manager 1.0.11
+
+Done in 11ms using pnpm v12.8.1
+</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l5-overhead">
+  <td><code>e-l5-overhead</code></td>
+  <td>sample</td>
+  <td><code>dsh --profile &lt;baseline|activated&gt; with the host sampler injected via NODE_OPTIONS=--import</code>
+    <pre>{
+  &quot;method&quot;: &quot;differential&quot;,
+  &quot;status&quot;: &quot;no-significant-delta&quot;,
+  &quot;samples&quot;: 6,
+  &quot;baselineMedian&quot;: {
+    &quot;atMs&quot;: 8040,
+    &quot;rss&quot;: 199651328,
+    &quot;heapUsed&quot;: 68538392,
+    &quot;external&quot;: 5188103,
+    &quot;activeTotal&quot;: 10,
+    &quot;watchers&quot;: 7,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 22,
+    &quot;libuvActiveHandles&quot;: 17,
+    &quot;fds&quot;: 20
+  },
+  &quot;activatedMedian&quot;: {
+    &quot;atMs&quot;: 8039,
+    &quot;rss&quot;: 200302592,
+    &quot;heapUsed&quot;: 75331040,
+    &quot;external&quot;: 5140271,
+    &quot;activeTotal&quot;: 11,
+    &quot;watchers&quot;: 8,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 23,
+    &quot;libuvActiveHandles&quot;: 18,
+    &quot;fds&quot;: 20
+  },
+  &quot;delta&quot;: {
+    &quot;atMs&quot;: -1,
+    &quot;rss&quot;: 651264,
+    &quot;heapUsed&quot;: 6792648,
+    &quot;external&quot;: -47832,
+    &quot;activeTotal&quot;: 1,
+    &quot;watchers&quot;: 1,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 1,
+    &quot;libuvActiveHandles&quot;: 1,
+    &quot;fds&quot;: 0
+  },
+  &quot;significant&quot;: []
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l3-session">
+  <td><code>e-l3-session</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">1271 ms</span></td>
+  <td><code>dsh --profile l3 --patch /work/fixtures/replay/l3-overlay.yml --json reply with any text</code>
+    <pre>{&quot;type&quot;:&quot;session&quot;,&quot;sessionId&quot;:&quot;session-cfb1a1b2-09ca-418f-94f2-49e23a7de350&quot;,&quot;cwd&quot;:&quot;/work&quot;}
+{&quot;type&quot;:&quot;status&quot;,&quot;phase&quot;:&quot;turn_start&quot;,&quot;turn&quot;:1}
+{&quot;type&quot;:&quot;status&quot;,&quot;phase&quot;:&quot;step_start&quot;,&quot;turn&quot;:1,&quot;step&quot;:1}
+{&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:&quot;Replay fixture: no provider was called.&quot;}
+{&quot;type&quot;:&quot;status&quot;,&quot;phase&quot;:&quot;step_end&quot;,&quot;turn&quot;:1,&quot;step&quot;:1}
+{&quot;type&quot;:&quot;status&quot;,&quot;phase&quot;:&quot;turn_end&quot;,&quot;turn&quot;:1,&quot;reason&quot;:{&quot;kind&quot;:&quot;completed&quot;}}
+{&quot;type&quot;:&quot;final&quot;,&quot;text&quot;:&quot;Replay fixture: no provider was called.&quot;}
+dsh: warning: 1 entry did not activate
+ui-workspace-archive-manager (@michengai/dsh-archive-manager): pending (waiting for service: webServer)
+</pre>
+    
+  </td>
+</tr>
+</tbody>
+</table>
+
+<h2>Limits</h2>
+<ul><li>the artifact ships no source paths, so capability findings describe build output only; code-level attribution between the author and inlined dependencies is not resolvable from this artifact</li><li>the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency</li><li>static analysis cannot see dynamically constructed code or prove intent</li><li>L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model</li><li>the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase</li><li>no dependency build script was approved by this executor</li><li>overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta</li><li>sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test</li></ul>
+
+<h2>Disclaimers</h2>
+<ul><li>Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence.</li></ul>
+
+<p class="note"><a href="./michengai__dsh-archive-manager.json">raw report JSON</a> · <a href="./badge/michengai__dsh-archive-manager.svg">badge</a> · <a href="https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/appeals.md">dispute this report</a></p>
+</html>

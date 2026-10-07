@@ -1,0 +1,571 @@
+{
+  "schema": "dsh.plugin.report.v1",
+  "reportId": "npm:dsh-pet@0.3.1",
+  "generatedAt": "2026-10-03T15:59:47.698Z",
+  "verifier": {
+    "name": "dsh-verified",
+    "version": "0.1.0",
+    "commit": "b07a7e8d009344208b960388aa24a9c5f8ec674c"
+  },
+  "subject": {
+    "spec": "dsh-pet@0.3.1",
+    "name": "dsh-pet",
+    "version": "0.3.1",
+    "registry": "https://registry.npmjs.org",
+    "tarball": "https://registry.npmjs.org/dsh-pet/-/dsh-pet-0.3.1.tgz",
+    "integrity": "sha512-7K8jDdoIT9nCX6HN0xhdcdOVAtSygSArE+zAWSBUfivC+gs6k9Szl7T8ozHfPs/QzOg45YRLLWvZVNZZfewcyQ==",
+    "shasum": "f51be7b4e8e4b603dacbed1f999b5275ae15568d",
+    "repository": "git+https://github.com/PC2005-cloud/dsh-pet.git",
+    "license": "MIT",
+    "publishedAt": "2026-09-30T07:04:19.661Z",
+    "dshBundlePatch": "./cordis.patch.yml"
+  },
+  "runtime": {
+    "dshVersion": "0.2.0-rc.2",
+    "nodeVersion": "v24.21.0",
+    "os": "linux 6.17.0-1022-azure",
+    "arch": "x64"
+  },
+  "container": {
+    "image": "none",
+    "imageDigest": null,
+    "notes": "executed in a one-off container; the subject was installed, booted and removed there"
+  },
+  "verdict": "verified",
+  "dimensions": {
+    "L0_qualification": {
+      "id": "L0",
+      "status": "pass",
+      "summary": "declares dsh.bundle.patch and every declared patch path exists (244 files, 64788596 bytes unpacked)",
+      "metrics": {
+        "fileCount": 244,
+        "unpackedBytes": 64788596,
+        "patchPaths": [
+          "./cordis.patch.yml"
+        ],
+        "declaredEnginesDsh": null,
+        "shipsSource": true
+      },
+      "evidenceRefs": [
+        "e-resolve",
+        "e-tarball",
+        "e-l0"
+      ],
+      "notes": [
+        "dsh.manifestVersion is not declared; the reader does not infer a default"
+      ]
+    },
+    "L1_install": {
+      "id": "L1",
+      "status": "pass",
+      "summary": "installed",
+      "metrics": {
+        "durationMs": 2390,
+        "exitCode": 0,
+        "declaredPeers": null,
+        "bundlesAfterInstall": [
+          "@deepseek-ai/dsh-base",
+          "dsh-pet"
+        ],
+        "pendingBuildScripts": [],
+        "buildScriptsApproved": 0,
+        "diagnosticsLog": null
+      },
+      "evidenceRefs": [
+        "e-l1-install"
+      ],
+      "notes": [
+        "the CLI completed the install with exit code 0",
+        "no dependency build script was approved by the verifier; approval permits commands with the host user permissions"
+      ]
+    },
+    "L2_load": {
+      "id": "L2",
+      "status": "pass",
+      "summary": "booted, mounted and stayed alive",
+      "metrics": {
+        "bootBoundMs": 25000,
+        "durationMs": 25069,
+        "signal": null
+      },
+      "evidenceRefs": [
+        "e-l2-boot"
+      ],
+      "notes": [
+        "the process was still running when the wall-clock bound reached it and reported no failure diagnostics, so the bundle was neither skipped nor rejected",
+        "the fiber phase is not read directly: an early exit with diagnostics is the load-failure signal, and a boot that settles and waits is the success signal"
+      ]
+    },
+    "L3_run": {
+      "id": "L3",
+      "status": "pass",
+      "summary": "a session completed with no credential",
+      "metrics": {
+        "replayAdapter": "@deepseek-ai/dsh-llm-replay@0.2.0-rc.2",
+        "probeTask": "reply with any text",
+        "events": {
+          "session": "session-65be6ed5-c274-4986-80c7-d3d328963f15",
+          "turnEndReason": {
+            "kind": "completed"
+          },
+          "finalText": "Replay fixture: no provider was called.",
+          "textEventCount": 1,
+          "error": null,
+          "exitCode": 0,
+          "durationMs": 1275,
+          "eventCount": 7
+        }
+      },
+      "evidenceRefs": [
+        "e-l3-session"
+      ],
+      "notes": [
+        "the model call was served by the official replay adapter from a fixture authored in this repository; no provider was contacted and no credential was present",
+        "probe task, stated verbatim: \"reply with any text\""
+      ]
+    },
+    "L4_capability": {
+      "id": "L4",
+      "status": "pass",
+      "summary": "4 capability signal(s) present across 95 scanned file(s)",
+      "metrics": {
+        "scannedFiles": 95,
+        "scannedBytes": 1170808,
+        "skippedFiles": 0
+      },
+      "evidenceRefs": [
+        "e-l4",
+        "e-patch"
+      ],
+      "notes": [
+        "static analysis cannot see dynamically constructed code or prove intent"
+      ]
+    },
+    "L5_overhead": {
+      "id": "L5",
+      "status": "pass",
+      "summary": "no significant delta across 6 sampled run(s)",
+      "metrics": {
+        "samples": 6,
+        "baseline": {
+          "atMs": 8040,
+          "rss": 198942720,
+          "heapUsed": 68467064,
+          "external": 5188103,
+          "activeTotal": 10,
+          "watchers": 7,
+          "timers": 0,
+          "libuvHandles": 22,
+          "libuvActiveHandles": 17,
+          "fds": 20
+        },
+        "activated": {
+          "atMs": 8039,
+          "rss": 200863744,
+          "heapUsed": 74278352,
+          "external": 5174866,
+          "activeTotal": 11,
+          "watchers": 8,
+          "timers": 0,
+          "libuvHandles": 24,
+          "libuvActiveHandles": 19,
+          "fds": 20
+        },
+        "delta": {
+          "atMs": -1,
+          "rss": 1921024,
+          "heapUsed": 5811288,
+          "external": -13237,
+          "activeTotal": 1,
+          "watchers": 1,
+          "timers": 0,
+          "libuvHandles": 2,
+          "libuvActiveHandles": 2,
+          "fds": 0
+        }
+      },
+      "evidenceRefs": [
+        "e-l5-overhead"
+      ],
+      "notes": [
+        "no metric moved beyond the significance thresholds; that is the finding",
+        "differential attribution: baseline profile first, then the subject activated, same container and order",
+        "thresholds are coarse on purpose — order-of-magnitude watcher changes, RSS growth beyond 100 MiB, steady state more than 2 s later"
+      ]
+    },
+    "L6_uninstall": {
+      "id": "L6",
+      "status": "pass",
+      "summary": "removed without residue",
+      "metrics": {
+        "residue": [],
+        "durationMs": 269
+      },
+      "evidenceRefs": [
+        "e-l6-remove"
+      ],
+      "notes": [
+        "the profile retains no bundle selection, dependency entry or files for the subject"
+      ]
+    }
+  },
+  "capabilities": [
+    {
+      "id": "listens_on_port",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "opens a listening socket",
+      "evidence": [
+        {
+          "file": "package/runtime/electron-helper/main.js",
+          "line": 554,
+          "snippet": "const server = http.createServer((req, res) => {"
+        }
+      ]
+    },
+    {
+      "id": "network_egress",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "author-source",
+      "notes": "can make outbound network requests",
+      "evidence": [
+        {
+          "file": "package/src/host/balance.ts",
+          "line": 63,
+          "snippet": "return fetch(url, {"
+        },
+        {
+          "file": "package/src/shared/balance.ts",
+          "line": 65,
+          "snippet": "const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT_MS) });"
+        },
+        {
+          "file": "package/src/shared/chat.ts",
+          "line": 24,
+          "snippet": "const res = await fetch(baseUrl, {"
+        },
+        {
+          "file": "package/src/host/helper-process.ts",
+          "line": 402,
+          "snippet": "void fetch(cb, {"
+        },
+        {
+          "file": "package/src/client/notify.ts",
+          "line": 129,
+          "snippet": "const r = await fetch('/dsh-pet-7340/config');"
+        }
+      ]
+    },
+    {
+      "id": "spawns_process",
+      "present": true,
+      "confidence": "high",
+      "attribution": "author-source",
+      "notes": "spawns or would spawn an operating-system process",
+      "evidence": [
+        {
+          "file": "package/src/host/helper-process.ts",
+          "line": 14,
+          "snippet": "import { spawn } from 'node:child_process';"
+        },
+        {
+          "file": "package/lib/index.js",
+          "line": 9,
+          "snippet": "import { spawn } from \"node:child_process\";"
+        },
+        {
+          "file": "package/runtime/electron-helper/main.js",
+          "line": 50,
+          "snippet": "const { execFileSync } = require('node:child_process');"
+        },
+        {
+          "file": "package/lib/types/helper-process.d.ts",
+          "line": 143,
+          "snippet": "start(): import('node:child_process').ChildProcess | undefined;"
+        }
+      ]
+    },
+    {
+      "id": "writes_outside_workspace",
+      "present": true,
+      "confidence": "low",
+      "attribution": "author-source",
+      "notes": "resolves a path outside the workspace (e.g. os.homedir(), DSH_HOME), which is normal for DSH profile handling; static analysis cannot determine whether it also writes there",
+      "evidence": [
+        {
+          "file": "package/src/host/helper-process.test.ts",
+          "line": 35,
+          "snippet": "const savedHome = process.env.DSH_HOME;"
+        },
+        {
+          "file": "package/src/host/helper-process.ts",
+          "line": 126,
+          "snippet": "const userProfile = process.env.USERPROFILE || process.env.HOME || '';"
+        },
+        {
+          "file": "package/src/host/routes.test.ts",
+          "line": 72,
+          "snippet": "savedHome = process.env.DSH_HOME;"
+        },
+        {
+          "file": "package/src/host/work-status-lifecycle.test.ts",
+          "line": 110,
+          "snippet": "savedHome = process.env.DSH_HOME;"
+        },
+        {
+          "file": "package/lib/index.js",
+          "line": 1053,
+          "snippet": "const userProfile = process.env.USERPROFILE || process.env.HOME || \"\";"
+        }
+      ]
+    },
+    {
+      "id": "eval_or_dynamic_code",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "eval or synthesised code; common and often benign, and frequently bundler output",
+      "evidence": []
+    },
+    {
+      "id": "hooks_api_gate",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks the API/LLM path, so it can observe or alter provider traffic",
+      "evidence": []
+    },
+    {
+      "id": "hooks_system_prompt",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks system-prompt assembly, so it can influence what the model is told",
+      "evidence": []
+    },
+    {
+      "id": "reads_secret_env",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "reads an environment variable whose name looks credential-shaped",
+      "evidence": []
+    },
+    {
+      "id": "runtime_patch",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "patches runtime objects rather than only registering its own services",
+      "evidence": []
+    },
+    {
+      "id": "watches_filesystem",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "watches the filesystem; a recursive workspace watch is the documented cause of host stalls",
+      "evidence": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e-resolve",
+      "kind": "command",
+      "command": "resolve dsh-pet@0.3.1 -> dsh-pet@0.3.1",
+      "exitCode": 0,
+      "durationMs": 157,
+      "excerpt": "{\n  \"name\": \"dsh-pet\",\n  \"version\": \"0.3.1\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/dsh-pet/-/dsh-pet-0.3.1.tgz\",\n  \"advertisedIntegrity\": \"sha512-7K8jDdoIT9nCX6HN0xhdcdOVAtSygSArE+zAWSBUfivC+gs6k9Szl7T8ozHfPs/QzOg45YRLLWvZVNZZfewcyQ==\",\n  \"publishedAt\": \"2026-09-30T07:04:19.661Z\"\n}"
+    },
+    {
+      "id": "e-tarball",
+      "kind": "artifact",
+      "command": "fetch https://registry.npmjs.org/dsh-pet/-/dsh-pet-0.3.1.tgz",
+      "exitCode": 0,
+      "durationMs": 475,
+      "excerpt": "{\n  \"bytes\": 62222739,\n  \"resolvedIntegrity\": \"sha512-7K8jDdoIT9nCX6HN0xhdcdOVAtSygSArE+zAWSBUfivC+gs6k9Szl7T8ozHfPs/QzOg45YRLLWvZVNZZfewcyQ==\",\n  \"advertisedIntegrity\": \"sha512-7K8jDdoIT9nCX6HN0xhdcdOVAtSygSArE+zAWSBUfivC+gs6k9Szl7T8ozHfPs/QzOg45YRLLWvZVNZZfewcyQ==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"c54409ea3d67f582de7dc7bb3d110198ae667a14bca7e27837bbb59690722f35\"\n}",
+      "excerptBytes": 385,
+      "sha256": "c54409ea3d67f582de7dc7bb3d110198ae667a14bca7e27837bbb59690722f35"
+    },
+    {
+      "id": "e-l0",
+      "kind": "static",
+      "command": "read published package.json and verify declared dsh.bundle.patch paths exist",
+      "excerpt": "{\n  \"status\": \"pass\",\n  \"reasons\": [],\n  \"declared\": {\n    \"manifestVersion\": null,\n    \"bundlePatch\": [\n      \"./cordis.patch.yml\"\n    ],\n    \"clientPlatform\": \"web\",\n    \"enginesDsh\": null,\n    \"enginesNode\": null\n  },\n  \"missingPatchPaths\": [],\n  \"fileCount\": 244,\n  \"unpackedBytes\": 64788596,\n  \"shipsSource\": true\n}",
+      "excerptBytes": 320
+    },
+    {
+      "id": "e-patch",
+      "kind": "static",
+      "command": "read cordis.patch.yml",
+      "excerpt": "# ============================================================================\n# dsh-pet 的 bundle patch —— 把宠物插件挂进 DSH 配置树\n# ============================================================================\n#\n# 【这是什么】\n#   这是 dsh-pet 的\"挂载声明\"。DSH 启动时按 bundle 层栈把各个插件的\n#   patch 叠起来组成配置树。本文件就是 dsh-pet 这一层的内容。\n#\n# 【工作原理】\n#   - insert：往配置树里添加新的插件行（entry）\n#   - 每个 entry 有 id（行标识，patch 覆盖时按它定位）和 name（插件模块）\n#   - name: 'dsh-pet' 会解析包入口 lib/index.js（宿主半侧）\n#   - 因为 package.json 声明了 dsh.client，DSH 的模块系统同时会把\n#     这个包扫描为\"浏览器插件\"，提供 /plugins/dsh-pet/client.js 给页面\n#\n# ============================================================================\n\n- insert:\n    - id: pet                     # 插件行 id（唯一）\n      name: 'dsh-pet'             # 模块名：解析到 lib/index.js\n",
+      "excerptBytes": 1070,
+      "sha256": "62f318e72084086a3d945ec77d74d72c07f1217b6f84b80bd87329e993ec5ef0"
+    },
+    {
+      "id": "e-l4",
+      "kind": "static",
+      "command": "scan 95 shipped source file(s) for capability signatures",
+      "excerpt": "{\n  \"present\": [\n    {\n      \"id\": \"listens_on_port\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/runtime/electron-helper/main.js\",\n        \"line\": 554,\n        \"snippet\": \"const server = http.createServer((req, res) => {\"\n      }\n    },\n    {\n      \"id\": \"network_egress\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/host/balance.ts\",\n        \"line\": 63,\n        \"snippet\": \"return fetch(url, {\"\n      }\n    },\n    {\n      \"id\": \"spawns_process\",\n      \"confidence\": \"high\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/host/helper-process.ts\",\n        \"line\": 14,\n        \"snippet\": \"import { spawn } from 'node:child_process';\"\n      }\n    },\n    {\n      \"id\": \"writes_outside_workspace\",\n      \"confidence\": \"low\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/host/helper-process.test.ts\",\n        \"line\": 35,\n        \"snippet\": \"const savedHome = process.env.DSH_HOME;\"\n      }\n    }\n  ],\n  \"scannedFiles\": 95,\n  \"skippedFiles\": 0,\n  \"limits\": [\n    \"static analysis cannot see dynamically constructed code or prove intent\"\n  ]\n}",
+      "excerptBytes": 1274
+    },
+    {
+      "id": "e-l1-install",
+      "kind": "command",
+      "command": "dsh plugin --profile verify add dsh-pet@0.3.1",
+      "exitCode": 0,
+      "durationMs": 2390,
+      "excerpt": "Downloading dsh-pet@0.3.1: 0.00 B/62.22 MB\nPackages are hard linked from the content-addressable store to the virtual store.\n  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nPackages: +11\n+++++++++++\nProgress: resolved 11, reused 0, downloaded 11, added 11, done\n[WARN] Issues with peer dependencies found. Run \"pnpm peers check\" to list them.\n\ndependencies:\n+ dsh-pet 0.3.1\n\nDone in 666ms using pnpm v12.8.1\ndsh: initialized profile verify at /work/dsh-home/profiles/verify\n",
+      "excerptBytes": 558,
+      "truncated": false,
+      "sha256": "19c1715686e05c6be43fbe2ee033b5b6de51d9fec7a7a26921ab61e347de69ee"
+    },
+    {
+      "id": "e-l2-boot",
+      "kind": "command",
+      "command": "dsh --profile verify",
+      "exitCode": 0,
+      "durationMs": 25069,
+      "excerpt": "dsh: warning: 1 entry did not activate\npet (dsh-pet): pending (waiting for service: webServer)\n",
+      "excerptBytes": 95,
+      "truncated": false,
+      "sha256": "349e548959245304f180b2e6104760475b535a5982800735e7eddda4acf41227"
+    },
+    {
+      "id": "e-l6-remove",
+      "kind": "command",
+      "command": "dsh plugin --profile verify remove dsh-pet",
+      "exitCode": 0,
+      "durationMs": 269,
+      "excerpt": "Packages: -11\n-----------\n\ndependencies:\n- dsh-pet 0.3.1\n\nDone in 15ms using pnpm v12.8.1\n",
+      "excerptBytes": 90,
+      "truncated": false,
+      "sha256": "b8298c3dcc68e42a32003f344d080c55a097d7d212f61e190b518175286e20e0"
+    },
+    {
+      "id": "e-l5-overhead",
+      "kind": "sample",
+      "command": "dsh --profile <baseline|activated> with the host sampler injected via NODE_OPTIONS=--import",
+      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8040,\n    \"rss\": 198942720,\n    \"heapUsed\": 68467064,\n    \"external\": 5188103,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8039,\n    \"rss\": 200863744,\n    \"heapUsed\": 74278352,\n    \"external\": 5174866,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 24,\n    \"libuvActiveHandles\": 19,\n    \"fds\": 20\n  },\n  \"delta\": {\n    \"atMs\": -1,\n    \"rss\": 1921024,\n    \"heapUsed\": 5811288,\n    \"external\": -13237,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 2,\n    \"libuvActiveHandles\": 2,\n    \"fds\": 0\n  },\n  \"significant\": []\n}"
+    },
+    {
+      "id": "e-l3-session",
+      "kind": "command",
+      "command": "dsh --profile l3 --patch /work/fixtures/replay/l3-overlay.yml --json reply with any text",
+      "exitCode": 0,
+      "durationMs": 1275,
+      "excerpt": "{\"type\":\"session\",\"sessionId\":\"session-65be6ed5-c274-4986-80c7-d3d328963f15\",\"cwd\":\"/work\"}\n{\"type\":\"status\",\"phase\":\"turn_start\",\"turn\":1}\n{\"type\":\"status\",\"phase\":\"step_start\",\"turn\":1,\"step\":1}\n{\"type\":\"text\",\"text\":\"Replay fixture: no provider was called.\"}\n{\"type\":\"status\",\"phase\":\"step_end\",\"turn\":1,\"step\":1}\n{\"type\":\"status\",\"phase\":\"turn_end\",\"turn\":1,\"reason\":{\"kind\":\"completed\"}}\n{\"type\":\"final\",\"text\":\"Replay fixture: no provider was called.\"}\ndsh: warning: 1 entry did not activate\npet (dsh-pet): pending (waiting for service: webServer)\n",
+      "excerptBytes": 554,
+      "truncated": false,
+      "sha256": "4852a159a28f3ceeb15d7e58e993118fbd28c8d9c82d994b11afbe481aa0501b"
+    }
+  ],
+  "redactions": [],
+  "disclaimers": [
+    "Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence."
+  ],
+  "limits": [
+    "static analysis cannot see dynamically constructed code or prove intent",
+    "L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model",
+    "the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase",
+    "no dependency build script was approved by this executor",
+    "overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta",
+    "sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test"
+  ],
+  "bundlePatch": {
+    "path": "cordis.patch.yml",
+    "present": true,
+    "bytes": 1070,
+    "entryCount": 2,
+    "disablesHostEntries": false,
+    "overridesConfig": false,
+    "usesJsExpressions": false,
+    "findings": [
+      {
+        "kind": "inserts-entry",
+        "line": 18,
+        "snippet": "- insert:"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 19,
+        "snippet": "- id: pet                     # 插件行 id（唯一）"
+      }
+    ],
+    "notes": [
+      "textual analysis: a line number is provided for review, not a YAML object model"
+    ]
+  },
+  "overhead": {
+    "method": "differential",
+    "status": "no-significant-delta",
+    "samples": 6,
+    "baseline": {
+      "atMs": 8040,
+      "rss": 198942720,
+      "heapUsed": 68467064,
+      "external": 5188103,
+      "activeTotal": 10,
+      "watchers": 7,
+      "timers": 0,
+      "libuvHandles": 22,
+      "libuvActiveHandles": 17,
+      "fds": 20
+    },
+    "activated": {
+      "atMs": 8039,
+      "rss": 200863744,
+      "heapUsed": 74278352,
+      "external": 5174866,
+      "activeTotal": 11,
+      "watchers": 8,
+      "timers": 0,
+      "libuvHandles": 24,
+      "libuvActiveHandles": 19,
+      "fds": 20
+    },
+    "delta": {
+      "atMs": -1,
+      "rss": 1921024,
+      "heapUsed": 5811288,
+      "external": -13237,
+      "activeTotal": 1,
+      "watchers": 1,
+      "timers": 0,
+      "libuvHandles": 2,
+      "libuvActiveHandles": 2,
+      "fds": 0
+    },
+    "significant": [],
+    "resourceKinds": {
+      "baseline": {
+        "PipeWrap": 3,
+        "FSEventWrap": 7,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 7,
+        "loop": 1
+      },
+      "activated": {
+        "PipeWrap": 3,
+        "FSEventWrap": 8,
+        "async": 4,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 8,
+        "loop": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>npm:dsh-find-plugin@0.4.0</title>
+<style>:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body { margin: 0 auto; max-width: 60rem; padding: 1.5rem 1rem 4rem;
+  font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+h1 { font-size: 1.6rem; margin: 0 0 .25rem; }
+h2 { font-size: 1.05rem; margin: 2rem 0 .5rem; text-transform: uppercase;
+  letter-spacing: .06em; opacity: .65; }
+a { color: inherit; }
+table { border-collapse: collapse; width: 100%; margin: .5rem 0; }
+th, td { text-align: left; padding: .35rem .5rem; border-bottom: 1px solid rgba(128,128,128,.25);
+  vertical-align: top; }
+code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85em; }
+pre { background: rgba(128,128,128,.12); padding: .6rem .75rem; border-radius: 4px; overflow-x: auto; }
+.status { font-weight: 600; }
+.status-pass { color: #1f883d; } .status-fail { color: #cf222e; }
+.status-skip, .status-blocked { color: #6e7781; }
+.status-inconclusive, .status-timeout { color: #bf8700; }
+.muted { opacity: .65; }
+.note { font-size: .9em; opacity: .8; margin: .2rem 0 0; }
+.tag { display: inline-block; border: 1px solid rgba(128,128,128,.45); border-radius: 3px;
+  padding: 0 .35rem; font-size: .8em; margin-right: .25rem; }</style>
+<p><a href="./index.html">← all reports</a></p>
+<h1>npm:dsh-find-plugin@0.4.0</h1>
+<p><a href="#top"><svg xmlns="http://www.w3.org/2000/svg" width="124" height="20" role="img" aria-label="dsh plugin: partial; historical method limitation">
+  <title>dsh-verified: partial — npm:dsh-find-plugin@0.4.0. Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Historical method limitation: this execution had network access and published container paths and replay fixture text.</title>
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="r"><rect width="124" height="20" rx="3" fill="#fff"/></clipPath>
+  <g clip-path="url(#r)">
+    <rect width="71" height="20" fill="#555"/>
+    <rect x="71" width="53" height="20" fill="#bf8700"/>
+    <rect width="124" height="20" fill="url(#s)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="35.5" y="15" fill="#010101" fill-opacity=".3">dsh plugin</text>
+    <text x="35.5" y="14">dsh plugin</text>
+    <text x="97.5" y="15" fill="#010101" fill-opacity=".3">partial</text>
+    <text x="97.5" y="14">partial</text>
+  </g>
+</svg>
+</a></p>
+
+<p><strong>Method limitation.</strong> This historical execution used a container with network access and published container paths and replay fixture text. The no-egress and redaction conditions were not met. See <a href="https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/security.md#7-historical-network-incident">the security incident</a>.</p>
+<p class="muted">sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==</p>
+
+<h2>Subject</h2>
+<table>
+<tr><th>name</th><td><code>dsh-find-plugin</code></td></tr>
+<tr><th>version</th><td><code>0.4.0</code></td></tr>
+<tr><th>integrity</th><td><code>sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==</code></td></tr>
+<tr><th>repository</th><td><a href="git+https://github.com/awesome-dsh-plugin/dsh-find-plugin.git">git+https://github.com/awesome-dsh-plugin/dsh-find-plugin.git</a></td></tr>
+<tr><th>declared bundle patch</th><td><code>&quot;./cordis.patch.yml&quot;</code></td></tr>
+<tr><th>declared engines.dsh</th><td><code>not declared</code> <span class="muted">— declarative and unenforced</span></td></tr>
+</table>
+
+<h2>Environment</h2>
+<table>
+<tr><th>DSH</th><td><code>0.2.0-rc.2</code></td></tr>
+<tr><th>Node</th><td><code>v24.21.0</code></td></tr>
+<tr><th>OS / arch</th><td><code>linux 6.17.0-1022-azure x64</code></td></tr>
+<tr><th>verifier</th><td><code>dsh-verified 0.1.0</code> <code>b07a7e8d0093</code></td></tr>
+<tr><th>generated</th><td><code>2026-10-03T15:57:40.152Z</code></td></tr>
+</table>
+
+<h2>Dimensions</h2>
+<table>
+<thead><tr><th></th><th>status</th><th>summary</th><th>evidence</th></tr></thead>
+<tbody>
+<tr>
+  <td><code>L0</code></td>
+  <td class="status status-pass">pass</td>
+  <td>declares dsh.bundle.patch and every declared patch path exists (15 files, 151561 bytes unpacked)
+    <p class="note">dsh.manifestVersion is not declared; the reader does not infer a default</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;fileCount&quot;: 15,
+  &quot;unpackedBytes&quot;: 151561,
+  &quot;patchPaths&quot;: [
+    &quot;./cordis.patch.yml&quot;
+  ],
+  &quot;declaredEnginesDsh&quot;: null,
+  &quot;shipsSource&quot;: true
+}</pre></details>
+  </td>
+  <td><a href="#e-e-resolve"><code>e-resolve</code></a>, <a href="#e-e-tarball"><code>e-tarball</code></a>, <a href="#e-e-l0"><code>e-l0</code></a></td>
+</tr>
+<tr>
+  <td><code>L1</code></td>
+  <td class="status status-fail">fail</td>
+  <td>peer-incompatible with the pinned runtime
+    <p class="note">DSH refused the install: the plugin&apos;s declared peerDependencies on @deepseek-ai/dsh* do not match the runtime. An exact-version exemption would bypass this check; granting one is a user decision and is not done here.</p><p class="note">no dependency build script was approved by the verifier; approval permits commands with the host user permissions</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;durationMs&quot;: 1639,
+  &quot;exitCode&quot;: 1,
+  &quot;declaredPeers&quot;: {
+    &quot;@deepseek-ai/dsh-tools&quot;: &quot;^0.1.0-rc.6 || ^0.1.1-rc.1 || ^0.1.2-alpha.2 || ^0.1.3-alpha.2 || ^0.1.5-alpha.1 || ^0.1.6-alpha.1 || ^0.1.7-alpha.1&quot;
+  },
+  &quot;bundlesAfterInstall&quot;: [
+    &quot;@deepseek-ai/dsh-base&quot;
+  ],
+  &quot;pendingBuildScripts&quot;: [],
+  &quot;buildScriptsApproved&quot;: 0,
+  &quot;diagnosticsLog&quot;: &quot;/work/dsh-home/profiles/verify/.plugin-manager/logs/operation-jqcPJ1/pnpm.log&quot;
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l1-install"><code>e-l1-install</code></a></td>
+</tr>
+<tr>
+  <td><code>L2</code></td>
+  <td class="status status-skip">skip</td>
+  <td>not run: the subject did not install
+    <p class="note">loading a plugin that is not present would measure nothing</p>
+    
+  </td>
+  <td><span class="muted">no evidence cited</span></td>
+</tr>
+<tr>
+  <td><code>L3</code></td>
+  <td class="status status-skip">skip</td>
+  <td>not run: the subject did not install
+    <p class="note">a session cannot be attributed to a subject that is not present</p>
+    
+  </td>
+  <td><span class="muted">no evidence cited</span></td>
+</tr>
+<tr>
+  <td><code>L4</code></td>
+  <td class="status status-pass">pass</td>
+  <td>2 capability signal(s) present across 9 scanned file(s)
+    <p class="note">static analysis cannot see dynamically constructed code or prove intent</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;scannedFiles&quot;: 9,
+  &quot;scannedBytes&quot;: 53201,
+  &quot;skippedFiles&quot;: 0
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l4"><code>e-l4</code></a>, <a href="#e-e-patch"><code>e-patch</code></a></td>
+</tr>
+<tr>
+  <td><code>L5</code></td>
+  <td class="status status-inconclusive">inconclusive</td>
+  <td>the subject did not install, so there was nothing to activate
+    <p class="note">no overhead claim is made when the differential could not be completed</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;samples&quot;: 0
+}</pre></details>
+  </td>
+  <td><span class="muted">no evidence cited</span></td>
+</tr>
+<tr>
+  <td><code>L6</code></td>
+  <td class="status status-skip">skip</td>
+  <td>not run: the subject did not install
+    <p class="note">removal was not attempted because nothing was installed</p>
+    
+  </td>
+  <td><span class="muted">no evidence cited</span></td>
+</tr>
+</tbody>
+</table>
+
+<h2>Capability (L4, static)</h2>
+<table><thead><tr><th>capability</th><th>confidence</th><th>attribution</th><th>first evidence</th></tr></thead><tbody>
+<tr><td><code>network_egress</code></td><td>medium</td><td>author-source</td><td><code>package/src/github.ts:164</code></td></tr>
+<tr><td><code>writes_outside_workspace</code></td><td>low</td><td>author-source</td><td><code>package/src/registry.ts:73</code></td></tr>
+</tbody></table>
+<p class="note">Capability is not intent. A signature records what the code can reach for, not what it does.</p>
+
+<h2>Overhead (L5, dynamic)</h2>
+<p class="muted">No overhead measurement was published for this report.</p>
+
+<h2>Evidence</h2>
+<table>
+<thead><tr><th>id</th><th>kind</th><th>artifact</th></tr></thead>
+<tbody>
+<tr id="e-e-resolve">
+  <td><code>e-resolve</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">83 ms</span></td>
+  <td><code>resolve dsh-find-plugin@0.4.0 -&gt; dsh-find-plugin@0.4.0</code>
+    <pre>{
+  &quot;name&quot;: &quot;dsh-find-plugin&quot;,
+  &quot;version&quot;: &quot;0.4.0&quot;,
+  &quot;registry&quot;: &quot;https://registry.npmjs.org&quot;,
+  &quot;tarball&quot;: &quot;https://registry.npmjs.org/dsh-find-plugin/-/dsh-find-plugin-0.4.0.tgz&quot;,
+  &quot;advertisedIntegrity&quot;: &quot;sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==&quot;,
+  &quot;publishedAt&quot;: &quot;2026-09-25T14:59:44.271Z&quot;
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-tarball">
+  <td><code>e-tarball</code></td>
+  <td>artifact <span class="muted">exit 0</span> <span class="muted">20 ms</span></td>
+  <td><code>fetch https://registry.npmjs.org/dsh-find-plugin/-/dsh-find-plugin-0.4.0.tgz</code>
+    <pre>{
+  &quot;bytes&quot;: 45308,
+  &quot;resolvedIntegrity&quot;: &quot;sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==&quot;,
+  &quot;advertisedIntegrity&quot;: &quot;sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==&quot;,
+  &quot;integrityMatchesRegistry&quot;: true,
+  &quot;sha256&quot;: &quot;39fc2dfd519b53bc71c9d4fb8cb7faa678d2c14ffb77c6df38daf0eedf0b56a0&quot;
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l0">
+  <td><code>e-l0</code></td>
+  <td>static</td>
+  <td><code>read published package.json and verify declared dsh.bundle.patch paths exist</code>
+    <pre>{
+  &quot;status&quot;: &quot;pass&quot;,
+  &quot;reasons&quot;: [],
+  &quot;declared&quot;: {
+    &quot;manifestVersion&quot;: null,
+    &quot;bundlePatch&quot;: [
+      &quot;./cordis.patch.yml&quot;
+    ],
+    &quot;clientPlatform&quot;: null,
+    &quot;enginesDsh&quot;: null,
+    &quot;enginesNode&quot;: null
+  },
+  &quot;missingPatchPaths&quot;: [],
+  &quot;fileCount&quot;: 15,
+  &quot;unpackedBytes&quot;: 151561,
+  &quot;shipsSource&quot;: true
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-patch">
+  <td><code>e-patch</code></td>
+  <td>static</td>
+  <td><code>read cordis.patch.yml</code>
+    <pre># dsh bundle patch: inserts this plugin into a profile&apos;s layer stack.
+- insert:
+    - id: find-dsh-plugin
+      name: &apos;dsh-find-plugin&apos;
+</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l4">
+  <td><code>e-l4</code></td>
+  <td>static</td>
+  <td><code>scan 9 shipped source file(s) for capability signatures</code>
+    <pre>{
+  &quot;present&quot;: [
+    {
+      &quot;id&quot;: &quot;network_egress&quot;,
+      &quot;confidence&quot;: &quot;medium&quot;,
+      &quot;attribution&quot;: &quot;author-source&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/src/github.ts&quot;,
+        &quot;line&quot;: 164,
+        &quot;snippet&quot;: &quot;res = await fetch(url, { headers, signal: signalFor() })&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;writes_outside_workspace&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;attribution&quot;: &quot;author-source&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/src/registry.ts&quot;,
+        &quot;line&quot;: 73,
+        &quot;snippet&quot;: &quot;const fromEnv = process.env.DSH_HOME&quot;
+      }
+    }
+  ],
+  &quot;scannedFiles&quot;: 9,
+  &quot;skippedFiles&quot;: 0,
+  &quot;limits&quot;: [
+    &quot;static analysis cannot see dynamically constructed code or prove intent&quot;
+  ]
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l1-install">
+  <td><code>e-l1-install</code></td>
+  <td>command <span class="muted">exit 1</span> <span class="muted">1639 ms</span></td>
+  <td><code>dsh plugin --profile verify add dsh-find-plugin@0.4.0</code>
+    <pre>dsh: initialized profile verify at /work/dsh-home/profiles/verify
+
+dsh: installation rejected: Plugin dsh-find-plugin@0.4.0 is incompatible with dsh 0.2.0-rc.2: peerDependencies {&quot;@deepseek-ai/dsh-tools&quot;:&quot;^0.1.0-rc.6 || ^0.1.1-rc.1 || ^0.1.2-alpha.2 || ^0.1.3-alpha.2 || ^0.1.5-alpha.1 || ^0.1.6-alpha.1 || ^0.1.7-alpha.1&quot;}. Running it may cause crashes or data loss. Update the plugin or install a plugin version compatible with this dsh runtime. To accept this risk explicitly, grant the exact-version exemption for dsh-find-plugin@0.4.0 on dsh 0.2.0-rc.2 with `dsh plugin allow-version` or the plugin manager, then retry the installation or restart dsh. Exact-version exemption: not active.
+dsh: nothing was installed.
+dsh: to accept the risk, run: dsh plugin --profile verify allow-version dsh-find-plugin@0.4.0 --dsh-version 0.2.0-rc.2 --accept-risk
+dsh: plugin command failed; diagnostics: /work/dsh-home/profiles/verify/.plugin-manager/logs/operation-jqcPJ1/pnpm.log
+</pre>
+    
+  </td>
+</tr>
+</tbody>
+</table>
+
+<h2>Limits</h2>
+<ul><li>static analysis cannot see dynamically constructed code or prove intent</li><li>L5 overhead sampling did not complete, so no cost claim is made</li><li>the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase</li><li>no dependency build script was approved by this executor</li><li>overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta</li><li>sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test</li></ul>
+
+<h2>Disclaimers</h2>
+<ul><li>Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence.</li></ul>
+
+<p class="note"><a href="./dsh-find-plugin.json">raw report JSON</a> · <a href="./badge/dsh-find-plugin.svg">badge</a> · <a href="https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/appeals.md">dispute this report</a></p>
+</html>

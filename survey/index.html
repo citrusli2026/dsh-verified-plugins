@@ -1,0 +1,1542 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dsh-plugin subject survey</title>
+<style>:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body { margin: 0 auto; max-width: 60rem; padding: 1.5rem 1rem 4rem;
+  font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+h1 { font-size: 1.6rem; margin: 0 0 .25rem; }
+h2 { font-size: 1.05rem; margin: 2rem 0 .5rem; text-transform: uppercase;
+  letter-spacing: .06em; opacity: .65; }
+a { color: inherit; }
+table { border-collapse: collapse; width: 100%; margin: .5rem 0; }
+th, td { text-align: left; padding: .35rem .5rem; border-bottom: 1px solid rgba(128,128,128,.25);
+  vertical-align: top; }
+code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85em; }
+pre { background: rgba(128,128,128,.12); padding: .6rem .75rem; border-radius: 4px; overflow-x: auto; }
+.status { font-weight: 600; }
+.status-pass { color: #1f883d; } .status-fail { color: #cf222e; }
+.status-skip, .status-blocked { color: #6e7781; }
+.status-inconclusive, .status-timeout { color: #bf8700; }
+.muted { opacity: .65; }
+.note { font-size: .9em; opacity: .8; margin: .2rem 0 0; }
+.tag { display: inline-block; border: 1px solid rgba(128,128,128,.45); border-radius: 3px;
+  padding: 0 .35rem; font-size: .8em; margin-right: .25rem; }</style>
+<p><a href="./index.html">← all reports</a></p>
+<h1>Survey: how many "DSH plugins" are installable?</h1>
+<p class="muted">Registry metadata only. No container, no plugin execution, no credential.</p>
+<table>
+<tr><th>scanned</th><td>250</td></tr>
+<tr><th>declares an installable bundle</th><td>240</td></tr>
+<tr><th>peer-compatible with 0.2.0-rc.2</th><td>130</td></tr>
+<tr><th>would be refused at install</th><td>110</td></tr>
+</table>
+<p><strong>Declaring a bundle is not being installable.</strong></p>
+<h2>Subjects</h2>
+<table><thead><tr><th>package</th><th>version</th><th>bundle</th><th>peers</th></tr></thead><tbody>
+<tr>
+  <td><code>dshmarket</code></td>
+  <td><code>1.66.8</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@michengai/dsh-archive-manager</code></td>
+  <td><code>1.0.11</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@michengai/dsh-skills-manager</code></td>
+  <td><code>1.1.8</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-plugin-model-proxy</code></td>
+  <td><code>0.1.6</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.0-rc.6</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-whale-widget</code></td>
+  <td><code>0.3.18</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-cost-meter</code></td>
+  <td><code>1.8.9</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@xmanrui/dsh-im</code></td>
+  <td><code>4.34.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-univer-office</code></td>
+  <td><code>0.3.6</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@dfy-plugins/dsh-image-generation</code></td>
+  <td><code>0.1.4</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-fs wants <code>&gt;=0.1.7-alpha.1</code>; @deepseek-ai/dsh-llm wants <code>&gt;=0.1.7-alpha.1</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@nanmicoder/dsh-agent-teams</code></td>
+  <td><code>0.1.22</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@liustack/modsearch</code></td>
+  <td><code>5.10.5</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@dfy-plugins/dsh-bundle</code></td>
+  <td><code>0.1.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-mnemon</code></td>
+  <td><code>0.5.23</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@roarpeng/graphflow</code></td>
+  <td><code>2.2.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@dfy-plugins/dsh-visualize</code></td>
+  <td><code>0.1.5</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-fs wants <code>&gt;=0.1.7-alpha.1</code>; @deepseek-ai/dsh-skill wants <code>&gt;=0.1.7-alpha.1</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-dream-skin</code></td>
+  <td><code>9.29.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-client-store wants <code>&gt;=0.1.0-rc.6 &lt;0.3.0-0</code>; @deepseek-ai/dsh-client-locale wants <code>&gt;=0.1.0-rc.6 &lt;0.3.0-0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-free-search</code></td>
+  <td><code>0.7.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@morlay/dsh-agent-instructions-as-prompt</code></td>
+  <td><code>0.0.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-fs wants <code>^0.1.5-rc.2</code>; @deepseek-ai/dsh-llm wants <code>^0.1.5-rc.2</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-pet</code></td>
+  <td><code>0.3.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-find-plugin</code></td>
+  <td><code>0.4.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-tools wants <code>^0.1.0-rc.6 || ^0.1.1-rc.1 || ^0.1.2-alpha.2 || ^0.1.3-alpha.2 || ^0.1.5-alpha.1 || ^0.1.6-alpha.1 || ^0.1.7-alpha.1</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@iasiv5/dsh-obmc-web</code></td>
+  <td><code>0.1.3</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-plugin-wallpaper-engine</code></td>
+  <td><code>1.2.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@dfy-plugins/dsh-appearance</code></td>
+  <td><code>0.1.6</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-settings wants <code>&gt;=0.1.7-alpha.1</code>; @deepseek-ai/dsh-client-ui-settings wants <code>&gt;=0.1.7-alpha.1</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-pocket</code></td>
+  <td><code>2.10.6</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@morlay/session-branch</code></td>
+  <td><code>0.1.5</code></td>
+  <td><span class="muted">no bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-tiddlywiki</code></td>
+  <td><code>0.30.57</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-mcp-connector</code></td>
+  <td><code>0.2.66</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-storage-domain wants <code>*</code>; @deepseek-ai/dsh-client-ui-layout wants <code>*</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-chat-import</code></td>
+  <td><code>0.24.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh wants <code>&gt;=0.1.5-rc.1</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.0-rc.6 &lt;0.3.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@furongjun1999/dsh-memory</code></td>
+  <td><code>0.7.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.0-rc.6</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.0-rc.6</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@wxg-prc-cpg/browser-skill-dsh-plugin</code></td>
+  <td><code>0.3.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@morlay/session-rdb</code></td>
+  <td><code>0.1.5</code></td>
+  <td><span class="muted">no bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-palimpsest</code></td>
+  <td><code>0.1.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-tools wants <code>^0.1.5-rc.1</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@morlay/ui-conversation-message-actions</code></td>
+  <td><code>0.1.5</code></td>
+  <td><span class="muted">no bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-server-deck</code></td>
+  <td><code>0.3.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-host-webserver wants <code>0.1.1-rc.2 || &gt;=0.1.2-alpha.2 || ^0.1.5-rc.1</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-mnemosyne</code></td>
+  <td><code>0.7.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-tools wants <code>^0.1.5-rc.2</code>; @deepseek-ai/dsh-settings wants <code>^0.1.5-rc.2</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@kenz1117/dsh-ui-usage-billing</code></td>
+  <td><code>1.4.18</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>*</code>; @deepseek-ai/dsh-tools wants <code>*</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@noob-stupid/dsh-plugin-console</code></td>
+  <td><code>0.5.36</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-plugin-updates</code></td>
+  <td><code>2026.1003.4803</code></td>
+  <td><span class="muted">no bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@tt-a1i/archify-dsh</code></td>
+  <td><code>0.1.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-codex-connect</code></td>
+  <td><code>0.2.0-alpha.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-image-gen</code></td>
+  <td><code>0.8.5</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@eddyskywalker/dsh-chatgpt-subscription</code></td>
+  <td><code>0.11.4</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-codex-subscription</code></td>
+  <td><code>2.5.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-config-manager</code></td>
+  <td><code>0.1.68</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.0-rc.6 &lt;0.3.0-0</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.0-rc.6 &lt;0.3.0-0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-plugin</code></td>
+  <td><code>1.4.13</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-builtin-browser</code></td>
+  <td><code>0.4.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.1-rc.2 &lt;0.3.0</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.1-rc.2 &lt;0.3.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-plugin-catalog</code></td>
+  <td><code>2026.1003.4803</code></td>
+  <td><span class="muted">no bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-subscriptions</code></td>
+  <td><code>0.6.53</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@mrrisega/dsh-remote</code></td>
+  <td><code>0.6.18</code></td>
+  <td><span class="muted">no bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-russian-lang</code></td>
+  <td><code>0.3.34</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-vision-bridge</code></td>
+  <td><code>0.6.10</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-mobile</code></td>
+  <td><code>0.5.4</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>*</code>; @deepseek-ai/dsh-commands wants <code>*</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-client-auto-continue</code></td>
+  <td><code>0.12.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-vibe-math</code></td>
+  <td><code>2.7.3</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@aiwayds/dsh-tui-pi</code></td>
+  <td><code>2.26.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@nonamelego/dsh-catppuccin</code></td>
+  <td><code>0.5.9</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-dafeiyu</code></td>
+  <td><code>0.1.14</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-key-rotation</code></td>
+  <td><code>0.8.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-gitbash-shell</code></td>
+  <td><code>0.33.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh wants <code>&gt;=0.1.7-rc</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-workbuddy-connect</code></td>
+  <td><code>0.7.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-memory-eternal</code></td>
+  <td><code>0.7.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.0-rc.2 &lt;0.2.0</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.0-rc.2 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-status-rotator</code></td>
+  <td><code>0.34.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-image-gen</code></td>
+  <td><code>0.11.29</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-remote</code></td>
+  <td><code>0.8.36</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-tools wants <code>&gt;=0.1.0-rc.6 &lt;0.3.0</code>; @deepseek-ai/dsh-commands wants <code>&gt;=0.1.0-rc.6 &lt;0.3.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-plugin-subscriptions</code></td>
+  <td><code>0.9.7</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-cron</code></td>
+  <td><code>0.2.38</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.0-rc.6 &lt;0.1.1 || &gt;=0.1.1-rc.1 &lt;0.1.2 || &gt;=0.1.2-alpha.1 &lt;1.0.0</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.0-rc.6 &lt;0.1.1 || &gt;=0.1.1-rc.1 &lt;0.1.2 || &gt;=0.1.2-alpha.1 &lt;1.0.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-lanmode</code></td>
+  <td><code>0.8.19</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-plugin-shop</code></td>
+  <td><code>0.8.4</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-app-boot wants <code>^0.1.1-rc.2</code>; @deepseek-ai/dsh-home-paths wants <code>^0.1.1-rc.2</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@shuind/dsh-codex-harness</code></td>
+  <td><code>0.2.21</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-fs wants <code>&gt;=0.0.1-rc.1</code>; @deepseek-ai/dsh-llm wants <code>&gt;=0.1.0-rc.8</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-office-tools</code></td>
+  <td><code>1.0.5</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@huanlin/dsh-plugin-better-locale</code></td>
+  <td><code>0.4.3</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-client-locale wants <code>^0.1.5-rc.2</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-connect-workbuddy</code></td>
+  <td><code>3.4.4</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.7-rc.1 &lt;0.3.0-0</code>; @deepseek-ai/dsh-settings wants <code>&gt;=0.1.7-rc.1 &lt;0.3.0-0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>beauticode-dsh</code></td>
+  <td><code>1.0.28</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@wenbin_wb/dsh-bridge</code></td>
+  <td><code>2.12.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.0-rc.6</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@lolkda/dsh-skills-manager</code></td>
+  <td><code>0.2.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-skill wants <code>&gt;=0.1.5-rc.1</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-session-manager</code></td>
+  <td><code>0.6.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-mcp-panel</code></td>
+  <td><code>0.6.19</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-jobs wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-ppt</code></td>
+  <td><code>0.8.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-custom-mode</code></td>
+  <td><code>1.11.6</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-mattpocock-skills-deck</code></td>
+  <td><code>1.7.39</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-chat-manager</code></td>
+  <td><code>1.5.7</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-permission-rules</code></td>
+  <td><code>0.7.9</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-live-canvas</code></td>
+  <td><code>0.2.22</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-tools wants <code>&gt;=0.1.0-rc.6 &lt;0.1.1 || &gt;=0.1.1-rc.1 &lt;0.1.2 || &gt;=0.1.2-alpha.1 &lt;1.0.0</code>; @deepseek-ai/dsh-settings wants <code>&gt;=0.1.0-rc.6 &lt;0.1.1 || &gt;=0.1.1-rc.1 &lt;0.1.2 || &gt;=0.1.2-alpha.1 &lt;1.0.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@alpacachen/dsh-automation</code></td>
+  <td><code>0.3.32</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>^0.1.7-rc.2</code>; @deepseek-ai/dsh-agent wants <code>^0.1.7-rc.2</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@lemoncat7/dsh-knowledge</code></td>
+  <td><code>2.13.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@zaofan/dsh-qqbot</code></td>
+  <td><code>1.6.3</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.0-rc.6</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.0-rc.6</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>stratagate-dsh</code></td>
+  <td><code>0.2.95</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@microi.net/cli</code></td>
+  <td><code>5.8.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@memtensor/memos-local-plugin</code></td>
+  <td><code>2.0.20</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.0-rc.5 &lt;0.2.0</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.0-rc.5 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-pre-duediligence</code></td>
+  <td><code>0.1.40</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-voice</code></td>
+  <td><code>0.9.18</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-vscode-mode</code></td>
+  <td><code>0.14.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.0.1-rc.1 &lt;0.1.0 || &gt;=0.1.0-rc.1 &lt;0.2.0-0 || &gt;=0.1.1-0 &lt;0.2.0-0 || &gt;=0.1.2-0 &lt;0.2.0-0 || &gt;=0.1.3-0 &lt;0.2.0-0 || &gt;=0.1.4-0 &lt;0.2.0-0 || &gt;=0.1.5-0 &lt;0.2.0-0 || &gt;=0.1.6-0 &lt;0.2.0-0 || &gt;=0.1.7-0 &lt;0.2.0-0 || =0.2.0-rc.1</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.0.1-rc.1 &lt;0.1.0 || &gt;=0.1.0-rc.1 &lt;0.2.0-0 || &gt;=0.1.1-0 &lt;0.2.0-0 || &gt;=0.1.2-0 &lt;0.2.0-0 || &gt;=0.1.3-0 &lt;0.2.0-0 || &gt;=0.1.4-0 &lt;0.2.0-0 || &gt;=0.1.5-0 &lt;0.2.0-0 || &gt;=0.1.6-0 &lt;0.2.0-0 || &gt;=0.1.7-0 &lt;0.2.0-0 || =0.2.0-rc.1</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-taskboard</code></td>
+  <td><code>0.8.7</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-web-mobile</code></td>
+  <td><code>3.0.4</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-data-cleaning-agent</code></td>
+  <td><code>0.9.17</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-client-ui-layout wants <code>*</code>; @deepseek-ai/dsh-client-ui-conversation wants <code>*</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-m</code></td>
+  <td><code>0.9.28</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>meow-memory</code></td>
+  <td><code>0.29.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@weibaohui/skills-management</code></td>
+  <td><code>0.9.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-image-viewer</code></td>
+  <td><code>0.1.7</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-clinebot</code></td>
+  <td><code>0.5.15</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-plugin-marketplace</code></td>
+  <td><code>0.4.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-calendar</code></td>
+  <td><code>0.10.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>agents-gitflow-guard</code></td>
+  <td><code>0.1.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-tools wants <code>^0.1.0-rc.5</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-notify-me</code></td>
+  <td><code>1.5.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-better-workspace</code></td>
+  <td><code>0.27.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh wants <code>&gt;=0.1.6-alpha.2</code>; @deepseek-ai/dsh-settings wants <code>&gt;=0.1.0-rc.7</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-claude-style</code></td>
+  <td><code>0.10.4</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@gehennawu/dsh-service</code></td>
+  <td><code>2.0.5</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-auto-review</code></td>
+  <td><code>0.12.10</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-coding-subscription-oauth</code></td>
+  <td><code>0.8.5</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>0.1.1-rc.2</code>; @deepseek-ai/dsh-tools wants <code>0.1.1-rc.2</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@kenz1117/dsh-engram</code></td>
+  <td><code>0.7.15</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>*</code>; @deepseek-ai/dsh-agent wants <code>*</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-agentone</code></td>
+  <td><code>0.5.37</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-skill-hub</code></td>
+  <td><code>0.3.18</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-skill wants <code>&gt;=0.1.7-alpha.1 &lt;0.3.0-0</code>; @deepseek-ai/dsh-session wants <code>&gt;=0.1.7-alpha.1 &lt;0.3.0-0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@anysearch/anysearch-dsh</code></td>
+  <td><code>0.1.6</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-web wants <code>0.0.1-rc.5 || &gt;=0.1.0-rc.2 &lt;=0.1.0-rc.8 || &gt;=0.1.1-rc.1 &lt;=0.1.1-rc.2 || &gt;=0.1.2-alpha.2 &lt;=0.1.2-rc.1 || 0.1.3-alpha.2 || &gt;=0.1.5-alpha.1 &lt;=0.1.5-rc.2 || &gt;=0.1.6-alpha.1 &lt;=0.1.6-alpha.2</code>; @deepseek-ai/dsh-tools wants <code>0.0.1-rc.5 || &gt;=0.1.0-rc.2 &lt;=0.1.0-rc.8 || &gt;=0.1.1-rc.1 &lt;=0.1.1-rc.2 || &gt;=0.1.2-alpha.2 &lt;=0.1.2-rc.1 || 0.1.3-alpha.2 || &gt;=0.1.5-alpha.1 &lt;=0.1.5-rc.2 || &gt;=0.1.6-alpha.1 &lt;=0.1.6-alpha.2</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-plugin-admin</code></td>
+  <td><code>1.27.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@agent_forge/forge-dsh</code></td>
+  <td><code>1.74.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@huanlin/dsh-plugin-better-sidebar-plugin-office</code></td>
+  <td><code>0.2.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-win32</code></td>
+  <td><code>0.17.14</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-fs-local wants <code>&gt;=0.1.0-rc.5 &lt;0.2.0</code>; @deepseek-ai/dsh-fs-sandbox wants <code>&gt;=0.1.0-rc.5 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>ds-harness-remote</code></td>
+  <td><code>0.4.27</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-plugin-lookatstudy</code></td>
+  <td><code>0.26.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-tools wants <code>&gt;=0.1.0-rc.0</code>; @deepseek-ai/dsh-client-ui-conversation wants <code>&gt;=0.1.0-rc.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dshbase-catalog</code></td>
+  <td><code>0.3.46</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-muv-table</code></td>
+  <td><code>0.3.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-voice-mode</code></td>
+  <td><code>0.7.21</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-plugin-t-expert</code></td>
+  <td><code>0.4.67</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh wants <code>&gt;=0.1.5-rc.1</code>; @deepseek-ai/dsh-llm wants <code>&gt;=0.1.5-rc.1</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@lemoncat7/dsh-ssh</code></td>
+  <td><code>1.11.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-harmony</code></td>
+  <td><code>0.8.16</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-qwen-token-plan-cn-responses</code></td>
+  <td><code>0.1.9</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>^0.1.0-rc.6 || ^0.1.1-rc.1 || ^0.1.2-rc.1</code>; @deepseek-ai/dsh-credentials wants <code>^0.1.0-rc.6 || ^0.1.1-rc.1 || ^0.1.2-rc.1</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-thoughtdag</code></td>
+  <td><code>0.5.16</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1</code>; @deepseek-ai/dsh-web wants <code>&gt;=0.1.2-rc.1</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@hyzyn/dsh-safe</code></td>
+  <td><code>0.18.1</code></td>
+  <td><span class="muted">no bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-plugin-guide</code></td>
+  <td><code>0.3.19</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-plugin-cards</code></td>
+  <td><code>0.9.7</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>billion-context-dsh</code></td>
+  <td><code>0.2.26</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.5-alpha.1 &lt;0.1.6-0</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.5-alpha.1 &lt;0.1.6-0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-any-background</code></td>
+  <td><code>0.3.3</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-invariants wants <code>0.1.5-rc.2 || 0.1.5-rc.3 || 0.1.6-alpha.1 || 0.1.6-alpha.2 || 0.1.7-alpha.1 || 0.1.7-alpha.2 || 0.1.7-rc.1 || 0.1.7-rc.2 || 0.2.0-rc.1 || &gt;=0.1.7-alpha.1 &lt;0.2.0-alpha.0</code>; @deepseek-ai/dsh-client-store wants <code>0.1.5-rc.2 || 0.1.5-rc.3 || 0.1.6-alpha.1 || 0.1.6-alpha.2 || 0.1.7-alpha.1 || 0.1.7-alpha.2 || 0.1.7-rc.1 || 0.1.7-rc.2 || 0.2.0-rc.1 || &gt;=0.1.7-alpha.1 &lt;0.2.0-alpha.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-moa</code></td>
+  <td><code>0.2.37</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-better-reasoning-effort</code></td>
+  <td><code>0.5.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-archived-chats</code></td>
+  <td><code>1.4.6</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-ssh-tui</code></td>
+  <td><code>0.8.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@cocofhu/skillhub</code></td>
+  <td><code>0.2.16</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-tools wants <code>*</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-agy-link</code></td>
+  <td><code>0.4.42</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>*</code>; @deepseek-ai/dsh-tools wants <code>*</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-opencode-go</code></td>
+  <td><code>0.1.20</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-fs wants <code>&gt;=0.1.5-rc.1</code>; @deepseek-ai/dsh-llm wants <code>&gt;=0.1.5-rc.1</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-opencode-session</code></td>
+  <td><code>0.1.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-muv-engine</code></td>
+  <td><code>0.3.11</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@lemoncat7/dsh-partner</code></td>
+  <td><code>2.7.4</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/assistant-policy</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-pocket-console</code></td>
+  <td><code>1.0.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>*</code>; @deepseek-ai/dsh-credentials wants <code>*</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@mstar-harness/dsh</code></td>
+  <td><code>3.11.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-fs wants <code>^0.1.5-rc.2</code>; @deepseek-ai/dsh-llm wants <code>^0.1.5-rc.2</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-legal-suite</code></td>
+  <td><code>0.2.19</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-retrace</code></td>
+  <td><code>0.4.32</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-session wants <code>^0.1.0-rc.6</code>; @deepseek-ai/dsh-token-meter wants <code>^0.1.0-rc.6</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-email</code></td>
+  <td><code>0.15.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@perrylink/dsh-plugin-doctor</code></td>
+  <td><code>0.4.5</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-perm-gate</code></td>
+  <td><code>5.0.4</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-context-lens</code></td>
+  <td><code>0.1.28</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-mpkg-wallpaper</code></td>
+  <td><code>3.16.3</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-mc-art-panel</code></td>
+  <td><code>0.2.9</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-memento</code></td>
+  <td><code>0.5.18</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-tools wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-session wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-auth-gate</code></td>
+  <td><code>0.16.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-zhihu-search</code></td>
+  <td><code>2.0.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.7-alpha.1 &lt;0.3.0</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.7-alpha.1 &lt;0.3.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@yolk_vat-y/dsh-project-memory</code></td>
+  <td><code>0.5.14</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-livebench-panel</code></td>
+  <td><code>0.2.36</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/assistant-heartbeat</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-agent wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/personal-wiki</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-agent wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code>; @deepseek-ai/dsh-skill wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-doublecheck</code></td>
+  <td><code>0.9.17</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-swarm-orchestrator</code></td>
+  <td><code>0.6.30</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.1-rc.2</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.1-rc.2</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-omni-router</code></td>
+  <td><code>2.4.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>memory-eternal</code></td>
+  <td><code>0.10.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.0-rc.2 &lt;0.2.0</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.0-rc.2 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-model-sync</code></td>
+  <td><code>0.5.4</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-plugin-ops-core</code></td>
+  <td><code>0.15.2</code></td>
+  <td><span class="muted">no bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>deepseek-harness-zh_pro</code></td>
+  <td><code>0.9.6</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-gitea</code></td>
+  <td><code>0.7.20</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-plugin-ops-bundle</code></td>
+  <td><code>0.15.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-client-liang-intensity-skin</code></td>
+  <td><code>0.1.6</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/preference-learning</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@weibaohui/user-management</code></td>
+  <td><code>0.9.9</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>design-playbook</code></td>
+  <td><code>0.25.4</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dshhub-market</code></td>
+  <td><code>0.8.60</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-settings wants <code>^0.1.0-rc.7 || ^0.1.5-rc.2</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-approval-gate</code></td>
+  <td><code>0.5.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-tts</code></td>
+  <td><code>0.4.26</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-video-preview</code></td>
+  <td><code>0.1.4</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-smooth-stream</code></td>
+  <td><code>0.6.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-settings wants <code>*</code>; @deepseek-ai/dsh-client-locale wants <code>*</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-workbuddy-xdpool</code></td>
+  <td><code>1.8.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.1-rc.1 &lt;0.3.0</code>; @deepseek-ai/dsh-settings wants <code>&gt;=0.1.1-rc.1 &lt;0.3.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/plugin-control-plane</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-scope wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/assistant-health</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-agent wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-goal</code></td>
+  <td><code>0.2.17</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/credentials-keychain</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-damage-pulse</code></td>
+  <td><code>4.2.3</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/assistant-delivery</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code>; @deepseek-ai/dsh-goal wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/traex-acp-provider</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@firetruck666/dsh-task-board</code></td>
+  <td><code>0.8.9</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-host-webserver wants <code>&gt;=0.1.7-rc.2</code>; @deepseek-ai/dsh-client-connection wants <code>&gt;=0.1.7-rc.2</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-time-machine</code></td>
+  <td><code>0.1.25</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/memory-wiki-bridge</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-agent wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/lark-channel</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>pi2dsh</code></td>
+  <td><code>0.25.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>^0.1.0-rc.8 || ^0.1.1-rc.1 || ^0.1.2-alpha.1 || ^0.1.5-rc.1</code>; @deepseek-ai/dsh-scope wants <code>^0.1.0-rc.8 || ^0.1.1-rc.1 || ^0.1.2-alpha.1 || ^0.1.5-rc.1</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-checkpoint-rewind</code></td>
+  <td><code>0.6.18</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-lsp-actions</code></td>
+  <td><code>0.5.6</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-fs wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/acp</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-kanban</code></td>
+  <td><code>0.2.19</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.0-rc.6 &lt;0.1.1 || &gt;=0.1.1-rc.1 &lt;0.1.2 || &gt;=0.1.2-alpha.1 &lt;1.0.0</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.0-rc.6 &lt;0.1.1 || &gt;=0.1.1-rc.1 &lt;0.1.2 || &gt;=0.1.2-alpha.1 &lt;1.0.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-meme</code></td>
+  <td><code>0.1.44</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-tools wants <code>*</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/personal-assistant</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@telosmaylx/dsh-session-notify</code></td>
+  <td><code>0.1.22</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-connect-trae</code></td>
+  <td><code>2.7.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.7-rc.1 &lt;0.3.0-0</code>; @deepseek-ai/dsh-settings wants <code>&gt;=0.1.7-rc.1 &lt;0.3.0-0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/coding-subscription-provider</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@zaimokuza/dsh-acp-adapter</code></td>
+  <td><code>0.1.0-rc.10</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-attachment wants <code>&gt;=0.1.1-rc.2</code>; @deepseek-ai/dsh-api-remotes wants <code>&gt;=0.1.1-rc.2</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@xiaoso/dsh-tool-plus</code></td>
+  <td><code>0.1.12</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/assistant-growth-experiments</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/assistant-automations</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/event-triggers</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-library</code></td>
+  <td><code>0.2.16</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-fs wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-sessions-manager</code></td>
+  <td><code>3.7.6</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-workspace wants <code>&gt;=0.1.0-rc.6</code>; @deepseek-ai/dsh-session-query wants <code>&gt;=0.1.0-rc.6</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@yangdcm/dsh-expert-team</code></td>
+  <td><code>1.5.3</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-fs wants <code>&gt;=0.1.5-rc.1</code>; @deepseek-ai/dsh-commands wants <code>&gt;=0.1.5-rc.1</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/hello</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/personal-memory</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-fs wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code>; @deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-research-report</code></td>
+  <td><code>0.3.16</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-web wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-jobs wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-composer-ux</code></td>
+  <td><code>0.16.4</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-kimi-subscription</code></td>
+  <td><code>1.3.6</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.1-rc.2 &lt;0.3.0-0</code>; @deepseek-ai/dsh-web wants <code>&gt;=0.1.1-rc.2 &lt;0.3.0-0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@aiwayds/dsh-subagent-registry</code></td>
+  <td><code>0.13.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@wxg-prc-cpg/dsh-weknora</code></td>
+  <td><code>0.1.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@eternalloveone/dsh-palm</code></td>
+  <td><code>1.5.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-settings wants <code>&gt;=0.1.5-rc.1 &lt;0.1.8-0</code>; @deepseek-ai/dsh-client-ui-slots wants <code>&gt;=0.1.5-rc.1 &lt;0.1.8-0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@flowingspring/dsh-voco</code></td>
+  <td><code>0.3.13</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>^0.1.1-rc.1</code>; @deepseek-ai/dsh-agent wants <code>^0.1.1-rc.1</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-plugin-ops</code></td>
+  <td><code>0.15.2</code></td>
+  <td><span class="muted">no bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-budget</code></td>
+  <td><code>0.4.12</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-session-sync</code></td>
+  <td><code>0.2.20</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-git-badge</code></td>
+  <td><code>0.17.4</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-fund-research</code></td>
+  <td><code>0.4.16</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-tools wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-session wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@liustack/pptwise</code></td>
+  <td><code>0.40.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-file-review</code></td>
+  <td><code>0.8.8</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>canvas-workbench</code></td>
+  <td><code>1.9.51</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>0.1.0-rc.7 || &gt;=0.1.0 &lt;0.2.0 || &gt;=0.1.7-rc.1 &lt;0.2.0</code>; @deepseek-ai/dsh-tools wants <code>0.1.0-rc.7 || &gt;=0.1.0 &lt;0.2.0 || &gt;=0.1.7-rc.1 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-ai4scholar</code></td>
+  <td><code>0.3.7</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.0-rc.6</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.0-rc.6</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-background-by-model</code></td>
+  <td><code>0.7.4</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-invariants wants <code>&gt;=0.1.7-rc.2</code>; @deepseek-ai/dsh-client-store wants <code>&gt;=0.1.7-rc.2</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-skills-anywhere</code></td>
+  <td><code>0.18.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-skill wants <code>&gt;=0.1.5-rc.1</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.5-rc.1</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@wingsky-1/dsh-mcp-manager</code></td>
+  <td><code>0.2.8</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@wowyuarm/dsh-agent-team</code></td>
+  <td><code>0.2.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-observe</code></td>
+  <td><code>0.2.18</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-session wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-composer-history</code></td>
+  <td><code>0.8.7</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-client-ui-settings wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-client-ui-conversation wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/assistant-evolution</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@goodandready/dsh-messenger-gateway</code></td>
+  <td><code>0.4.9</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/assistant-evaluation</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code>; @deepseek-ai/dsh-goal wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-grok-subscription</code></td>
+  <td><code>2.0.5</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.5-rc.2 &lt;0.3.0-0</code>; @deepseek-ai/dsh-web wants <code>&gt;=0.1.5-rc.2 &lt;0.3.0-0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-soul-md</code></td>
+  <td><code>0.9.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@stardustlc/dsh-suite</code></td>
+  <td><code>0.2.16</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@perrylink/dsh-github</code></td>
+  <td><code>0.7.15</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-jobs wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-genui</code></td>
+  <td><code>0.2.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-system-prompt wants <code>&gt;=0.0.1-rc.1 &lt;0.1.0 || &gt;=0.1.0-rc.1 &lt;0.2.0-0</code>; @deepseek-ai/dsh-client-ui-slots wants <code>&gt;=0.0.1-rc.1 &lt;0.1.0 || &gt;=0.1.0-rc.1 &lt;0.2.0-0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-home-hosted</code></td>
+  <td><code>0.7.2</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-workbench</code></td>
+  <td><code>0.16.1</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-session wants <code>*</code>; @deepseek-ai/dsh-client-locale wants <code>*</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-deja</code></td>
+  <td><code>0.21.5</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@morlay/dsh-llm-openai-compatible</code></td>
+  <td><code>0.0.14</code></td>
+  <td><span class="muted">no bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>@wingsky-1/dsh-notifier</code></td>
+  <td><code>0.2.8</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-local-ai</code></td>
+  <td><code>0.2.14</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-tools wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@dsh-enhanced/assistant-recovery</code></td>
+  <td><code>0.1.48</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+<tr>
+  <td><code>dsh-fast</code></td>
+  <td><code>0.2.17</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-tools wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-session wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>dsh-click</code></td>
+  <td><code>0.3.15</code></td>
+  <td><span class="status status-pass">declares a bundle</span><p class="note">@deepseek-ai/dsh-llm wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code>; @deepseek-ai/dsh-agent wants <code>&gt;=0.1.2-rc.1 &lt;0.2.0 || &gt;=0.1.5-alpha.1 &lt;0.2.0 || &gt;=0.1.6-0 &lt;0.2.0 || &gt;=0.1.7-0 &lt;0.2.0</code></p></td>
+  <td><span class="status status-fail">would be refused</span></td>
+</tr>
+<tr>
+  <td><code>@waterwx/dsh-novel-forge</code></td>
+  <td><code>2.0.0</code></td>
+  <td><span class="status status-pass">declares a bundle</span></td>
+  <td><span class="status status-pass">peer-compatible</span></td>
+</tr>
+</tbody></table>
+<h2>Limits</h2>
+<ul><li>this reads registry metadata only: it confirms that a package DECLARES dsh.bundle.patch, not that the declared patch files exist in the published tarball</li><li>a package with no declared bundle may still be a legitimate DSH plugin shipped as a plain loader entry; the figure is about the bundle declaration, which is what makes a package composable</li><li>the search API ranks by its own relevance, not by popularity or quality, and the sample is the first page rather than the whole ecosystem</li><li>peer verdicts are evaluated against DSH 0.2.0-rc.2 using this repository&apos;s own SemVer evaluator, which reproduces the install decisions DSH made on the verified subjects; a range outside its supported grammar is reported as unsupported rather than assumed compatible</li></ul>
+</html>

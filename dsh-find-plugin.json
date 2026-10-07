@@ -1,0 +1,343 @@
+{
+  "schema": "dsh.plugin.report.v1",
+  "reportId": "npm:dsh-find-plugin@0.4.0",
+  "generatedAt": "2026-10-03T15:57:40.152Z",
+  "verifier": {
+    "name": "dsh-verified",
+    "version": "0.1.0",
+    "commit": "b07a7e8d009344208b960388aa24a9c5f8ec674c"
+  },
+  "subject": {
+    "spec": "dsh-find-plugin@0.4.0",
+    "name": "dsh-find-plugin",
+    "version": "0.4.0",
+    "registry": "https://registry.npmjs.org",
+    "tarball": "https://registry.npmjs.org/dsh-find-plugin/-/dsh-find-plugin-0.4.0.tgz",
+    "integrity": "sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==",
+    "shasum": "d9cf5df9ec8bab0f756ce4b8a7528c6a4641b9c2",
+    "repository": "git+https://github.com/awesome-dsh-plugin/dsh-find-plugin.git",
+    "license": "MIT",
+    "publishedAt": "2026-09-25T14:59:44.271Z",
+    "dshBundlePatch": "./cordis.patch.yml"
+  },
+  "runtime": {
+    "dshVersion": "0.2.0-rc.2",
+    "nodeVersion": "v24.21.0",
+    "os": "linux 6.17.0-1022-azure",
+    "arch": "x64"
+  },
+  "container": {
+    "image": "none",
+    "imageDigest": null,
+    "notes": "executed in a one-off container; the subject was installed, booted and removed there"
+  },
+  "verdict": "partial",
+  "dimensions": {
+    "L0_qualification": {
+      "id": "L0",
+      "status": "pass",
+      "summary": "declares dsh.bundle.patch and every declared patch path exists (15 files, 151561 bytes unpacked)",
+      "metrics": {
+        "fileCount": 15,
+        "unpackedBytes": 151561,
+        "patchPaths": [
+          "./cordis.patch.yml"
+        ],
+        "declaredEnginesDsh": null,
+        "shipsSource": true
+      },
+      "evidenceRefs": [
+        "e-resolve",
+        "e-tarball",
+        "e-l0"
+      ],
+      "notes": [
+        "dsh.manifestVersion is not declared; the reader does not infer a default"
+      ]
+    },
+    "L1_install": {
+      "id": "L1",
+      "status": "fail",
+      "summary": "peer-incompatible with the pinned runtime",
+      "metrics": {
+        "durationMs": 1639,
+        "exitCode": 1,
+        "declaredPeers": {
+          "@deepseek-ai/dsh-tools": "^0.1.0-rc.6 || ^0.1.1-rc.1 || ^0.1.2-alpha.2 || ^0.1.3-alpha.2 || ^0.1.5-alpha.1 || ^0.1.6-alpha.1 || ^0.1.7-alpha.1"
+        },
+        "bundlesAfterInstall": [
+          "@deepseek-ai/dsh-base"
+        ],
+        "pendingBuildScripts": [],
+        "buildScriptsApproved": 0,
+        "diagnosticsLog": "/work/dsh-home/profiles/verify/.plugin-manager/logs/operation-jqcPJ1/pnpm.log"
+      },
+      "evidenceRefs": [
+        "e-l1-install"
+      ],
+      "notes": [
+        "DSH refused the install: the plugin's declared peerDependencies on @deepseek-ai/dsh* do not match the runtime. An exact-version exemption would bypass this check; granting one is a user decision and is not done here.",
+        "no dependency build script was approved by the verifier; approval permits commands with the host user permissions"
+      ]
+    },
+    "L2_load": {
+      "id": "L2",
+      "status": "skip",
+      "summary": "not run: the subject did not install",
+      "evidenceRefs": [],
+      "notes": [
+        "loading a plugin that is not present would measure nothing"
+      ]
+    },
+    "L3_run": {
+      "id": "L3",
+      "status": "skip",
+      "summary": "not run: the subject did not install",
+      "evidenceRefs": [],
+      "notes": [
+        "a session cannot be attributed to a subject that is not present"
+      ]
+    },
+    "L4_capability": {
+      "id": "L4",
+      "status": "pass",
+      "summary": "2 capability signal(s) present across 9 scanned file(s)",
+      "metrics": {
+        "scannedFiles": 9,
+        "scannedBytes": 53201,
+        "skippedFiles": 0
+      },
+      "evidenceRefs": [
+        "e-l4",
+        "e-patch"
+      ],
+      "notes": [
+        "static analysis cannot see dynamically constructed code or prove intent"
+      ]
+    },
+    "L5_overhead": {
+      "id": "L5",
+      "status": "inconclusive",
+      "summary": "the subject did not install, so there was nothing to activate",
+      "metrics": {
+        "samples": 0
+      },
+      "evidenceRefs": [],
+      "notes": [
+        "no overhead claim is made when the differential could not be completed"
+      ]
+    },
+    "L6_uninstall": {
+      "id": "L6",
+      "status": "skip",
+      "summary": "not run: the subject did not install",
+      "evidenceRefs": [],
+      "notes": [
+        "removal was not attempted because nothing was installed"
+      ]
+    }
+  },
+  "capabilities": [
+    {
+      "id": "network_egress",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "author-source",
+      "notes": "can make outbound network requests",
+      "evidence": [
+        {
+          "file": "package/src/github.ts",
+          "line": 164,
+          "snippet": "res = await fetch(url, { headers, signal: signalFor() })"
+        },
+        {
+          "file": "package/src/registry.ts",
+          "line": 150,
+          "snippet": "const res = await fetch(REGISTRY_URL, { headers, signal: AbortSignal.timeout(TIMEOUT_MS) })"
+        },
+        {
+          "file": "package/lib/github.js",
+          "line": 125,
+          "snippet": "res = await fetch(url, { headers, signal: signalFor() });"
+        },
+        {
+          "file": "package/lib/registry.js",
+          "line": 111,
+          "snippet": "const res = await fetch(REGISTRY_URL, { headers, signal: AbortSignal.timeout(TIMEOUT_MS) });"
+        }
+      ]
+    },
+    {
+      "id": "writes_outside_workspace",
+      "present": true,
+      "confidence": "low",
+      "attribution": "author-source",
+      "notes": "resolves a path outside the workspace (e.g. os.homedir(), DSH_HOME), which is normal for DSH profile handling; static analysis cannot determine whether it also writes there",
+      "evidence": [
+        {
+          "file": "package/src/registry.ts",
+          "line": 73,
+          "snippet": "const fromEnv = process.env.DSH_HOME"
+        },
+        {
+          "file": "package/lib/registry.js",
+          "line": 42,
+          "snippet": "const fromEnv = process.env.DSH_HOME;"
+        }
+      ]
+    },
+    {
+      "id": "eval_or_dynamic_code",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "eval or synthesised code; common and often benign, and frequently bundler output",
+      "evidence": []
+    },
+    {
+      "id": "hooks_api_gate",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks the API/LLM path, so it can observe or alter provider traffic",
+      "evidence": []
+    },
+    {
+      "id": "hooks_system_prompt",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks system-prompt assembly, so it can influence what the model is told",
+      "evidence": []
+    },
+    {
+      "id": "listens_on_port",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "opens a listening socket",
+      "evidence": []
+    },
+    {
+      "id": "reads_secret_env",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "reads an environment variable whose name looks credential-shaped",
+      "evidence": []
+    },
+    {
+      "id": "runtime_patch",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "patches runtime objects rather than only registering its own services",
+      "evidence": []
+    },
+    {
+      "id": "spawns_process",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "spawns or would spawn an operating-system process",
+      "evidence": []
+    },
+    {
+      "id": "watches_filesystem",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "watches the filesystem; a recursive workspace watch is the documented cause of host stalls",
+      "evidence": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e-resolve",
+      "kind": "command",
+      "command": "resolve dsh-find-plugin@0.4.0 -> dsh-find-plugin@0.4.0",
+      "exitCode": 0,
+      "durationMs": 83,
+      "excerpt": "{\n  \"name\": \"dsh-find-plugin\",\n  \"version\": \"0.4.0\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/dsh-find-plugin/-/dsh-find-plugin-0.4.0.tgz\",\n  \"advertisedIntegrity\": \"sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==\",\n  \"publishedAt\": \"2026-09-25T14:59:44.271Z\"\n}"
+    },
+    {
+      "id": "e-tarball",
+      "kind": "artifact",
+      "command": "fetch https://registry.npmjs.org/dsh-find-plugin/-/dsh-find-plugin-0.4.0.tgz",
+      "exitCode": 0,
+      "durationMs": 20,
+      "excerpt": "{\n  \"bytes\": 45308,\n  \"resolvedIntegrity\": \"sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==\",\n  \"advertisedIntegrity\": \"sha512-XO0zQb3iHxK7IGGygfiGDxI3t4HUEBNLK4knqYmh8KuT2cbCWzmH+4PViaIgVPsiytC7mXN5p94u5fJc3VNsBw==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"39fc2dfd519b53bc71c9d4fb8cb7faa678d2c14ffb77c6df38daf0eedf0b56a0\"\n}",
+      "excerptBytes": 382,
+      "sha256": "39fc2dfd519b53bc71c9d4fb8cb7faa678d2c14ffb77c6df38daf0eedf0b56a0"
+    },
+    {
+      "id": "e-l0",
+      "kind": "static",
+      "command": "read published package.json and verify declared dsh.bundle.patch paths exist",
+      "excerpt": "{\n  \"status\": \"pass\",\n  \"reasons\": [],\n  \"declared\": {\n    \"manifestVersion\": null,\n    \"bundlePatch\": [\n      \"./cordis.patch.yml\"\n    ],\n    \"clientPlatform\": null,\n    \"enginesDsh\": null,\n    \"enginesNode\": null\n  },\n  \"missingPatchPaths\": [],\n  \"fileCount\": 15,\n  \"unpackedBytes\": 151561,\n  \"shipsSource\": true\n}",
+      "excerptBytes": 316
+    },
+    {
+      "id": "e-patch",
+      "kind": "static",
+      "command": "read cordis.patch.yml",
+      "excerpt": "# dsh bundle patch: inserts this plugin into a profile's layer stack.\n- insert:\n    - id: find-dsh-plugin\n      name: 'dsh-find-plugin'\n",
+      "excerptBytes": 136,
+      "sha256": "37d977ba706948ca4da431776e0e8f82598ad707b15bf23b27ff0ab2197b6f68"
+    },
+    {
+      "id": "e-l4",
+      "kind": "static",
+      "command": "scan 9 shipped source file(s) for capability signatures",
+      "excerpt": "{\n  \"present\": [\n    {\n      \"id\": \"network_egress\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/github.ts\",\n        \"line\": 164,\n        \"snippet\": \"res = await fetch(url, { headers, signal: signalFor() })\"\n      }\n    },\n    {\n      \"id\": \"writes_outside_workspace\",\n      \"confidence\": \"low\",\n      \"attribution\": \"author-source\",\n      \"firstEvidence\": {\n        \"file\": \"package/src/registry.ts\",\n        \"line\": 73,\n        \"snippet\": \"const fromEnv = process.env.DSH_HOME\"\n      }\n    }\n  ],\n  \"scannedFiles\": 9,\n  \"skippedFiles\": 0,\n  \"limits\": [\n    \"static analysis cannot see dynamically constructed code or prove intent\"\n  ]\n}",
+      "excerptBytes": 716
+    },
+    {
+      "id": "e-l1-install",
+      "kind": "command",
+      "command": "dsh plugin --profile verify add dsh-find-plugin@0.4.0",
+      "exitCode": 1,
+      "durationMs": 1639,
+      "excerpt": "dsh: initialized profile verify at /work/dsh-home/profiles/verify\n\ndsh: installation rejected: Plugin dsh-find-plugin@0.4.0 is incompatible with dsh 0.2.0-rc.2: peerDependencies {\"@deepseek-ai/dsh-tools\":\"^0.1.0-rc.6 || ^0.1.1-rc.1 || ^0.1.2-alpha.2 || ^0.1.3-alpha.2 || ^0.1.5-alpha.1 || ^0.1.6-alpha.1 || ^0.1.7-alpha.1\"}. Running it may cause crashes or data loss. Update the plugin or install a plugin version compatible with this dsh runtime. To accept this risk explicitly, grant the exact-version exemption for dsh-find-plugin@0.4.0 on dsh 0.2.0-rc.2 with `dsh plugin allow-version` or the plugin manager, then retry the installation or restart dsh. Exact-version exemption: not active.\ndsh: nothing was installed.\ndsh: to accept the risk, run: dsh plugin --profile verify allow-version dsh-find-plugin@0.4.0 --dsh-version 0.2.0-rc.2 --accept-risk\ndsh: plugin command failed; diagnostics: /work/dsh-home/profiles/verify/.plugin-manager/logs/operation-jqcPJ1/pnpm.log\n",
+      "excerptBytes": 974,
+      "truncated": false,
+      "sha256": "82972622d72610273261a3e1dc292553e415e004df65c83917e6542646623912"
+    }
+  ],
+  "redactions": [],
+  "disclaimers": [
+    "Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence."
+  ],
+  "limits": [
+    "static analysis cannot see dynamically constructed code or prove intent",
+    "L5 overhead sampling did not complete, so no cost claim is made",
+    "the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase",
+    "no dependency build script was approved by this executor",
+    "overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta",
+    "sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test"
+  ],
+  "bundlePatch": {
+    "path": "cordis.patch.yml",
+    "present": true,
+    "bytes": 136,
+    "entryCount": 2,
+    "disablesHostEntries": false,
+    "overridesConfig": false,
+    "usesJsExpressions": false,
+    "findings": [
+      {
+        "kind": "inserts-entry",
+        "line": 2,
+        "snippet": "- insert:"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 3,
+        "snippet": "- id: find-dsh-plugin"
+      }
+    ],
+    "notes": [
+      "textual analysis: a line number is provided for review, not a YAML object model"
+    ]
+  }
+}

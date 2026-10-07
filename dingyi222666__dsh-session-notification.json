@@ -1,0 +1,525 @@
+{
+  "schema": "dsh.plugin.report.v1",
+  "reportId": "npm:@dingyi222666/dsh-session-notification@0.2.2",
+  "generatedAt": "2026-10-07T05:03:39.395Z",
+  "verifier": {
+    "name": "dsh-verified",
+    "version": "0.2.0",
+    "commit": "c68e3c12b899b2d03a2e1f634baee51c276072ee"
+  },
+  "subject": {
+    "spec": "@dingyi222666/dsh-session-notification@0.2.2",
+    "name": "@dingyi222666/dsh-session-notification",
+    "version": "0.2.2",
+    "registry": "https://registry.npmjs.org",
+    "tarball": "https://registry.npmjs.org/@dingyi222666/dsh-session-notification/-/dsh-session-notification-0.2.2.tgz",
+    "integrity": "sha512-bD1QCZAq4I65qEaekN9LQNnW1mh3S1eHLfd1Cof3pduNcV3KuwoO05PT4nuuO9nCfSlEaUoxHOhSomaSR8r4pw==",
+    "shasum": "517fa87b29a34751ebbd07e4e2c85aa61c040200",
+    "repository": "git+https://github.com/dingyi222666/dsh-session-notification.git",
+    "license": "BSD-3-Clause",
+    "publishedAt": "2026-09-30T05:58:28.966Z",
+    "dshBundlePatch": "./cordis.patch.yml"
+  },
+  "runtime": {
+    "dshVersion": "0.2.0-rc.2",
+    "nodeVersion": "v24.21.0",
+    "os": "linux 6.17.0-1022-azure",
+    "arch": "x64"
+  },
+  "container": {
+    "image": "dsh-verifier:0.2.0-rc.2",
+    "imageDigest": "sha256:f82a047a4451bde2e76e62ef88faeb7900a34ac1af69b2cc1b664c87f256a372",
+    "notes": "network-denied execution container; install outcome: pass; fetch attempts: 1; execution attempts: 2; later phases ran only where their dimensions say so",
+    "prefetchAttempts": 1,
+    "executionAttempts": 2
+  },
+  "verdict": "verified",
+  "dimensions": {
+    "L0_qualification": {
+      "id": "L0",
+      "status": "pass",
+      "summary": "declares dsh.bundle.patch and every declared patch path exists (22 files, 145901 bytes unpacked)",
+      "metrics": {
+        "fileCount": 22,
+        "unpackedBytes": 145901,
+        "patchPaths": [
+          "./cordis.patch.yml"
+        ],
+        "declaredEnginesDsh": null,
+        "shipsSource": false
+      },
+      "evidenceRefs": [
+        "e-resolve",
+        "e-tarball",
+        "e-l0"
+      ],
+      "notes": [
+        "dsh.manifestVersion is not declared; the reader does not infer a default",
+        "tarball ships no src/ paths, so capability findings are limited to build output"
+      ]
+    },
+    "L1_install": {
+      "id": "L1",
+      "status": "pass",
+      "summary": "installed",
+      "metrics": {
+        "durationMs": 834,
+        "exitCode": 0,
+        "declaredPeers": null,
+        "bundlesAfterInstall": [
+          "@deepseek-ai/dsh-base",
+          "@dingyi222666/dsh-session-notification"
+        ],
+        "pendingBuildScripts": [],
+        "buildScriptsApproved": 0,
+        "diagnosticsLog": null
+      },
+      "evidenceRefs": [
+        "e-l1-install"
+      ],
+      "notes": [
+        "the CLI completed the install with exit code 0",
+        "no dependency build script was approved by the verifier; approval permits commands with the host user permissions"
+      ]
+    },
+    "L2_load": {
+      "id": "L2",
+      "status": "pass",
+      "summary": "1 Host row(s) active and browser client activated",
+      "metrics": {
+        "bootBoundMs": 25000,
+        "durationMs": 25057,
+        "signal": null,
+        "observedRows": 1,
+        "activeRows": 1,
+        "browserClientDeclared": true,
+        "browserClientActivated": true,
+        "browserStatus": "pass",
+        "browserErrorCount": 0
+      },
+      "evidenceRefs": [
+        "e-l2-boot",
+        "e-l2-inventory",
+        "e-l2-browser"
+      ],
+      "notes": [
+        "the Host rows were active and the real Web surface displayed the subject-owned Notifications section without browser errors",
+        "Host bundle rows were read from the running plugin manager; the browser result records the real Web surface marker and browser error counts"
+      ]
+    },
+    "L3_run": {
+      "id": "L3",
+      "status": "pass",
+      "summary": "a session completed with no credential",
+      "metrics": {
+        "replayAdapter": "@deepseek-ai/dsh-llm-replay@0.2.0-rc.2",
+        "probeTask": "reply with any text",
+        "events": {
+          "turnEndReason": {
+            "kind": "completed"
+          },
+          "finalEventSeen": true,
+          "textEventCount": 1,
+          "errorEventSeen": false,
+          "exitCode": 0,
+          "durationMs": 869,
+          "eventCount": 7
+        }
+      },
+      "evidenceRefs": [
+        "e-l3-session"
+      ],
+      "notes": [
+        "the model call was served by the official replay adapter from a fixture authored in this repository; no provider was contacted and no credential was present",
+        "probe task, stated verbatim: \"reply with any text\""
+      ]
+    },
+    "L4_capability": {
+      "id": "L4",
+      "status": "pass",
+      "summary": "0 capability signal(s) present across 18 scanned file(s)",
+      "metrics": {
+        "scannedFiles": 18,
+        "scannedBytes": 124872,
+        "skippedFiles": 0
+      },
+      "evidenceRefs": [
+        "e-l4",
+        "e-patch"
+      ],
+      "notes": [
+        "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+        "static analysis cannot see dynamically constructed code or prove intent"
+      ]
+    },
+    "L5_overhead": {
+      "id": "L5",
+      "status": "pass",
+      "summary": "no significant delta across 6 sampled run(s)",
+      "metrics": {
+        "samples": 6,
+        "baseline": {
+          "atMs": 8038,
+          "rss": 200536064,
+          "heapUsed": 58089992,
+          "external": 4426614,
+          "activeTotal": 10,
+          "watchers": 7,
+          "timers": 0,
+          "libuvHandles": 22,
+          "libuvActiveHandles": 17,
+          "fds": 20
+        },
+        "activated": {
+          "atMs": 8038,
+          "rss": 201375744,
+          "heapUsed": 58758776,
+          "external": 4428342,
+          "activeTotal": 11,
+          "watchers": 8,
+          "timers": 0,
+          "libuvHandles": 23,
+          "libuvActiveHandles": 18,
+          "fds": 20
+        },
+        "delta": {
+          "atMs": 0,
+          "rss": 839680,
+          "heapUsed": 668784,
+          "external": 1728,
+          "activeTotal": 1,
+          "watchers": 1,
+          "timers": 0,
+          "libuvHandles": 1,
+          "libuvActiveHandles": 1,
+          "fds": 0
+        }
+      },
+      "evidenceRefs": [
+        "e-l5-overhead"
+      ],
+      "notes": [
+        "no metric moved beyond the significance thresholds; that is the finding",
+        "differential attribution: baseline profile first, then the subject activated, same container and order",
+        "thresholds are coarse on purpose — order-of-magnitude watcher changes, RSS growth beyond 100 MiB, steady state more than 2 s later"
+      ]
+    },
+    "L6_uninstall": {
+      "id": "L6",
+      "status": "pass",
+      "summary": "removed without residue",
+      "metrics": {
+        "residue": [],
+        "durationMs": 381
+      },
+      "evidenceRefs": [
+        "e-l6-remove"
+      ],
+      "notes": [
+        "the profile retains no bundle selection, dependency entry or files for the subject"
+      ]
+    }
+  },
+  "capabilities": [
+    {
+      "id": "eval_or_dynamic_code",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "eval or synthesised code; common and often benign, and frequently bundler output",
+      "evidence": []
+    },
+    {
+      "id": "hooks_api_gate",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks the API/LLM path, so it can observe or alter provider traffic",
+      "evidence": []
+    },
+    {
+      "id": "hooks_system_prompt",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks system-prompt assembly, so it can influence what the model is told",
+      "evidence": []
+    },
+    {
+      "id": "listens_on_port",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "opens a listening socket",
+      "evidence": []
+    },
+    {
+      "id": "network_egress",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "can make outbound network requests",
+      "evidence": []
+    },
+    {
+      "id": "reads_secret_env",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "reads an environment variable whose name looks credential-shaped",
+      "evidence": []
+    },
+    {
+      "id": "runtime_patch",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "patches runtime objects rather than only registering its own services",
+      "evidence": []
+    },
+    {
+      "id": "spawns_process",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "spawns or would spawn an operating-system process",
+      "evidence": []
+    },
+    {
+      "id": "watches_filesystem",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "watches the filesystem; a recursive workspace watch is the documented cause of host stalls",
+      "evidence": []
+    },
+    {
+      "id": "writes_outside_workspace",
+      "present": false,
+      "confidence": "low",
+      "attribution": "unknown",
+      "notes": "resolves a path outside the workspace (e.g. os.homedir(), DSH_HOME), which is normal for DSH profile handling; static analysis cannot determine whether it also writes there",
+      "evidence": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e-resolve",
+      "kind": "command",
+      "command": "resolve @dingyi222666/dsh-session-notification@0.2.2 -> @dingyi222666/dsh-session-notification@0.2.2",
+      "exitCode": 0,
+      "durationMs": 314,
+      "excerpt": "{\n  \"name\": \"@dingyi222666/dsh-session-notification\",\n  \"version\": \"0.2.2\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/@dingyi222666/dsh-session-notification/-/dsh-session-notification-0.2.2.tgz\",\n  \"advertisedIntegrity\": \"sha512-bD1QCZAq4I65qEaekN9LQNnW1mh3S1eHLfd1Cof3pduNcV3KuwoO05PT4nuuO9nCfSlEaUoxHOhSomaSR8r4pw==\",\n  \"publishedAt\": \"2026-09-30T05:58:28.966Z\"\n}"
+    },
+    {
+      "id": "e-tarball",
+      "kind": "artifact",
+      "command": "fetch https://registry.npmjs.org/@dingyi222666/dsh-session-notification/-/dsh-session-notification-0.2.2.tgz",
+      "exitCode": 0,
+      "durationMs": 161,
+      "excerpt": "{\n  \"bytes\": 43504,\n  \"resolvedIntegrity\": \"sha512-bD1QCZAq4I65qEaekN9LQNnW1mh3S1eHLfd1Cof3pduNcV3KuwoO05PT4nuuO9nCfSlEaUoxHOhSomaSR8r4pw==\",\n  \"advertisedIntegrity\": \"sha512-bD1QCZAq4I65qEaekN9LQNnW1mh3S1eHLfd1Cof3pduNcV3KuwoO05PT4nuuO9nCfSlEaUoxHOhSomaSR8r4pw==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"c3dacb1daab82bc62548eb0b9c3af589ef2879c50e544a17bed0c82eba3a09bb\"\n}",
+      "excerptBytes": 382,
+      "sha256": "c3dacb1daab82bc62548eb0b9c3af589ef2879c50e544a17bed0c82eba3a09bb"
+    },
+    {
+      "id": "e-l0",
+      "kind": "static",
+      "command": "read published package.json and verify declared dsh.bundle.patch paths exist",
+      "excerpt": "{\n  \"status\": \"pass\",\n  \"reasons\": [],\n  \"declared\": {\n    \"manifestVersion\": null,\n    \"bundlePatch\": [\n      \"./cordis.patch.yml\"\n    ],\n    \"clientPlatform\": \"web\",\n    \"enginesDsh\": null,\n    \"enginesNode\": null\n  },\n  \"missingPatchPaths\": [],\n  \"fileCount\": 22,\n  \"unpackedBytes\": 145901,\n  \"shipsSource\": false\n}",
+      "excerptBytes": 318
+    },
+    {
+      "id": "e-patch",
+      "kind": "static",
+      "command": "read cordis.patch.yml",
+      "excerpt": "# The dsh-session-notification bundle patch: one plugin row added to the host\n# composition. Applied after the web-app bundle's patch layer; the row joins\n# the Loader entry list, so the node half registers the `dsh-session-notification`\n# settings namespace, and the modules node half serves lib/client.js into the\n# boot graph (the 通知 / Notifications settings section).\n- insert:\n    - id: dsh-session-notification\n      name: '@dingyi222666/dsh-session-notification'\n",
+      "excerptBytes": 474,
+      "sha256": "3e074821b9cdce6c226f25dc7333d8e622f28bb887cf7207fa25a97d508a26b3"
+    },
+    {
+      "id": "e-l4",
+      "kind": "static",
+      "command": "scan 18 shipped source file(s) for capability signatures",
+      "excerpt": "{\n  \"present\": [],\n  \"scannedFiles\": 18,\n  \"skippedFiles\": 0,\n  \"limits\": [\n    \"the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency\",\n    \"static analysis cannot see dynamically constructed code or prove intent\"\n  ]\n}",
+      "excerptBytes": 291
+    },
+    {
+      "id": "e-l1-install",
+      "kind": "command",
+      "command": "dsh plugin --profile verify add @dingyi222666/dsh-session-notification@0.2.2",
+      "exitCode": 0,
+      "durationMs": 834,
+      "excerpt": "Progress: resolved 1, reused 0, downloaded 0, added 0\n\ndependencies:\n+ @dingyi222666/dsh-session-notification 0.2.2\n\nPackages: +1\n+\nProgress: resolved 1, reused 1, downloaded 0, added 1, done\nDone in 281ms using pnpm v10.33.2\ndsh: initialized profile verify at <work>/dsh-home/profiles/verify\n",
+      "excerptBytes": 293,
+      "truncated": false,
+      "sha256": "55b2165a2f1903b2ccdbcc5eb37f45605b34f4ebd665d630c550adecd2ce1ea6"
+    },
+    {
+      "id": "e-l2-boot",
+      "kind": "command",
+      "command": "dsh --profile verify --patch <work>/fixtures/load/l2-overlay.yml",
+      "exitCode": 0,
+      "durationMs": 25057,
+      "excerpt": "",
+      "excerptBytes": 0,
+      "truncated": false,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "e-l2-browser",
+      "kind": "command",
+      "command": "node <work>/browser-probe.mjs @dingyi222666/dsh-session-notification@0.2.2 <work>/out/exec/l2-browser.json",
+      "exitCode": 0,
+      "durationMs": 5034,
+      "excerpt": "{\"spec\":\"@dingyi222666/dsh-session-notification@0.2.2\",\"status\":\"pass\",\"browserClientActivated\":true,\"markerText\":\"Notifications\",\"startupUrl\":\"http://127.0.0.1:8765/\",\"finalUrl\":\"http://127.0.0.1:8765/\",\"title\":\"DeepSeek Harness\",\"consoleErrors\":[],\"pageErrors\":[],\"failedRequests\":[],\"httpErrors\":[],\"durationMs\":4673}\n",
+      "excerptBytes": 321,
+      "truncated": false,
+      "sha256": "338be0ebc2c07b21f6f9f3ad02dabde7a9e532ad7bb92f427e853f5a443c93b7"
+    },
+    {
+      "id": "e-l2-inventory",
+      "kind": "sample",
+      "command": "pluginManager.listBundles() + pluginManager.listPlugins() in the running Host",
+      "excerpt": "{\"found\":true,\"enabled\":true,\"error\":null,\"overrides\":[],\"rows\":[{\"rowId\":\"dsh-session-notification\",\"entryId\":\"include:dsh-session-notification\",\"enabled\":true,\"fiberPhase\":\"active\"}],\"browserClientDeclared\":true,\"browser\":{\"spec\":\"@dingyi222666/dsh-session-notification@0.2.2\",\"status\":\"pass\",\"browserClientActivated\":true,\"markerText\":\"Notifications\",\"startupUrl\":\"http://127.0.0.1:8765/\",\"finalUrl\":\"http://127.0.0.1:8765/\",\"title\":\"DeepSeek Harness\",\"consoleErrors\":[],\"pageErrors\":[],\"failedRequests\":[],\"httpErrors\":[],\"durationMs\":4673}}",
+      "excerptBytes": 545,
+      "truncated": false
+    },
+    {
+      "id": "e-l6-remove",
+      "kind": "command",
+      "command": "dsh plugin --profile verify remove @dingyi222666/dsh-session-notification",
+      "exitCode": 0,
+      "durationMs": 381,
+      "excerpt": "\ndependencies:\n- @dingyi222666/dsh-session-notification 0.2.2\n\nAlready up to date\nDone in 220ms using pnpm v10.33.2\n",
+      "excerptBytes": 116,
+      "truncated": false,
+      "sha256": "ac91a2b5eb69a06299989665f3344e5f3c75b8b61a3c6ca4f5fec7af4d03b0a1"
+    },
+    {
+      "id": "e-l5-overhead",
+      "kind": "sample",
+      "command": "dsh --profile <baseline|activated> with the host sampler injected via NODE_OPTIONS=--import",
+      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8038,\n    \"rss\": 200536064,\n    \"heapUsed\": 58089992,\n    \"external\": 4426614,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8038,\n    \"rss\": 201375744,\n    \"heapUsed\": 58758776,\n    \"external\": 4428342,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 23,\n    \"libuvActiveHandles\": 18,\n    \"fds\": 20\n  },\n  \"delta\": {\n    \"atMs\": 0,\n    \"rss\": 839680,\n    \"heapUsed\": 668784,\n    \"external\": 1728,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 1,\n    \"libuvActiveHandles\": 1,\n    \"fds\": 0\n  },\n  \"significant\": []\n}"
+    },
+    {
+      "id": "e-l3-session",
+      "kind": "command",
+      "command": "dsh --profile l3 --patch <work>/fixtures/replay/l3-overlay.yml --json reply with any text",
+      "exitCode": 0,
+      "durationMs": 869,
+      "excerpt": "{\"type\":\"session\",\"sessionId\":\"[redacted:session-content]\",\"cwd\":\"<work>\"}\n{\"type\":\"status\",\"phase\":\"turn_start\",\"turn\":1}\n{\"type\":\"status\",\"phase\":\"step_start\",\"turn\":1,\"step\":1}\n{\"type\":\"text\",\"text\":\"[redacted:session-content]\"}\n{\"type\":\"status\",\"phase\":\"step_end\",\"turn\":1,\"step\":1}\n{\"type\":\"status\",\"phase\":\"turn_end\",\"turn\":1,\"reason\":{\"kind\":\"completed\"}}\n{\"type\":\"final\",\"text\":\"[redacted:session-content]\"}\n",
+      "excerptBytes": 416,
+      "truncated": false,
+      "sha256": "e18d2e19ea0d1944549314497ef91d90d60438708e444f633a0e62d0c298d3d3"
+    }
+  ],
+  "redactions": [],
+  "disclaimers": [
+    "Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence."
+  ],
+  "limits": [
+    "the artifact ships no source paths, so capability findings describe build output only; code-level attribution between the author and inlined dependencies is not resolvable from this artifact",
+    "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+    "static analysis cannot see dynamically constructed code or prove intent",
+    "L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model",
+    "network egress was denied; attempted destination hosts were not observable in this run",
+    "no dependency build script was approved by this executor",
+    "overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta",
+    "sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test",
+    "L3 session identifiers and text are redacted before execution evidence is written"
+  ],
+  "bundlePatch": {
+    "path": "cordis.patch.yml",
+    "present": true,
+    "bytes": 474,
+    "entryCount": 2,
+    "disablesHostEntries": false,
+    "overridesConfig": false,
+    "usesJsExpressions": false,
+    "findings": [
+      {
+        "kind": "inserts-entry",
+        "line": 6,
+        "snippet": "- insert:"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 7,
+        "snippet": "- id: dsh-session-notification"
+      }
+    ],
+    "notes": [
+      "textual analysis: a line number is provided for review, not a YAML object model"
+    ]
+  },
+  "overhead": {
+    "method": "differential",
+    "status": "no-significant-delta",
+    "samples": 6,
+    "baseline": {
+      "atMs": 8038,
+      "rss": 200536064,
+      "heapUsed": 58089992,
+      "external": 4426614,
+      "activeTotal": 10,
+      "watchers": 7,
+      "timers": 0,
+      "libuvHandles": 22,
+      "libuvActiveHandles": 17,
+      "fds": 20
+    },
+    "activated": {
+      "atMs": 8038,
+      "rss": 201375744,
+      "heapUsed": 58758776,
+      "external": 4428342,
+      "activeTotal": 11,
+      "watchers": 8,
+      "timers": 0,
+      "libuvHandles": 23,
+      "libuvActiveHandles": 18,
+      "fds": 20
+    },
+    "delta": {
+      "atMs": 0,
+      "rss": 839680,
+      "heapUsed": 668784,
+      "external": 1728,
+      "activeTotal": 1,
+      "watchers": 1,
+      "timers": 0,
+      "libuvHandles": 1,
+      "libuvActiveHandles": 1,
+      "fds": 0
+    },
+    "significant": [],
+    "resourceKinds": {
+      "baseline": {
+        "PipeWrap": 3,
+        "FSEventWrap": 7,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 7,
+        "loop": 1
+      },
+      "activated": {
+        "PipeWrap": 3,
+        "FSEventWrap": 8,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 8,
+        "loop": 1
+      }
+    }
+  }
+}

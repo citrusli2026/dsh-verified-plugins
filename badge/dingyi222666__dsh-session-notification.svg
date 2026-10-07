@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="131" height="20" role="img" aria-label="dsh plugin: verified">
+  <title>dsh-verified: verified — npm:@dingyi222666/dsh-session-notification@0.2.2. Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time.</title>
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="r"><rect width="131" height="20" rx="3" fill="#fff"/></clipPath>
+  <g clip-path="url(#r)">
+    <rect width="71" height="20" fill="#555"/>
+    <rect x="71" width="60" height="20" fill="#1f883d"/>
+    <rect width="131" height="20" fill="url(#s)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="35.5" y="15" fill="#010101" fill-opacity=".3">dsh plugin</text>
+    <text x="35.5" y="14">dsh plugin</text>
+    <text x="101" y="15" fill="#010101" fill-opacity=".3">verified</text>
+    <text x="101" y="14">verified</text>
+  </g>
+</svg>

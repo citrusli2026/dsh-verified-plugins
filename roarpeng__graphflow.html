@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>npm:@roarpeng/graphflow@2.2.0</title>
+<style>:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body { margin: 0 auto; max-width: 60rem; padding: 1.5rem 1rem 4rem;
+  font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+h1 { font-size: 1.6rem; margin: 0 0 .25rem; }
+h2 { font-size: 1.05rem; margin: 2rem 0 .5rem; text-transform: uppercase;
+  letter-spacing: .06em; opacity: .65; }
+a { color: inherit; }
+table { border-collapse: collapse; width: 100%; margin: .5rem 0; }
+th, td { text-align: left; padding: .35rem .5rem; border-bottom: 1px solid rgba(128,128,128,.25);
+  vertical-align: top; }
+code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85em; }
+pre { background: rgba(128,128,128,.12); padding: .6rem .75rem; border-radius: 4px; overflow-x: auto; }
+.status { font-weight: 600; }
+.status-pass { color: #1f883d; } .status-fail { color: #cf222e; }
+.status-skip, .status-blocked { color: #6e7781; }
+.status-inconclusive, .status-timeout { color: #bf8700; }
+.muted { opacity: .65; }
+.note { font-size: .9em; opacity: .8; margin: .2rem 0 0; }
+.tag { display: inline-block; border: 1px solid rgba(128,128,128,.45); border-radius: 3px;
+  padding: 0 .35rem; font-size: .8em; margin-right: .25rem; }</style>
+<p><a href="./index.html">← all reports</a></p>
+<h1>npm:@roarpeng/graphflow@2.2.0</h1>
+<p><a href="#top"><svg xmlns="http://www.w3.org/2000/svg" width="124" height="20" role="img" aria-label="dsh plugin: partial; historical method limitation">
+  <title>dsh-verified: partial — npm:@roarpeng/graphflow@2.2.0. Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Historical method limitation: this execution had network access and published container paths and replay fixture text.</title>
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="r"><rect width="124" height="20" rx="3" fill="#fff"/></clipPath>
+  <g clip-path="url(#r)">
+    <rect width="71" height="20" fill="#555"/>
+    <rect x="71" width="53" height="20" fill="#bf8700"/>
+    <rect width="124" height="20" fill="url(#s)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="35.5" y="15" fill="#010101" fill-opacity=".3">dsh plugin</text>
+    <text x="35.5" y="14">dsh plugin</text>
+    <text x="97.5" y="15" fill="#010101" fill-opacity=".3">partial</text>
+    <text x="97.5" y="14">partial</text>
+  </g>
+</svg>
+</a></p>
+
+<p><strong>Method limitation.</strong> This historical execution used a container with network access and published container paths and replay fixture text. The no-egress and redaction conditions were not met. See <a href="https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/security.md#7-historical-network-incident">the security incident</a>.</p>
+<p class="muted">sha512-IyY6QjSNuQLojcV92qR44ILiXwu0n/yeaQDd0zzOC18iMRqybt1wIiI7FCcPmUDInlvLd4rEnM49AYsW/AF4NA==</p>
+
+<h2>Subject</h2>
+<table>
+<tr><th>name</th><td><code>@roarpeng/graphflow</code></td></tr>
+<tr><th>version</th><td><code>2.2.0</code></td></tr>
+<tr><th>integrity</th><td><code>sha512-IyY6QjSNuQLojcV92qR44ILiXwu0n/yeaQDd0zzOC18iMRqybt1wIiI7FCcPmUDInlvLd4rEnM49AYsW/AF4NA==</code></td></tr>
+<tr><th>repository</th><td><a href="git+https://github.com/Roarpeng/GraphFlow.git">git+https://github.com/Roarpeng/GraphFlow.git</a></td></tr>
+<tr><th>declared bundle patch</th><td><code>&quot;./cordis.patch.yml&quot;</code></td></tr>
+<tr><th>declared engines.dsh</th><td><code>not declared</code> <span class="muted">— declarative and unenforced</span></td></tr>
+</table>
+
+<h2>Environment</h2>
+<table>
+<tr><th>DSH</th><td><code>0.2.0-rc.2</code></td></tr>
+<tr><th>Node</th><td><code>v24.21.0</code></td></tr>
+<tr><th>OS / arch</th><td><code>linux 6.17.0-1022-azure x64</code></td></tr>
+<tr><th>verifier</th><td><code>dsh-verified 0.1.0</code> <code>b737da1e4edd</code></td></tr>
+<tr><th>generated</th><td><code>2026-10-03T16:49:48.347Z</code></td></tr>
+</table>
+
+<h2>Dimensions</h2>
+<table>
+<thead><tr><th></th><th>status</th><th>summary</th><th>evidence</th></tr></thead>
+<tbody>
+<tr>
+  <td><code>L0</code></td>
+  <td class="status status-pass">pass</td>
+  <td>declares dsh.bundle.patch and every declared patch path exists (1204 files, 24261577 bytes unpacked)
+    <p class="note">dsh.manifestVersion is not declared; the reader does not infer a default</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;fileCount&quot;: 1204,
+  &quot;unpackedBytes&quot;: 24261577,
+  &quot;patchPaths&quot;: [
+    &quot;./cordis.patch.yml&quot;
+  ],
+  &quot;declaredEnginesDsh&quot;: null,
+  &quot;shipsSource&quot;: true
+}</pre></details>
+  </td>
+  <td><a href="#e-e-resolve"><code>e-resolve</code></a>, <a href="#e-e-tarball"><code>e-tarball</code></a>, <a href="#e-e-l0"><code>e-l0</code></a></td>
+</tr>
+<tr>
+  <td><code>L1</code></td>
+  <td class="status status-fail">fail</td>
+  <td>installation blocked pending dependency build-script approval
+    <p class="note">pnpm refused to run build scripts for 4 package(s) and the install did not complete. This verifier never approves them: approval permits commands with the host user&apos;s permissions, which is the user&apos;s decision and a finding rather than a chore. The requested scripts are listed in the metrics.</p><p class="note">no dependency build script was approved by the verifier; approval permits commands with the host user permissions</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;durationMs&quot;: 4847,
+  &quot;exitCode&quot;: 1,
+  &quot;declaredPeers&quot;: null,
+  &quot;bundlesAfterInstall&quot;: [
+    &quot;@deepseek-ai/dsh-base&quot;
+  ],
+  &quot;pendingBuildScripts&quot;: [
+    &quot;@roarpeng/graphflow@2.2.0&quot;,
+    &quot;better-sqlite3@12.11.1&quot;,
+    &quot;onnxruntime-node@1.30.0&quot;,
+    &quot;protobufjs@7.6.6&quot;
+  ],
+  &quot;buildScriptsApproved&quot;: 0,
+  &quot;diagnosticsLog&quot;: &quot;/work/dsh-home/profiles/verify/.plugin-manager/logs/operation-1SeoeV/pnpm.log&quot;
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l1-install"><code>e-l1-install</code></a></td>
+</tr>
+<tr>
+  <td><code>L2</code></td>
+  <td class="status status-skip">skip</td>
+  <td>not run: the subject did not install
+    <p class="note">loading a plugin that is not present would measure nothing</p>
+    
+  </td>
+  <td><span class="muted">no evidence cited</span></td>
+</tr>
+<tr>
+  <td><code>L3</code></td>
+  <td class="status status-skip">skip</td>
+  <td>not run: the subject did not install
+    <p class="note">a session cannot be attributed to a subject that is not present</p>
+    
+  </td>
+  <td><span class="muted">no evidence cited</span></td>
+</tr>
+<tr>
+  <td><code>L4</code></td>
+  <td class="status status-pass">pass</td>
+  <td>6 capability signal(s) present across 588 scanned file(s)
+    <p class="note">the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency</p><p class="note">static analysis cannot see dynamically constructed code or prove intent</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;scannedFiles&quot;: 588,
+  &quot;scannedBytes&quot;: 3569614,
+  &quot;skippedFiles&quot;: 0
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l4"><code>e-l4</code></a>, <a href="#e-e-patch"><code>e-patch</code></a></td>
+</tr>
+<tr>
+  <td><code>L5</code></td>
+  <td class="status status-inconclusive">inconclusive</td>
+  <td>the subject did not install, so there was nothing to activate
+    <p class="note">no overhead claim is made when the differential could not be completed</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;samples&quot;: 0
+}</pre></details>
+  </td>
+  <td><span class="muted">no evidence cited</span></td>
+</tr>
+<tr>
+  <td><code>L6</code></td>
+  <td class="status status-skip">skip</td>
+  <td>not run: the subject did not install
+    <p class="note">removal was not attempted because nothing was installed</p>
+    
+  </td>
+  <td><span class="muted">no evidence cited</span></td>
+</tr>
+</tbody>
+</table>
+
+<h2>Capability (L4, static)</h2>
+<table><thead><tr><th>capability</th><th>confidence</th><th>attribution</th><th>first evidence</th></tr></thead><tbody>
+<tr><td><code>hooks_system_prompt</code></td><td>medium</td><td>unknown</td><td><code>package/dsh/plugin.mjs:320</code></td></tr>
+<tr><td><code>listens_on_port</code></td><td>medium</td><td>build-output</td><td><code>package/dist/surfaces/mcp/server.js:588</code></td></tr>
+<tr><td><code>network_egress</code></td><td>low</td><td>build-output</td><td><code>package/dist/routing/provider-adapters/anthropic.js:21</code></td></tr>
+<tr><td><code>reads_secret_env</code></td><td>medium</td><td>build-output</td><td><code>package/dist/routing/provider-adapters/anthropic.js:9</code></td></tr>
+<tr><td><code>spawns_process</code></td><td>medium</td><td>unknown</td><td><code>package/scripts/safe-postinstall.cjs:5</code></td></tr>
+<tr><td><code>writes_outside_workspace</code></td><td>low</td><td>unknown</td><td><code>package/dsh/plugin.mjs:478</code></td></tr>
+</tbody></table>
+<p class="note">Capability is not intent. A signature records what the code can reach for, not what it does.</p>
+
+<h2>Overhead (L5, dynamic)</h2>
+<p class="muted">No overhead measurement was published for this report.</p>
+
+<h2>Evidence</h2>
+<table>
+<thead><tr><th>id</th><th>kind</th><th>artifact</th></tr></thead>
+<tbody>
+<tr id="e-e-resolve">
+  <td><code>e-resolve</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">409 ms</span></td>
+  <td><code>resolve @roarpeng/graphflow@2.2.0 -&gt; @roarpeng/graphflow@2.2.0</code>
+    <pre>{
+  &quot;name&quot;: &quot;@roarpeng/graphflow&quot;,
+  &quot;version&quot;: &quot;2.2.0&quot;,
+  &quot;registry&quot;: &quot;https://registry.npmjs.org&quot;,
+  &quot;tarball&quot;: &quot;https://registry.npmjs.org/@roarpeng/graphflow/-/graphflow-2.2.0.tgz&quot;,
+  &quot;advertisedIntegrity&quot;: &quot;sha512-IyY6QjSNuQLojcV92qR44ILiXwu0n/yeaQDd0zzOC18iMRqybt1wIiI7FCcPmUDInlvLd4rEnM49AYsW/AF4NA==&quot;,
+  &quot;publishedAt&quot;: &quot;2026-10-02T12:48:41.890Z&quot;
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-tarball">
+  <td><code>e-tarball</code></td>
+  <td>artifact <span class="muted">exit 0</span> <span class="muted">109 ms</span></td>
+  <td><code>fetch https://registry.npmjs.org/@roarpeng/graphflow/-/graphflow-2.2.0.tgz</code>
+    <pre>{
+  &quot;bytes&quot;: 3266668,
+  &quot;resolvedIntegrity&quot;: &quot;sha512-IyY6QjSNuQLojcV92qR44ILiXwu0n/yeaQDd0zzOC18iMRqybt1wIiI7FCcPmUDInlvLd4rEnM49AYsW/AF4NA==&quot;,
+  &quot;advertisedIntegrity&quot;: &quot;sha512-IyY6QjSNuQLojcV92qR44ILiXwu0n/yeaQDd0zzOC18iMRqybt1wIiI7FCcPmUDInlvLd4rEnM49AYsW/AF4NA==&quot;,
+  &quot;integrityMatchesRegistry&quot;: true,
+  &quot;sha256&quot;: &quot;c9fa6e2a74a0e367a4dbd37e997f31666ad825c334226e45ab60dfd6820ab168&quot;
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l0">
+  <td><code>e-l0</code></td>
+  <td>static</td>
+  <td><code>read published package.json and verify declared dsh.bundle.patch paths exist</code>
+    <pre>{
+  &quot;status&quot;: &quot;pass&quot;,
+  &quot;reasons&quot;: [],
+  &quot;declared&quot;: {
+    &quot;manifestVersion&quot;: null,
+    &quot;bundlePatch&quot;: [
+      &quot;./cordis.patch.yml&quot;
+    ],
+    &quot;clientPlatform&quot;: &quot;web&quot;,
+    &quot;enginesDsh&quot;: null,
+    &quot;enginesNode&quot;: &quot;&gt;=20&quot;
+  },
+  &quot;missingPatchPaths&quot;: [],
+  &quot;fileCount&quot;: 1204,
+  &quot;unpackedBytes&quot;: 24261577,
+  &quot;shipsSource&quot;: true
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-patch">
+  <td><code>e-patch</code></td>
+  <td>static</td>
+  <td><code>read cordis.patch.yml</code>
+    <pre># GraphFlow — DeepSeek Harness (dsh) 插件层
+#
+# 用法:
+#   dsh plugin --profile web add @roarpeng/graphflow
+#   npx @deepseek-ai/dsh web
+#   或已有 ~/.dsh 时: npx @roarpeng/graphflow install
+#
+# 能力:
+#   1) MCP 10 工具挂到 ctx.tools（cwd = 会话/工作区 process.cwd()）。
+#      模型侧名称: mcp__graphflow__graphflow_context / _plan / _run /
+#      _report_outcome / _insight / _index / _skill_insights /
+#      _diagnose / _artifact / _skill_guide
+#   2) ESM glue `@roarpeng/graphflow/dsh`：ctx.skills.register(graphflow)
+#      （dsh plugin add 即可用 skill，不必先 graphflow install）；
+#      agent/disposed 时不默认把 pending episode 标成成功（等同 Claude Code
+#      SessionEnd 空 $2 保持 pending）。显式 GRAPHFLOW_HOOK_SUCCESS=true|false
+#      才调用 graphflow outcome report。不监听 live session/flush。
+#   3) 首轮 agent/pre-step 注入一句短 hint：先调 graphflow_context（rootDir=cwd）。
+#
+# 调用约定: 先 context（传 rootDir），复杂任务再 plan；改完代码后 index；
+#   若走了 run，结束后必须 report_outcome。不要写死 GRAPHFLOW_WORKSPACE_ROOT。
+#
+# graphflow install（无 profile 包时）只写 MCP 行到 $DSH_HOME/cordis.patch.yml；
+# 已 `dsh plugin add` / profile 有包时会清空 home overlay，由 bundle 独占 MCP+glue
+# （避免 duplicate loader entry id / ERR_MODULE_NOT_FOUND）。
+# 完整安装请优先: dsh plugin --profile web add @roarpeng/graphflow
+
+- insert:
+    - id: mcp-graphflow
+      name: &apos;@deepseek-ai/dsh-mcp-client&apos;
+      config:
+        serverName: graphflow
+        transport: stdio
+        command: npx
+        args:
+          - &apos;-y&apos;
+          - &apos;--package=@roarpeng/graphflow&apos;
+          - graphflow-mcp
+        env:
+          GRAPHFLOW_MCP_STDIO: &apos;1&apos;
+          GRAPHFLOW_LOG_JSON: &apos;1&apos;
+        cwd: !!js process.cwd()
+        failOnStartupError: false
+    - id: graphflow-dsh
+      name: &apos;@roarpeng/graphflow/dsh&apos;
+</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l4">
+  <td><code>e-l4</code></td>
+  <td>static</td>
+  <td><code>scan 588 shipped source file(s) for capability signatures</code>
+    <pre>{
+  &quot;present&quot;: [
+    {
+      &quot;id&quot;: &quot;hooks_system_prompt&quot;,
+      &quot;confidence&quot;: &quot;medium&quot;,
+      &quot;attribution&quot;: &quot;unknown&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/dsh/plugin.mjs&quot;,
+        &quot;line&quot;: 320,
+        &quot;snippet&quot;: &quot;\&quot;system-prompt\&quot;,&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;listens_on_port&quot;,
+      &quot;confidence&quot;: &quot;medium&quot;,
+      &quot;attribution&quot;: &quot;build-output&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/dist/surfaces/mcp/server.js&quot;,
+        &quot;line&quot;: 588,
+        &quot;snippet&quot;: &quot;httpServer.listen(requestedPort, host, resolve);&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;network_egress&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;attribution&quot;: &quot;build-output&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/dist/routing/provider-adapters/anthropic.js&quot;,
+        &quot;line&quot;: 21,
+        &quot;snippet&quot;: &quot;const response = await fetch(`${baseUrl}/v1/messages`, {&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;reads_secret_env&quot;,
+      &quot;confidence&quot;: &quot;medium&quot;,
+      &quot;attribution&quot;: &quot;build-output&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/dist/routing/provider-adapters/anthropic.js&quot;,
+        &quot;line&quot;: 9,
+        &quot;snippet&quot;: &quot;const apiKey = process.env.ANTHROPIC_API_KEY;&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;spawns_process&quot;,
+      &quot;confidence&quot;: &quot;medium&quot;,
+      &quot;attribution&quot;: &quot;unknown&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/scripts/safe-postinstall.cjs&quot;,
+        &quot;line&quot;: 5,
+        &quot;snippet&quot;: &quot;const { spawnSync } = require(\&quot;node:child_process\&quot;);&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;writes_outside_workspace&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;attribution&quot;: &quot;unknown&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/dsh/plugin.mjs&quot;,
+        &quot;line&quot;: 478,
+        &quot;snippet&quot;: &quot;export function resolveCliForCapture(packageRoot = PACKAGE_ROOT, home = process.env.HOME || process.env.USERPROFILE) {&quot;
+      }
+    }
+  ],
+  &quot;scannedFiles&quot;: 588,
+  &quot;skippedFiles&quot;: 0,
+  &quot;limits&quot;: [
+    &quot;the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency&quot;,
+    &quot;static analysis cannot see dynamically construct</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l1-install">
+  <td><code>e-l1-install</code></td>
+  <td>command <span class="muted">exit 1</span> <span class="muted">4847 ms</span></td>
+  <td><code>dsh plugin --profile verify add @roarpeng/graphflow@2.2.0</code>
+    <pre>Downloading gpt-tokenizer@3.4.0: 0.00 B/17.68 MB
+Downloading onnxruntime-web@1.31.0-dev.20260914-8d85527a0: 0.00 B/33.18 MB
+Downloading onnxruntime-node@1.30.0: 0.00 B/113.50 MB
+Downloading @img/sharp-libvips-linux-x64@1.3.4: 0.00 B/8.21 MB
+[WARN] 1 deprecated subdependencies found: prebuild-install@7.1.3
+Downloading onnxruntime-node@1.30.0: 93.02 MB/113.50 MB
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11
+  Virtual store is at:             node_modules/.pnpm
+Packages: +186
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 185, reused 0, downloaded 188, added 186, done
+
+dependencies:
++ @roarpeng/graphflow 2.2.0
+
+dsh: initialized profile verify at /work/dsh-home/profiles/verify
+Error: ERR_PNPM_IGNORED_BUILDS
+
+  × adding a new package
+  ╰─▶ Ignored build scripts: @roarpeng/graphflow@2.2.0, better-
+      sqlite3@12.11.1, onnxruntime-node@1.30.0, protobufjs@7.6.6
+  help: Run &quot;pnpm approve-builds&quot; to pick which dependencies should be allowed
+        to run scripts.
+
+dsh: plugin command failed; diagnostics: /work/dsh-home/profiles/verify/.plugin-manager/logs/operation-1SeoeV/pnpm.log
+</pre>
+    
+  </td>
+</tr>
+</tbody>
+</table>
+
+<h2>Limits</h2>
+<ul><li>the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency</li><li>static analysis cannot see dynamically constructed code or prove intent</li><li>L5 overhead sampling did not complete, so no cost claim is made</li><li>the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase</li><li>no dependency build script was approved by this executor</li><li>overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta</li><li>sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test</li></ul>
+
+<h2>Disclaimers</h2>
+<ul><li>Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence.</li></ul>
+
+<p class="note"><a href="./roarpeng__graphflow.json">raw report JSON</a> · <a href="./badge/roarpeng__graphflow.svg">badge</a> · <a href="https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/appeals.md">dispute this report</a></p>
+</html>

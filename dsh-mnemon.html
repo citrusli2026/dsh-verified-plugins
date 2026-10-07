@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>npm:dsh-mnemon@0.5.23</title>
+<style>:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body { margin: 0 auto; max-width: 60rem; padding: 1.5rem 1rem 4rem;
+  font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+h1 { font-size: 1.6rem; margin: 0 0 .25rem; }
+h2 { font-size: 1.05rem; margin: 2rem 0 .5rem; text-transform: uppercase;
+  letter-spacing: .06em; opacity: .65; }
+a { color: inherit; }
+table { border-collapse: collapse; width: 100%; margin: .5rem 0; }
+th, td { text-align: left; padding: .35rem .5rem; border-bottom: 1px solid rgba(128,128,128,.25);
+  vertical-align: top; }
+code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85em; }
+pre { background: rgba(128,128,128,.12); padding: .6rem .75rem; border-radius: 4px; overflow-x: auto; }
+.status { font-weight: 600; }
+.status-pass { color: #1f883d; } .status-fail { color: #cf222e; }
+.status-skip, .status-blocked { color: #6e7781; }
+.status-inconclusive, .status-timeout { color: #bf8700; }
+.muted { opacity: .65; }
+.note { font-size: .9em; opacity: .8; margin: .2rem 0 0; }
+.tag { display: inline-block; border: 1px solid rgba(128,128,128,.45); border-radius: 3px;
+  padding: 0 .35rem; font-size: .8em; margin-right: .25rem; }</style>
+<p><a href="./index.html">← all reports</a></p>
+<h1>npm:dsh-mnemon@0.5.23</h1>
+<p><a href="#top"><svg xmlns="http://www.w3.org/2000/svg" width="131" height="20" role="img" aria-label="dsh plugin: verified; historical method limitation">
+  <title>dsh-verified: verified — npm:dsh-mnemon@0.5.23. Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Historical method limitation: this execution had network access and published container paths and replay fixture text.</title>
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="r"><rect width="131" height="20" rx="3" fill="#fff"/></clipPath>
+  <g clip-path="url(#r)">
+    <rect width="71" height="20" fill="#555"/>
+    <rect x="71" width="60" height="20" fill="#1f883d"/>
+    <rect width="131" height="20" fill="url(#s)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="35.5" y="15" fill="#010101" fill-opacity=".3">dsh plugin</text>
+    <text x="35.5" y="14">dsh plugin</text>
+    <text x="101" y="15" fill="#010101" fill-opacity=".3">verified</text>
+    <text x="101" y="14">verified</text>
+  </g>
+</svg>
+</a></p>
+<p><strong>Stale.</strong> the latest tag points at 0.5.24, while this report covers 0.5.23</p>
+<p><strong>Method limitation.</strong> This historical execution used a container with network access and published container paths and replay fixture text. The no-egress and redaction conditions were not met. See <a href="https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/security.md#7-historical-network-incident">the security incident</a>.</p>
+<p class="muted">sha512-Ey0rlzroEj1OpKmjU5NWaCrNLL0ujI4/8m5AjT+mZRA2fQERuL84gr1xDJ0RE8fK1WhzqRiwrV4pVTCXAGvirA==</p>
+
+<h2>Subject</h2>
+<table>
+<tr><th>name</th><td><code>dsh-mnemon</code></td></tr>
+<tr><th>version</th><td><code>0.5.23</code></td></tr>
+<tr><th>integrity</th><td><code>sha512-Ey0rlzroEj1OpKmjU5NWaCrNLL0ujI4/8m5AjT+mZRA2fQERuL84gr1xDJ0RE8fK1WhzqRiwrV4pVTCXAGvirA==</code></td></tr>
+<tr><th>repository</th><td><a href="git+https://github.com/omdsh-dev/dsh-mnemon.git">git+https://github.com/omdsh-dev/dsh-mnemon.git</a></td></tr>
+<tr><th>declared bundle patch</th><td><code>&quot;./cordis.patch.yml&quot;</code></td></tr>
+<tr><th>declared engines.dsh</th><td><code>not declared</code> <span class="muted">— declarative and unenforced</span></td></tr>
+</table>
+
+<h2>Environment</h2>
+<table>
+<tr><th>DSH</th><td><code>0.2.0-rc.2</code></td></tr>
+<tr><th>Node</th><td><code>v24.21.0</code></td></tr>
+<tr><th>OS / arch</th><td><code>linux 6.17.0-1022-azure x64</code></td></tr>
+<tr><th>verifier</th><td><code>dsh-verified 0.1.0</code> <code>ec8d77c8d74d</code></td></tr>
+<tr><th>generated</th><td><code>2026-10-03T16:23:19.346Z</code></td></tr>
+</table>
+
+<h2>Dimensions</h2>
+<table>
+<thead><tr><th></th><th>status</th><th>summary</th><th>evidence</th></tr></thead>
+<tbody>
+<tr>
+  <td><code>L0</code></td>
+  <td class="status status-pass">pass</td>
+  <td>declares dsh.bundle.patch and every declared patch path exists (59 files, 1519875 bytes unpacked)
+    <p class="note">dsh.manifestVersion is not declared; the reader does not infer a default</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;fileCount&quot;: 59,
+  &quot;unpackedBytes&quot;: 1519875,
+  &quot;patchPaths&quot;: [
+    &quot;./cordis.patch.yml&quot;
+  ],
+  &quot;declaredEnginesDsh&quot;: null,
+  &quot;shipsSource&quot;: true
+}</pre></details>
+  </td>
+  <td><a href="#e-e-resolve"><code>e-resolve</code></a>, <a href="#e-e-tarball"><code>e-tarball</code></a>, <a href="#e-e-l0"><code>e-l0</code></a></td>
+</tr>
+<tr>
+  <td><code>L1</code></td>
+  <td class="status status-pass">pass</td>
+  <td>installed
+    <p class="note">the CLI completed the install with exit code 0</p><p class="note">no dependency build script was approved by the verifier; approval permits commands with the host user permissions</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;durationMs&quot;: 2421,
+  &quot;exitCode&quot;: 0,
+  &quot;declaredPeers&quot;: null,
+  &quot;bundlesAfterInstall&quot;: [
+    &quot;@deepseek-ai/dsh-base&quot;,
+    &quot;dsh-mnemon&quot;
+  ],
+  &quot;pendingBuildScripts&quot;: [],
+  &quot;buildScriptsApproved&quot;: 0,
+  &quot;diagnosticsLog&quot;: null
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l1-install"><code>e-l1-install</code></a></td>
+</tr>
+<tr>
+  <td><code>L2</code></td>
+  <td class="status status-pass">pass</td>
+  <td>booted, mounted and stayed alive
+    <p class="note">the process was still running when the wall-clock bound reached it and reported no failure diagnostics, so the bundle was neither skipped nor rejected</p><p class="note">the fiber phase is not read directly: an early exit with diagnostics is the load-failure signal, and a boot that settles and waits is the success signal</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;bootBoundMs&quot;: 25000,
+  &quot;durationMs&quot;: 25066,
+  &quot;signal&quot;: null
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l2-boot"><code>e-l2-boot</code></a></td>
+</tr>
+<tr>
+  <td><code>L3</code></td>
+  <td class="status status-pass">pass</td>
+  <td>a session completed with no credential
+    <p class="note">the model call was served by the official replay adapter from a fixture authored in this repository; no provider was contacted and no credential was present</p><p class="note">probe task, stated verbatim: &quot;reply with any text&quot;</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;replayAdapter&quot;: &quot;@deepseek-ai/dsh-llm-replay@0.2.0-rc.2&quot;,
+  &quot;probeTask&quot;: &quot;reply with any text&quot;,
+  &quot;events&quot;: {
+    &quot;session&quot;: &quot;session-213ede21-1424-49ed-a85d-32f95c8e8247&quot;,
+    &quot;turnEndReason&quot;: {
+      &quot;kind&quot;: &quot;completed&quot;
+    },
+    &quot;finalText&quot;: &quot;Replay fixture: no provider was called.&quot;,
+    &quot;textEventCount&quot;: 1,
+    &quot;error&quot;: null,
+    &quot;exitCode&quot;: 0,
+    &quot;durationMs&quot;: 1480,
+    &quot;eventCount&quot;: 7
+  }
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l3-session"><code>e-l3-session</code></a></td>
+</tr>
+<tr>
+  <td><code>L4</code></td>
+  <td class="status status-pass">pass</td>
+  <td>5 capability signal(s) present across 50 scanned file(s)
+    <p class="note">the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency</p><p class="note">static analysis cannot see dynamically constructed code or prove intent</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;scannedFiles&quot;: 50,
+  &quot;scannedBytes&quot;: 1467754,
+  &quot;skippedFiles&quot;: 0
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l4"><code>e-l4</code></a>, <a href="#e-e-patch"><code>e-patch</code></a></td>
+</tr>
+<tr>
+  <td><code>L5</code></td>
+  <td class="status status-pass">pass</td>
+  <td>no significant delta across 6 sampled run(s)
+    <p class="note">no metric moved beyond the significance thresholds; that is the finding</p><p class="note">differential attribution: baseline profile first, then the subject activated, same container and order</p><p class="note">thresholds are coarse on purpose — order-of-magnitude watcher changes, RSS growth beyond 100 MiB, steady state more than 2 s later</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;samples&quot;: 6,
+  &quot;baseline&quot;: {
+    &quot;atMs&quot;: 8040,
+    &quot;rss&quot;: 199122944,
+    &quot;heapUsed&quot;: 68590120,
+    &quot;external&quot;: 5188103,
+    &quot;activeTotal&quot;: 10,
+    &quot;watchers&quot;: 7,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 22,
+    &quot;libuvActiveHandles&quot;: 17,
+    &quot;fds&quot;: 20
+  },
+  &quot;activated&quot;: {
+    &quot;atMs&quot;: 8039,
+    &quot;rss&quot;: 219471872,
+    &quot;heapUsed&quot;: 95159832,
+    &quot;external&quot;: 4704038,
+    &quot;activeTotal&quot;: 11,
+    &quot;watchers&quot;: 8,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 23,
+    &quot;libuvActiveHandles&quot;: 18,
+    &quot;fds&quot;: 20
+  },
+  &quot;delta&quot;: {
+    &quot;atMs&quot;: -1,
+    &quot;rss&quot;: 20348928,
+    &quot;heapUsed&quot;: 26569712,
+    &quot;external&quot;: -484065,
+    &quot;activeTotal&quot;: 1,
+    &quot;watchers&quot;: 1,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 1,
+    &quot;libuvActiveHandles&quot;: 1,
+    &quot;fds&quot;: 0
+  }
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l5-overhead"><code>e-l5-overhead</code></a></td>
+</tr>
+<tr>
+  <td><code>L6</code></td>
+  <td class="status status-pass">pass</td>
+  <td>removed without residue
+    <p class="note">the profile retains no bundle selection, dependency entry or files for the subject</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;residue&quot;: [],
+  &quot;durationMs&quot;: 275
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l6-remove"><code>e-l6-remove</code></a></td>
+</tr>
+</tbody>
+</table>
+
+<h2>Capability (L4, static)</h2>
+<table><thead><tr><th>capability</th><th>confidence</th><th>attribution</th><th>first evidence</th></tr></thead><tbody>
+<tr><td><code>eval_or_dynamic_code</code></td><td>medium</td><td>unknown</td><td><code>package/lib/testing.js:223</code></td></tr>
+<tr><td><code>hooks_system_prompt</code></td><td>medium</td><td>unknown</td><td><code>package/lib/index.js:2613</code></td></tr>
+<tr><td><code>network_egress</code></td><td>medium</td><td>unknown</td><td><code>package/lib/index.js:6452</code></td></tr>
+<tr><td><code>spawns_process</code></td><td>medium</td><td>unknown</td><td><code>package/lib/index.js:19</code></td></tr>
+<tr><td><code>writes_outside_workspace</code></td><td>low</td><td>unknown</td><td><code>package/lib/index.js:522</code></td></tr>
+</tbody></table>
+<p class="note">Capability is not intent. A signature records what the code can reach for, not what it does.</p>
+
+<h2>Overhead (L5, dynamic)</h2>
+<pre>{
+  &quot;status&quot;: &quot;no-significant-delta&quot;,
+  &quot;samples&quot;: 6,
+  &quot;baseline&quot;: {
+    &quot;atMs&quot;: 8040,
+    &quot;rss&quot;: 199122944,
+    &quot;heapUsed&quot;: 68590120,
+    &quot;external&quot;: 5188103,
+    &quot;activeTotal&quot;: 10,
+    &quot;watchers&quot;: 7,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 22,
+    &quot;libuvActiveHandles&quot;: 17,
+    &quot;fds&quot;: 20
+  },
+  &quot;activated&quot;: {
+    &quot;atMs&quot;: 8039,
+    &quot;rss&quot;: 219471872,
+    &quot;heapUsed&quot;: 95159832,
+    &quot;external&quot;: 4704038,
+    &quot;activeTotal&quot;: 11,
+    &quot;watchers&quot;: 8,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 23,
+    &quot;libuvActiveHandles&quot;: 18,
+    &quot;fds&quot;: 20
+  },
+  &quot;delta&quot;: {
+    &quot;atMs&quot;: -1,
+    &quot;rss&quot;: 20348928,
+    &quot;heapUsed&quot;: 26569712,
+    &quot;external&quot;: -484065,
+    &quot;activeTotal&quot;: 1,
+    &quot;watchers&quot;: 1,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 1,
+    &quot;libuvActiveHandles&quot;: 1,
+    &quot;fds&quot;: 0
+  },
+  &quot;significant&quot;: []
+}</pre>
+
+<h2>Evidence</h2>
+<table>
+<thead><tr><th>id</th><th>kind</th><th>artifact</th></tr></thead>
+<tbody>
+<tr id="e-e-resolve">
+  <td><code>e-resolve</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">193 ms</span></td>
+  <td><code>resolve dsh-mnemon@0.5.23 -&gt; dsh-mnemon@0.5.23</code>
+    <pre>{
+  &quot;name&quot;: &quot;dsh-mnemon&quot;,
+  &quot;version&quot;: &quot;0.5.23&quot;,
+  &quot;registry&quot;: &quot;https://registry.npmjs.org&quot;,
+  &quot;tarball&quot;: &quot;https://registry.npmjs.org/dsh-mnemon/-/dsh-mnemon-0.5.23.tgz&quot;,
+  &quot;advertisedIntegrity&quot;: &quot;sha512-Ey0rlzroEj1OpKmjU5NWaCrNLL0ujI4/8m5AjT+mZRA2fQERuL84gr1xDJ0RE8fK1WhzqRiwrV4pVTCXAGvirA==&quot;,
+  &quot;publishedAt&quot;: &quot;2026-10-03T12:47:58.797Z&quot;
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-tarball">
+  <td><code>e-tarball</code></td>
+  <td>artifact <span class="muted">exit 0</span> <span class="muted">44 ms</span></td>
+  <td><code>fetch https://registry.npmjs.org/dsh-mnemon/-/dsh-mnemon-0.5.23.tgz</code>
+    <pre>{
+  &quot;bytes&quot;: 351825,
+  &quot;resolvedIntegrity&quot;: &quot;sha512-Ey0rlzroEj1OpKmjU5NWaCrNLL0ujI4/8m5AjT+mZRA2fQERuL84gr1xDJ0RE8fK1WhzqRiwrV4pVTCXAGvirA==&quot;,
+  &quot;advertisedIntegrity&quot;: &quot;sha512-Ey0rlzroEj1OpKmjU5NWaCrNLL0ujI4/8m5AjT+mZRA2fQERuL84gr1xDJ0RE8fK1WhzqRiwrV4pVTCXAGvirA==&quot;,
+  &quot;integrityMatchesRegistry&quot;: true,
+  &quot;sha256&quot;: &quot;ad23be5b0c5751447710e65f03ef4ad3b6ef25dd2e959ceebe59cb869651c571&quot;
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l0">
+  <td><code>e-l0</code></td>
+  <td>static</td>
+  <td><code>read published package.json and verify declared dsh.bundle.patch paths exist</code>
+    <pre>{
+  &quot;status&quot;: &quot;pass&quot;,
+  &quot;reasons&quot;: [],
+  &quot;declared&quot;: {
+    &quot;manifestVersion&quot;: null,
+    &quot;bundlePatch&quot;: [
+      &quot;./cordis.patch.yml&quot;
+    ],
+    &quot;clientPlatform&quot;: &quot;web&quot;,
+    &quot;enginesDsh&quot;: null,
+    &quot;enginesNode&quot;: &quot;&gt;=20&quot;
+  },
+  &quot;missingPatchPaths&quot;: [],
+  &quot;fileCount&quot;: 59,
+  &quot;unpackedBytes&quot;: 1519875,
+  &quot;shipsSource&quot;: true
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-patch">
+  <td><code>e-patch</code></td>
+  <td>static</td>
+  <td><code>read cordis.patch.yml</code>
+    <pre># Mount the Mnemon bridge into a DSH profile. A profile&apos;s final patch may
+# replace this config row as a whole; use user settings or environment
+# variables for one-field overrides such as cliPath.
+- insert:
+    # Keep the v0.4 `mnemon` Entry as the public configuration target while
+    # making every v0.5 component inherit its enabled state. The expression
+    # reads the core row&apos;s own flag (rather than its effective state) to avoid
+    # recursing through this ancestor gate. The group itself prepares the
+    # Starter&apos;s dependency resolution before it imports its children.
+    - id: mnemon-bundle
+      name: dsh-mnemon/bundle
+      group: true
+      disabled: !!js &gt;-
+        ((entry) =&gt; entry.options.disabled?.__jsExpr
+          ? Boolean(entry.evaluate(entry.options.disabled.__jsExpr))
+          : Boolean(entry.options.disabled))
+        ([...loader.entries()].find(entry =&gt; entry.options.id === &apos;mnemon&apos;))
+      config:
+        - id: mnemon
+          # Core/Host and default settings. Sources own their independent Entries.
+          name: dsh-mnemon
+          config:
+            routingGuidance: true
+            lifecycleEnabled: true
+            recallMode: guided
+            writebackMode: guided
+            idleReviewMs: 30000
+            tabEnabled: true
+            writeEnabled: true
+            remoteAccess: read-only
+            timeoutMs: 10000
+            defaultRecallLimit: 10
+            embedding:
+              enabled: false
+              endpoint: http://localhost:11434
+              model: nomic-embed-text
+            recallQuality:
+              policy: strict-v1
+              lowScoreThreshold: 0.25
+              highScoreThreshold: 0.6
+              candidateMultiplier: 3
+              maxMediumResults: 4
+              maxUnknownResults: 2
+        - id: mnemon-source-runtime
+          name: dsh-mnemon-source-runtime
+        - id: mnemon-source-documents
+          name: dsh-mnemon-source-documents
+        - id: mnemon-source-memory-spaces
+          name: dsh-mnemon-source-memory-spaces
+        </pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l4">
+  <td><code>e-l4</code></td>
+  <td>static</td>
+  <td><code>scan 50 shipped source file(s) for capability signatures</code>
+    <pre>{
+  &quot;present&quot;: [
+    {
+      &quot;id&quot;: &quot;eval_or_dynamic_code&quot;,
+      &quot;confidence&quot;: &quot;medium&quot;,
+      &quot;attribution&quot;: &quot;unknown&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/lib/testing.js&quot;,
+        &quot;line&quot;: 223,
+        &quot;snippet&quot;: &quot;new Function(\&quot;window\&quot;, readFileSync(path, \&quot;utf8\&quot;))(window);&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;hooks_system_prompt&quot;,
+      &quot;confidence&quot;: &quot;medium&quot;,
+      &quot;attribution&quot;: &quot;unknown&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/lib/index.js&quot;,
+        &quot;line&quot;: 2613,
+        &quot;snippet&quot;: &quot;ctx.inject([\&quot;systemPrompt\&quot;], (prompted) =&gt; {&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;network_egress&quot;,
+      &quot;confidence&quot;: &quot;medium&quot;,
+      &quot;attribution&quot;: &quot;unknown&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/lib/index.js&quot;,
+        &quot;line&quot;: 6452,
+        &quot;snippet&quot;: &quot;const response = await fetch(url, {&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;spawns_process&quot;,
+      &quot;confidence&quot;: &quot;medium&quot;,
+      &quot;attribution&quot;: &quot;unknown&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/lib/index.js&quot;,
+        &quot;line&quot;: 19,
+        &quot;snippet&quot;: &quot;import { spawn } from \&quot;node:child_process\&quot;;&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;writes_outside_workspace&quot;,
+      &quot;confidence&quot;: &quot;low&quot;,
+      &quot;attribution&quot;: &quot;unknown&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/lib/index.js&quot;,
+        &quot;line&quot;: 522,
+        &quot;snippet&quot;: &quot;const globalRoot = process.env.MNEMON_DATA_DIR?.trim() || \&quot;~/.mnemon\&quot;;&quot;
+      }
+    }
+  ],
+  &quot;scannedFiles&quot;: 50,
+  &quot;skippedFiles&quot;: 0,
+  &quot;limits&quot;: [
+    &quot;the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency&quot;,
+    &quot;static analysis cannot see dynamically constructed code or prove intent&quot;
+  ]
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l1-install">
+  <td><code>e-l1-install</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">2421 ms</span></td>
+  <td><code>dsh plugin --profile verify add dsh-mnemon@0.5.23</code>
+    <pre>Progress: resolved 0, reused 0, downloaded 1, added 0
+Added 5 entries to minimumReleaseAgeExclude in pnpm-workspace.yaml (set minimumReleaseAgeStrict to true to gate these updates with a prompt):
+  dsh-mnemon-provider-holographic@0.5.6
+  dsh-mnemon-source-documents@0.5.9
+  dsh-mnemon-source-memory-spaces@0.5.15
+  dsh-mnemon-source-runtime@0.5.12
+  dsh-mnemon@0.5.23
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11
+  Virtual store is at:             node_modules/.pnpm
+Packages: +25
++++++++++++++++++++++++++
+Progress: resolved 25, reused 0, downloaded 25, added 25, done
+[WARN] Issues with peer dependencies found. Run &quot;pnpm peers check&quot; to list them.
+
+dependencies:
++ dsh-mnemon 0.5.23
+
+Done in 532ms using pnpm v12.8.1
+dsh: initialized profile verify at /work/dsh-home/profiles/verify
+</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l2-boot">
+  <td><code>e-l2-boot</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">25066 ms</span></td>
+  <td><code>dsh --profile verify</code>
+    
+    
+  </td>
+</tr>
+<tr id="e-e-l6-remove">
+  <td><code>e-l6-remove</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">275 ms</span></td>
+  <td><code>dsh plugin --profile verify remove dsh-mnemon</code>
+    <pre>Packages: -25
+-------------------------
+
+dependencies:
+- dsh-mnemon 0.5.23
+
+Done in 28ms using pnpm v12.8.1
+</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l5-overhead">
+  <td><code>e-l5-overhead</code></td>
+  <td>sample</td>
+  <td><code>dsh --profile &lt;baseline|activated&gt; with the host sampler injected via NODE_OPTIONS=--import</code>
+    <pre>{
+  &quot;method&quot;: &quot;differential&quot;,
+  &quot;status&quot;: &quot;no-significant-delta&quot;,
+  &quot;samples&quot;: 6,
+  &quot;baselineMedian&quot;: {
+    &quot;atMs&quot;: 8040,
+    &quot;rss&quot;: 199122944,
+    &quot;heapUsed&quot;: 68590120,
+    &quot;external&quot;: 5188103,
+    &quot;activeTotal&quot;: 10,
+    &quot;watchers&quot;: 7,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 22,
+    &quot;libuvActiveHandles&quot;: 17,
+    &quot;fds&quot;: 20
+  },
+  &quot;activatedMedian&quot;: {
+    &quot;atMs&quot;: 8039,
+    &quot;rss&quot;: 219471872,
+    &quot;heapUsed&quot;: 95159832,
+    &quot;external&quot;: 4704038,
+    &quot;activeTotal&quot;: 11,
+    &quot;watchers&quot;: 8,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 23,
+    &quot;libuvActiveHandles&quot;: 18,
+    &quot;fds&quot;: 20
+  },
+  &quot;delta&quot;: {
+    &quot;atMs&quot;: -1,
+    &quot;rss&quot;: 20348928,
+    &quot;heapUsed&quot;: 26569712,
+    &quot;external&quot;: -484065,
+    &quot;activeTotal&quot;: 1,
+    &quot;watchers&quot;: 1,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 1,
+    &quot;libuvActiveHandles&quot;: 1,
+    &quot;fds&quot;: 0
+  },
+  &quot;significant&quot;: []
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l3-session">
+  <td><code>e-l3-session</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">1480 ms</span></td>
+  <td><code>dsh --profile l3 --patch /work/fixtures/replay/l3-overlay.yml --json reply with any text</code>
+    <pre>{&quot;type&quot;:&quot;session&quot;,&quot;sessionId&quot;:&quot;session-213ede21-1424-49ed-a85d-32f95c8e8247&quot;,&quot;cwd&quot;:&quot;/work&quot;}
+{&quot;type&quot;:&quot;status&quot;,&quot;phase&quot;:&quot;turn_start&quot;,&quot;turn&quot;:1}
+{&quot;type&quot;:&quot;status&quot;,&quot;phase&quot;:&quot;step_start&quot;,&quot;turn&quot;:1,&quot;step&quot;:1}
+{&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:&quot;Replay fixture: no provider was called.&quot;}
+{&quot;type&quot;:&quot;status&quot;,&quot;phase&quot;:&quot;step_end&quot;,&quot;turn&quot;:1,&quot;step&quot;:1}
+{&quot;type&quot;:&quot;status&quot;,&quot;phase&quot;:&quot;turn_end&quot;,&quot;turn&quot;:1,&quot;reason&quot;:{&quot;kind&quot;:&quot;completed&quot;}}
+{&quot;type&quot;:&quot;final&quot;,&quot;text&quot;:&quot;Replay fixture: no provider was called.&quot;}
+</pre>
+    
+  </td>
+</tr>
+</tbody>
+</table>
+
+<h2>Limits</h2>
+<ul><li>the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency</li><li>static analysis cannot see dynamically constructed code or prove intent</li><li>L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model</li><li>the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase</li><li>no dependency build script was approved by this executor</li><li>overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta</li><li>sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test</li></ul>
+
+<h2>Disclaimers</h2>
+<ul><li>Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence.</li></ul>
+
+<p class="note"><a href="./dsh-mnemon.json">raw report JSON</a> · <a href="./badge/dsh-mnemon.svg">badge</a> · <a href="https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/appeals.md">dispute this report</a></p>
+</html>

@@ -1,0 +1,539 @@
+{
+  "schema": "dsh.plugin.report.v1",
+  "reportId": "npm:dsh-cost-meter@1.8.8",
+  "generatedAt": "2026-10-04T17:45:51.544Z",
+  "verifier": {
+    "name": "dsh-verified",
+    "version": "0.2.0",
+    "commit": "f78b5c4b87a98b36a3bde51d3f2f198a17c2f0eb"
+  },
+  "subject": {
+    "spec": "dsh-cost-meter@1.8.8",
+    "name": "dsh-cost-meter",
+    "version": "1.8.8",
+    "registry": "https://registry.npmjs.org",
+    "tarball": "https://registry.npmjs.org/dsh-cost-meter/-/dsh-cost-meter-1.8.8.tgz",
+    "integrity": "sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==",
+    "shasum": "b8859dc888ef90ca75ead8633bdf81c8c5ee5ce0",
+    "repository": "git+https://github.com/Han-1413141/dsh-cost-meter.git",
+    "license": "MIT",
+    "publishedAt": "2026-10-03T10:59:09.474Z",
+    "dshBundlePatch": "./cordis.patch.yml"
+  },
+  "runtime": {
+    "dshVersion": "0.2.0-rc.2",
+    "nodeVersion": "v24.21.0",
+    "os": "linux 6.17.0-1022-azure",
+    "arch": "x64"
+  },
+  "container": {
+    "image": "dsh-verifier:0.2.0-rc.2",
+    "imageDigest": "sha256:3fd6657657966a9cf3033f594771b82601be9b516fc9dfd46c021ca265bd4617",
+    "notes": "network-denied execution container; install outcome: pass; fetch attempts: 1; execution attempts: 2; later phases ran only where their dimensions say so",
+    "prefetchAttempts": 1,
+    "executionAttempts": 2
+  },
+  "verdict": "partial",
+  "dimensions": {
+    "L0_qualification": {
+      "id": "L0",
+      "status": "pass",
+      "summary": "declares dsh.bundle.patch and every declared patch path exists (48 files, 1458942 bytes unpacked)",
+      "metrics": {
+        "fileCount": 48,
+        "unpackedBytes": 1458942,
+        "patchPaths": [
+          "./cordis.patch.yml"
+        ],
+        "declaredEnginesDsh": null,
+        "shipsSource": false
+      },
+      "evidenceRefs": [
+        "e-resolve",
+        "e-tarball",
+        "e-l0"
+      ],
+      "notes": [
+        "dsh.manifestVersion is not declared; the reader does not infer a default",
+        "tarball ships no src/ paths, so capability findings are limited to build output"
+      ]
+    },
+    "L1_install": {
+      "id": "L1",
+      "status": "pass",
+      "summary": "installed",
+      "metrics": {
+        "durationMs": 1194,
+        "exitCode": 0,
+        "declaredPeers": null,
+        "bundlesAfterInstall": [
+          "@deepseek-ai/dsh-base",
+          "dsh-cost-meter"
+        ],
+        "pendingBuildScripts": [],
+        "buildScriptsApproved": 0,
+        "diagnosticsLog": null
+      },
+      "evidenceRefs": [
+        "e-l1-install"
+      ],
+      "notes": [
+        "the CLI completed the install with exit code 0",
+        "no dependency build script was approved by the verifier; approval permits commands with the host user permissions"
+      ]
+    },
+    "L2_load": {
+      "id": "L2",
+      "status": "inconclusive",
+      "summary": "Host loader rows active; browser client not observed",
+      "metrics": {
+        "bootBoundMs": 25000,
+        "durationMs": 25063,
+        "signal": null,
+        "observedRows": 1,
+        "activeRows": 1,
+        "browserClientDeclared": true
+      },
+      "evidenceRefs": [
+        "e-l2-boot",
+        "e-l2-inventory"
+      ],
+      "notes": [
+        "the subject declares dsh.client or its manifest could not be read; no browser client fiber was measured",
+        "Host bundle rows were read from the running plugin manager; browser client execution requires separate evidence"
+      ]
+    },
+    "L3_run": {
+      "id": "L3",
+      "status": "pass",
+      "summary": "a session completed with no credential",
+      "metrics": {
+        "replayAdapter": "@deepseek-ai/dsh-llm-replay@0.2.0-rc.2",
+        "probeTask": "reply with any text",
+        "events": {
+          "turnEndReason": {
+            "kind": "completed"
+          },
+          "finalEventSeen": true,
+          "textEventCount": 1,
+          "errorEventSeen": false,
+          "exitCode": 0,
+          "durationMs": 1326,
+          "eventCount": 7
+        }
+      },
+      "evidenceRefs": [
+        "e-l3-session"
+      ],
+      "notes": [
+        "the model call was served by the official replay adapter from a fixture authored in this repository; no provider was contacted and no credential was present",
+        "probe task, stated verbatim: \"reply with any text\""
+      ]
+    },
+    "L4_capability": {
+      "id": "L4",
+      "status": "pass",
+      "summary": "4 capability signal(s) present across 36 scanned file(s)",
+      "metrics": {
+        "scannedFiles": 36,
+        "scannedBytes": 1221328,
+        "skippedFiles": 0
+      },
+      "evidenceRefs": [
+        "e-l4",
+        "e-patch"
+      ],
+      "notes": [
+        "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+        "static analysis cannot see dynamically constructed code or prove intent"
+      ]
+    },
+    "L5_overhead": {
+      "id": "L5",
+      "status": "pass",
+      "summary": "no significant delta across 6 sampled run(s)",
+      "metrics": {
+        "samples": 6,
+        "baseline": {
+          "atMs": 8041,
+          "rss": 200003584,
+          "heapUsed": 58514200,
+          "external": 4426614,
+          "activeTotal": 10,
+          "watchers": 7,
+          "timers": 0,
+          "libuvHandles": 22,
+          "libuvActiveHandles": 17,
+          "fds": 20
+        },
+        "activated": {
+          "atMs": 8036,
+          "rss": 206131200,
+          "heapUsed": 75146424,
+          "external": 4651664,
+          "activeTotal": 11,
+          "watchers": 8,
+          "timers": 0,
+          "libuvHandles": 23,
+          "libuvActiveHandles": 19,
+          "fds": 20
+        },
+        "delta": {
+          "atMs": -5,
+          "rss": 6127616,
+          "heapUsed": 16632224,
+          "external": 225050,
+          "activeTotal": 1,
+          "watchers": 1,
+          "timers": 0,
+          "libuvHandles": 1,
+          "libuvActiveHandles": 2,
+          "fds": 0
+        }
+      },
+      "evidenceRefs": [
+        "e-l5-overhead"
+      ],
+      "notes": [
+        "no metric moved beyond the significance thresholds; that is the finding",
+        "differential attribution: baseline profile first, then the subject activated, same container and order",
+        "thresholds are coarse on purpose — order-of-magnitude watcher changes, RSS growth beyond 100 MiB, steady state more than 2 s later"
+      ]
+    },
+    "L6_uninstall": {
+      "id": "L6",
+      "status": "pass",
+      "summary": "removed without residue",
+      "metrics": {
+        "residue": [],
+        "durationMs": 521
+      },
+      "evidenceRefs": [
+        "e-l6-remove"
+      ],
+      "notes": [
+        "the profile retains no bundle selection, dependency entry or files for the subject"
+      ]
+    }
+  },
+  "capabilities": [
+    {
+      "id": "hooks_api_gate",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks the API/LLM path, so it can observe or alter provider traffic",
+      "evidence": [
+        {
+          "file": "package/lib/index.js",
+          "line": 3253,
+          "snippet": "ctx.on('llm/stream', createLlmStreamBilling({"
+        }
+      ]
+    },
+    {
+      "id": "network_egress",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "can make outbound network requests",
+      "evidence": [
+        {
+          "file": "package/lib/native-search-billing.js",
+          "line": 85,
+          "snippet": "const source = diagnostics(`undici:request:${name}`)"
+        },
+        {
+          "file": "package/lib/client.js",
+          "line": 3,
+          "snippet": "`),h=e(E,null,e(\"div\",{className:\"cm-mm-title\"},n(\"codingPlanMinimaxTitle\")),c.row,p.row,u?e(\"div\",{className:\"cm-mm-reset\"},\"5h · \"+u):null),x=e(E,null,e(\"div\",{className:\"cm-bbox-rail cm-num\"},c.tex…"
+        }
+      ]
+    },
+    {
+      "id": "spawns_process",
+      "present": true,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "spawns or would spawn an operating-system process",
+      "evidence": [
+        {
+          "file": "package/lib/cli-bridge.js",
+          "line": 5,
+          "snippet": "import { execFile } from 'node:child_process'"
+        }
+      ]
+    },
+    {
+      "id": "writes_outside_workspace",
+      "present": true,
+      "confidence": "low",
+      "attribution": "unknown",
+      "notes": "resolves a path outside the workspace (e.g. os.homedir(), DSH_HOME), which is normal for DSH profile handling; static analysis cannot determine whether it also writes there",
+      "evidence": [
+        {
+          "file": "package/lib/index.js",
+          "line": 690,
+          "snippet": "const home = process.env.USERPROFILE || process.env.HOME || ''"
+        }
+      ]
+    },
+    {
+      "id": "eval_or_dynamic_code",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "eval or synthesised code; common and often benign, and frequently bundler output",
+      "evidence": []
+    },
+    {
+      "id": "hooks_system_prompt",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks system-prompt assembly, so it can influence what the model is told",
+      "evidence": []
+    },
+    {
+      "id": "listens_on_port",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "opens a listening socket",
+      "evidence": []
+    },
+    {
+      "id": "reads_secret_env",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "reads an environment variable whose name looks credential-shaped",
+      "evidence": []
+    },
+    {
+      "id": "runtime_patch",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "patches runtime objects rather than only registering its own services",
+      "evidence": []
+    },
+    {
+      "id": "watches_filesystem",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "watches the filesystem; a recursive workspace watch is the documented cause of host stalls",
+      "evidence": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e-resolve",
+      "kind": "command",
+      "command": "resolve dsh-cost-meter@1.8.8 -> dsh-cost-meter@1.8.8",
+      "exitCode": 0,
+      "durationMs": 146,
+      "excerpt": "{\n  \"name\": \"dsh-cost-meter\",\n  \"version\": \"1.8.8\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/dsh-cost-meter/-/dsh-cost-meter-1.8.8.tgz\",\n  \"advertisedIntegrity\": \"sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==\",\n  \"publishedAt\": \"2026-10-03T10:59:09.474Z\"\n}"
+    },
+    {
+      "id": "e-tarball",
+      "kind": "artifact",
+      "command": "fetch https://registry.npmjs.org/dsh-cost-meter/-/dsh-cost-meter-1.8.8.tgz",
+      "exitCode": 0,
+      "durationMs": 49,
+      "excerpt": "{\n  \"bytes\": 411843,\n  \"resolvedIntegrity\": \"sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==\",\n  \"advertisedIntegrity\": \"sha512-qK4Wswen1Ek5QYFKI/kx7tQxKwjXn6Dr8SFE24YpLP8nOd3LofdZ+l5AltmBFrSOibStgtn0f2BBH/ymRr2UDw==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"21e4fd0d9655707fddb328ce8cb93cc49a8d21f304f946ae7674b336bba51080\"\n}",
+      "excerptBytes": 383,
+      "sha256": "21e4fd0d9655707fddb328ce8cb93cc49a8d21f304f946ae7674b336bba51080"
+    },
+    {
+      "id": "e-l0",
+      "kind": "static",
+      "command": "read published package.json and verify declared dsh.bundle.patch paths exist",
+      "excerpt": "{\n  \"status\": \"pass\",\n  \"reasons\": [],\n  \"declared\": {\n    \"manifestVersion\": null,\n    \"bundlePatch\": [\n      \"./cordis.patch.yml\"\n    ],\n    \"clientPlatform\": \"web\",\n    \"enginesDsh\": null,\n    \"enginesNode\": \">=20\"\n  },\n  \"missingPatchPaths\": [],\n  \"fileCount\": 48,\n  \"unpackedBytes\": 1458942,\n  \"shipsSource\": false\n}",
+      "excerptBytes": 321
+    },
+    {
+      "id": "e-patch",
+      "kind": "static",
+      "command": "read cordis.patch.yml",
+      "excerpt": "# dsh-cost-meter bundle patch: one host row over the Web or Desktop profile.\n# The row name resolves from the profile's own node_modules where\n# `dsh plugin --profile <profile> add <path>` installed this package.\n- insert:\n    - id: cost-meter\n      name: dsh-cost-meter\n",
+      "excerptBytes": 271,
+      "sha256": "0a0f660e4cece87463bb7d2b4757bbf2789ba5e49dbc11651a7298dc99a148bc"
+    },
+    {
+      "id": "e-l4",
+      "kind": "static",
+      "command": "scan 36 shipped source file(s) for capability signatures",
+      "excerpt": "{\n  \"present\": [\n    {\n      \"id\": \"hooks_api_gate\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/lib/index.js\",\n        \"line\": 3253,\n        \"snippet\": \"ctx.on('llm/stream', createLlmStreamBilling({\"\n      }\n    },\n    {\n      \"id\": \"network_egress\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/lib/native-search-billing.js\",\n        \"line\": 85,\n        \"snippet\": \"const source = diagnostics(`undici:request:${name}`)\"\n      }\n    },\n    {\n      \"id\": \"spawns_process\",\n      \"confidence\": \"medium\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/lib/cli-bridge.js\",\n        \"line\": 5,\n        \"snippet\": \"import { execFile } from 'node:child_process'\"\n      }\n    },\n    {\n      \"id\": \"writes_outside_workspace\",\n      \"confidence\": \"low\",\n      \"attribution\": \"unknown\",\n      \"firstEvidence\": {\n        \"file\": \"package/lib/index.js\",\n        \"line\": 690,\n        \"snippet\": \"const home = process.env.USERPROFILE || process.env.HOME || ''\"\n      }\n    }\n  ],\n  \"scannedFiles\": 36,\n  \"skippedFiles\": 0,\n  \"limits\": [\n    \"the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency\",\n    \"static analysis cannot see dynamically constructed code or prove intent\"\n  ]\n}",
+      "excerptBytes": 1407
+    },
+    {
+      "id": "e-l1-install",
+      "kind": "command",
+      "command": "dsh plugin --profile verify add dsh-cost-meter@1.8.8",
+      "exitCode": 0,
+      "durationMs": 1194,
+      "excerpt": "Progress: resolved 1, reused 0, downloaded 0, added 0\n WARN  Issues with peer dependencies found\n.\n└─┬ dsh-cost-meter 1.8.8\n  ├── ✕ missing peer @deepseek-ai/dsh-home-paths@\"^0.1.0-rc.6 || ^0.1.1-0 || ^0.1.2-0 || ^0.1.3-0 || ^0.1.5-0 || >=0.2.0-rc.1 <0.3.0-0\"\n  └── ✕ missing peer @deepseek-ai/dsh-credentials@\"^0.1.0-rc.6 || ^0.1.1-0 || ^0.1.2-0 || ^0.1.3-0 || ^0.1.5-0 || >=0.2.0-rc.1 <0.3.0-0\"\nPeer dependencies that should be installed:\n  @deepseek-ai/dsh-credentials@\"^0.1.0-rc.6 || ^0.1.1-0 || ^0.1.2-0 || ^0.1.3-0 || ^0.1.5-0 || >=0.2.0-rc.1 <0.3.0-0\"\n  @deepseek-ai/dsh-home-paths@\"^0.1.0-rc.6 || ^0.1.1-0 || ^0.1.2-0 || ^0.1.3-0 || ^0.1.5-0 || >=0.2.0-rc.1 <0.3.0-0\"\n\ndependencies:\n+ dsh-cost-meter 1.8.8\n\nPackages: +2\n++\nProgress: resolved 2, reused 2, downloaded 0, added 2, done\nDone in 469ms using pnpm v10.33.2\ndsh: initialized profile verify at <work>/dsh-home/profiles/verify\n",
+      "excerptBytes": 918,
+      "truncated": false,
+      "sha256": "97cb7c48f57a216816246d9004b4f2b149c780dac536abe8fc3f06beaf682da3"
+    },
+    {
+      "id": "e-l2-boot",
+      "kind": "command",
+      "command": "dsh --profile verify --patch <work>/fixtures/load/l2-overlay.yml",
+      "exitCode": 0,
+      "durationMs": 25063,
+      "excerpt": "[dsh-cost-meter] 已加载,账本:<work>/dsh-home/storages/cost-meter/ledger.json\n[dsh-cost-meter] OpenRouter 价格刷新失败(保留本地价格): fetch failed\n",
+      "excerptBytes": 163,
+      "truncated": false,
+      "sha256": "d093b95e64c1b896ecce2600b68d66b13a1e21c7477ed55712e20a02f4535fad"
+    },
+    {
+      "id": "e-l2-inventory",
+      "kind": "sample",
+      "command": "pluginManager.listBundles() + pluginManager.listPlugins() in the running Host",
+      "excerpt": "{\"found\":true,\"enabled\":true,\"error\":null,\"overrides\":[],\"rows\":[{\"rowId\":\"cost-meter\",\"entryId\":\"include:cost-meter\",\"enabled\":true,\"fiberPhase\":\"active\"}],\"browserClientDeclared\":true}",
+      "excerptBytes": 186,
+      "truncated": false
+    },
+    {
+      "id": "e-l6-remove",
+      "kind": "command",
+      "command": "dsh plugin --profile verify remove dsh-cost-meter",
+      "exitCode": 0,
+      "durationMs": 521,
+      "excerpt": "\ndependencies:\n- dsh-cost-meter 1.8.8\n\nAlready up to date\nDone in 328ms using pnpm v10.33.2\n",
+      "excerptBytes": 92,
+      "truncated": false,
+      "sha256": "af6b75b887da6eefd173219c40644dd0b2000daa46a3030b9788a99d01c0f9d6"
+    },
+    {
+      "id": "e-l5-overhead",
+      "kind": "sample",
+      "command": "dsh --profile <baseline|activated> with the host sampler injected via NODE_OPTIONS=--import",
+      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8041,\n    \"rss\": 200003584,\n    \"heapUsed\": 58514200,\n    \"external\": 4426614,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8036,\n    \"rss\": 206131200,\n    \"heapUsed\": 75146424,\n    \"external\": 4651664,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 23,\n    \"libuvActiveHandles\": 19,\n    \"fds\": 20\n  },\n  \"delta\": {\n    \"atMs\": -5,\n    \"rss\": 6127616,\n    \"heapUsed\": 16632224,\n    \"external\": 225050,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 1,\n    \"libuvActiveHandles\": 2,\n    \"fds\": 0\n  },\n  \"significant\": []\n}"
+    },
+    {
+      "id": "e-l3-session",
+      "kind": "command",
+      "command": "dsh --profile l3 --patch <work>/fixtures/replay/l3-overlay.yml --json reply with any text",
+      "exitCode": 0,
+      "durationMs": 1326,
+      "excerpt": "[dsh-cost-meter] 已加载,账本:<work>/dsh-home/storages/cost-meter/ledger.json\n{\"type\":\"session\",\"sessionId\":\"[redacted:session-content]\",\"cwd\":\"<work>\"}\n{\"type\":\"status\",\"phase\":\"turn_start\",\"turn\":1}\n{\"type\":\"status\",\"phase\":\"step_start\",\"turn\":1,\"step\":1}\n{\"type\":\"text\",\"text\":\"[redacted:session-content]\"}\n{\"type\":\"status\",\"phase\":\"step_end\",\"turn\":1,\"step\":1}\n{\"type\":\"status\",\"phase\":\"turn_end\",\"turn\":1,\"reason\":{\"kind\":\"completed\"}}\n{\"type\":\"final\",\"text\":\"[redacted:session-content]\"}\n",
+      "excerptBytes": 498,
+      "truncated": false,
+      "sha256": "8c43cf11f896c9dc851d92f6a8ac5c60bc61c8d95982c1e08b192a0a83977a0c"
+    }
+  ],
+  "redactions": [],
+  "disclaimers": [
+    "Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence."
+  ],
+  "limits": [
+    "the artifact ships no source paths, so capability findings describe build output only; code-level attribution between the author and inlined dependencies is not resolvable from this artifact",
+    "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+    "static analysis cannot see dynamically constructed code or prove intent",
+    "L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model",
+    "network egress was denied; attempted destination hosts were not observable in this run",
+    "no dependency build script was approved by this executor",
+    "overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta",
+    "sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test",
+    "L3 session identifiers and text are redacted before execution evidence is written"
+  ],
+  "bundlePatch": {
+    "path": "cordis.patch.yml",
+    "present": true,
+    "bytes": 271,
+    "entryCount": 2,
+    "disablesHostEntries": false,
+    "overridesConfig": false,
+    "usesJsExpressions": false,
+    "findings": [
+      {
+        "kind": "inserts-entry",
+        "line": 4,
+        "snippet": "- insert:"
+      },
+      {
+        "kind": "inserts-entry",
+        "line": 5,
+        "snippet": "- id: cost-meter"
+      }
+    ],
+    "notes": [
+      "textual analysis: a line number is provided for review, not a YAML object model"
+    ]
+  },
+  "overhead": {
+    "method": "differential",
+    "status": "no-significant-delta",
+    "samples": 6,
+    "baseline": {
+      "atMs": 8041,
+      "rss": 200003584,
+      "heapUsed": 58514200,
+      "external": 4426614,
+      "activeTotal": 10,
+      "watchers": 7,
+      "timers": 0,
+      "libuvHandles": 22,
+      "libuvActiveHandles": 17,
+      "fds": 20
+    },
+    "activated": {
+      "atMs": 8036,
+      "rss": 206131200,
+      "heapUsed": 75146424,
+      "external": 4651664,
+      "activeTotal": 11,
+      "watchers": 8,
+      "timers": 0,
+      "libuvHandles": 23,
+      "libuvActiveHandles": 19,
+      "fds": 20
+    },
+    "delta": {
+      "atMs": -5,
+      "rss": 6127616,
+      "heapUsed": 16632224,
+      "external": 225050,
+      "activeTotal": 1,
+      "watchers": 1,
+      "timers": 0,
+      "libuvHandles": 1,
+      "libuvActiveHandles": 2,
+      "fds": 0
+    },
+    "significant": [],
+    "resourceKinds": {
+      "baseline": {
+        "PipeWrap": 3,
+        "FSEventWrap": 7,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 7,
+        "loop": 1
+      },
+      "activated": {
+        "PipeWrap": 3,
+        "FSEventWrap": 8,
+        "async": 3,
+        "timer": 2,
+        "check": 2,
+        "idle": 1,
+        "prepare": 1,
+        "pipe": 3,
+        "signal": 2,
+        "fs_event": 8,
+        "loop": 1
+      }
+    }
+  }
+}

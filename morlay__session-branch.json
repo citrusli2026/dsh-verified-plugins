@@ -1,0 +1,303 @@
+{
+  "schema": "dsh.plugin.report.v1",
+  "reportId": "npm:@morlay/session-branch@0.1.5",
+  "generatedAt": "2026-10-03T15:58:13.711Z",
+  "verifier": {
+    "name": "dsh-verified",
+    "version": "0.1.0",
+    "commit": "b07a7e8d009344208b960388aa24a9c5f8ec674c"
+  },
+  "subject": {
+    "spec": "@morlay/session-branch@0.1.5",
+    "name": "@morlay/session-branch",
+    "version": "0.1.5",
+    "registry": "https://registry.npmjs.org",
+    "tarball": "https://registry.npmjs.org/@morlay/session-branch/-/session-branch-0.1.5.tgz",
+    "integrity": "sha512-l2H7RhC7Tw9w2sXB0VZ+FdxNKvYtqT4MaGc6j93THglh+OqtD1qrbeR7lVfSLSo609+LCXo5C4q/g3ahd7OcNQ==",
+    "shasum": "56c3a278a0b770e5834445ec0ef516eea93b23dd",
+    "repository": "https://github.com/morlay/dsh-plugin.git",
+    "license": "MIT",
+    "publishedAt": "2026-10-02T10:52:44.685Z"
+  },
+  "runtime": {
+    "dshVersion": "0.2.0-rc.2",
+    "nodeVersion": "v24.21.0",
+    "os": "linux 6.17.0-1022-azure",
+    "arch": "x64"
+  },
+  "container": {
+    "image": "none",
+    "imageDigest": null,
+    "notes": "executed in a one-off container; the subject was installed, booted and removed there"
+  },
+  "verdict": "not-installable",
+  "dimensions": {
+    "L0_qualification": {
+      "id": "L0",
+      "status": "fail",
+      "summary": "package.json declares no dsh.bundle.patch, so this is not an installable DSH plugin bundle",
+      "metrics": {
+        "fileCount": 15,
+        "unpackedBytes": 17191,
+        "patchPaths": [],
+        "declaredEnginesDsh": null,
+        "shipsSource": true
+      },
+      "evidenceRefs": [
+        "e-resolve",
+        "e-tarball",
+        "e-l0"
+      ],
+      "notes": [
+        "dsh.manifestVersion is not declared; the reader does not infer a default"
+      ]
+    },
+    "L1_install": {
+      "id": "L1",
+      "status": "skip",
+      "summary": "not run: the subject declares no dsh.bundle.patch, so it installs as a plain dependency that is never composed; running this dimension would measure the absence of the subject rather than the subject",
+      "evidenceRefs": [],
+      "notes": [
+        "a package that is not a bundle cannot be loaded, run, measured or uninstalled as a plugin",
+        "this dimension was skipped by the L0 pre-filter rather than measured"
+      ]
+    },
+    "L2_load": {
+      "id": "L2",
+      "status": "skip",
+      "summary": "not run: the subject declares no dsh.bundle.patch, so it installs as a plain dependency that is never composed; running this dimension would measure the absence of the subject rather than the subject",
+      "evidenceRefs": [],
+      "notes": [
+        "a package that is not a bundle cannot be loaded, run, measured or uninstalled as a plugin",
+        "this dimension was skipped by the L0 pre-filter rather than measured"
+      ]
+    },
+    "L3_run": {
+      "id": "L3",
+      "status": "skip",
+      "summary": "not run: the subject declares no dsh.bundle.patch, so it installs as a plain dependency that is never composed; running this dimension would measure the absence of the subject rather than the subject",
+      "evidenceRefs": [],
+      "notes": [
+        "a package that is not a bundle cannot be loaded, run, measured or uninstalled as a plugin",
+        "this dimension was skipped by the L0 pre-filter rather than measured"
+      ]
+    },
+    "L4_capability": {
+      "id": "L4",
+      "status": "pass",
+      "summary": "0 capability signal(s) present across 10 scanned file(s)",
+      "metrics": {
+        "scannedFiles": 10,
+        "scannedBytes": 12949,
+        "skippedFiles": 0
+      },
+      "evidenceRefs": [
+        "e-l4"
+      ],
+      "notes": [
+        "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+        "static analysis cannot see dynamically constructed code or prove intent"
+      ]
+    },
+    "L5_overhead": {
+      "id": "L5",
+      "status": "skip",
+      "summary": "not run: the subject declares no dsh.bundle.patch, so it installs as a plain dependency that is never composed; running this dimension would measure the absence of the subject rather than the subject",
+      "evidenceRefs": [],
+      "notes": [
+        "a package that is not a bundle cannot be loaded, run, measured or uninstalled as a plugin",
+        "this dimension was skipped by the L0 pre-filter rather than measured"
+      ]
+    },
+    "L6_uninstall": {
+      "id": "L6",
+      "status": "skip",
+      "summary": "not run: the subject declares no dsh.bundle.patch, so it installs as a plain dependency that is never composed; running this dimension would measure the absence of the subject rather than the subject",
+      "evidenceRefs": [],
+      "notes": [
+        "a package that is not a bundle cannot be loaded, run, measured or uninstalled as a plugin",
+        "this dimension was skipped by the L0 pre-filter rather than measured"
+      ]
+    }
+  },
+  "capabilities": [
+    {
+      "id": "eval_or_dynamic_code",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "eval or synthesised code; common and often benign, and frequently bundler output",
+      "evidence": []
+    },
+    {
+      "id": "hooks_api_gate",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks the API/LLM path, so it can observe or alter provider traffic",
+      "evidence": []
+    },
+    {
+      "id": "hooks_system_prompt",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "hooks system-prompt assembly, so it can influence what the model is told",
+      "evidence": []
+    },
+    {
+      "id": "listens_on_port",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "opens a listening socket",
+      "evidence": []
+    },
+    {
+      "id": "network_egress",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "can make outbound network requests",
+      "evidence": []
+    },
+    {
+      "id": "reads_secret_env",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "reads an environment variable whose name looks credential-shaped",
+      "evidence": []
+    },
+    {
+      "id": "runtime_patch",
+      "present": false,
+      "confidence": "medium",
+      "attribution": "unknown",
+      "notes": "patches runtime objects rather than only registering its own services",
+      "evidence": []
+    },
+    {
+      "id": "spawns_process",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "spawns or would spawn an operating-system process",
+      "evidence": []
+    },
+    {
+      "id": "watches_filesystem",
+      "present": false,
+      "confidence": "high",
+      "attribution": "unknown",
+      "notes": "watches the filesystem; a recursive workspace watch is the documented cause of host stalls",
+      "evidence": []
+    },
+    {
+      "id": "writes_outside_workspace",
+      "present": false,
+      "confidence": "low",
+      "attribution": "unknown",
+      "notes": "resolves a path outside the workspace (e.g. os.homedir(), DSH_HOME), which is normal for DSH profile handling; static analysis cannot determine whether it also writes there",
+      "evidence": []
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e-resolve",
+      "kind": "command",
+      "command": "resolve @morlay/session-branch@0.1.5 -> @morlay/session-branch@0.1.5",
+      "exitCode": 0,
+      "durationMs": 429,
+      "excerpt": "{\n  \"name\": \"@morlay/session-branch\",\n  \"version\": \"0.1.5\",\n  \"registry\": \"https://registry.npmjs.org\",\n  \"tarball\": \"https://registry.npmjs.org/@morlay/session-branch/-/session-branch-0.1.5.tgz\",\n  \"advertisedIntegrity\": \"sha512-l2H7RhC7Tw9w2sXB0VZ+FdxNKvYtqT4MaGc6j93THglh+OqtD1qrbeR7lVfSLSo609+LCXo5C4q/g3ahd7OcNQ==\",\n  \"publishedAt\": \"2026-10-02T10:52:44.685Z\"\n}"
+    },
+    {
+      "id": "e-tarball",
+      "kind": "artifact",
+      "command": "fetch https://registry.npmjs.org/@morlay/session-branch/-/session-branch-0.1.5.tgz",
+      "exitCode": 0,
+      "durationMs": 181,
+      "excerpt": "{\n  \"bytes\": 5903,\n  \"resolvedIntegrity\": \"sha512-l2H7RhC7Tw9w2sXB0VZ+FdxNKvYtqT4MaGc6j93THglh+OqtD1qrbeR7lVfSLSo609+LCXo5C4q/g3ahd7OcNQ==\",\n  \"advertisedIntegrity\": \"sha512-l2H7RhC7Tw9w2sXB0VZ+FdxNKvYtqT4MaGc6j93THglh+OqtD1qrbeR7lVfSLSo609+LCXo5C4q/g3ahd7OcNQ==\",\n  \"integrityMatchesRegistry\": true,\n  \"sha256\": \"1bfe2527e8a1224b9cf65258d057d28d19cfdddf6a67572690d8ebb0fe87bf15\"\n}",
+      "excerptBytes": 381,
+      "sha256": "1bfe2527e8a1224b9cf65258d057d28d19cfdddf6a67572690d8ebb0fe87bf15"
+    },
+    {
+      "id": "e-l0",
+      "kind": "static",
+      "command": "read published package.json and verify declared dsh.bundle.patch paths exist",
+      "excerpt": "{\n  \"status\": \"fail\",\n  \"reasons\": [\n    \"package.json declares no dsh.bundle.patch, so this is not an installable DSH plugin bundle\"\n  ],\n  \"declared\": {\n    \"manifestVersion\": null,\n    \"bundlePatch\": null,\n    \"clientPlatform\": null,\n    \"enginesDsh\": null,\n    \"enginesNode\": null\n  },\n  \"missingPatchPaths\": [],\n  \"fileCount\": 15,\n  \"unpackedBytes\": 17191,\n  \"shipsSource\": true\n}",
+      "excerptBytes": 385
+    },
+    {
+      "id": "e-l4",
+      "kind": "static",
+      "command": "scan 10 shipped source file(s) for capability signatures",
+      "excerpt": "{\n  \"present\": [],\n  \"scannedFiles\": 10,\n  \"skippedFiles\": 0,\n  \"limits\": [\n    \"the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency\",\n    \"static analysis cannot see dynamically constructed code or prove intent\"\n  ]\n}",
+      "excerptBytes": 291
+    },
+    {
+      "id": "e-l1-install",
+      "kind": "command",
+      "command": "dsh plugin --profile verify add @morlay/session-branch@0.1.5",
+      "exitCode": 0,
+      "durationMs": 2045,
+      "excerpt": "Progress: resolved 1, reused 0, downloaded 0, added 0\nPackages are hard linked from the content-addressable store to the virtual store.\n  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11\n  Virtual store is at:             node_modules/.pnpm\nPackages: +1\n+\nProgress: resolved 1, reused 0, downloaded 1, added 1, done\n[WARN] Issues with peer dependencies found. Run \"pnpm peers check\" to list them.\n\ndependencies:\n+ @morlay/session-branch 0.1.5\n\nDone in 292ms using pnpm v12.8.1\ndsh: initialized profile verify at /work/dsh-home/profiles/verify\ndsh: warning: @morlay/session-branch declares no dsh.bundle — installed as a plain dependency, not a profile layer\n",
+      "excerptBytes": 687,
+      "truncated": false,
+      "sha256": "ddbcf24309f7af19195f4dd6e334d408b550e846c00a545809772ebbc61eca5b"
+    },
+    {
+      "id": "e-l2-boot",
+      "kind": "command",
+      "command": "dsh --profile verify",
+      "exitCode": 0,
+      "durationMs": 25066,
+      "excerpt": "",
+      "excerptBytes": 0,
+      "truncated": false,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "e-l6-remove",
+      "kind": "command",
+      "command": "dsh plugin --profile verify remove @morlay/session-branch",
+      "exitCode": 0,
+      "durationMs": 261,
+      "excerpt": "Packages: -1\n-\n\ndependencies:\n- @morlay/session-branch 0.1.5\n\nDone in 14ms using pnpm v12.8.1\n",
+      "excerptBytes": 94,
+      "truncated": false,
+      "sha256": "5d3f268460b391160eeac574a2ed6c9fa749c40a641cf55fbde61739fa33704b"
+    },
+    {
+      "id": "e-l5-overhead",
+      "kind": "sample",
+      "command": "dsh --profile <baseline|activated> with the host sampler injected via NODE_OPTIONS=--import",
+      "excerpt": "{\n  \"method\": \"differential\",\n  \"status\": \"no-significant-delta\",\n  \"samples\": 6,\n  \"baselineMedian\": {\n    \"atMs\": 8040,\n    \"rss\": 199372800,\n    \"heapUsed\": 68378376,\n    \"external\": 5188103,\n    \"activeTotal\": 10,\n    \"watchers\": 7,\n    \"timers\": 0,\n    \"libuvHandles\": 22,\n    \"libuvActiveHandles\": 17,\n    \"fds\": 20\n  },\n  \"activatedMedian\": {\n    \"atMs\": 8039,\n    \"rss\": 199806976,\n    \"heapUsed\": 68531224,\n    \"external\": 5189831,\n    \"activeTotal\": 11,\n    \"watchers\": 8,\n    \"timers\": 0,\n    \"libuvHandles\": 23,\n    \"libuvActiveHandles\": 18,\n    \"fds\": 20\n  },\n  \"delta\": {\n    \"atMs\": -1,\n    \"rss\": 434176,\n    \"heapUsed\": 152848,\n    \"external\": 1728,\n    \"activeTotal\": 1,\n    \"watchers\": 1,\n    \"timers\": 0,\n    \"libuvHandles\": 1,\n    \"libuvActiveHandles\": 1,\n    \"fds\": 0\n  },\n  \"significant\": []\n}"
+    },
+    {
+      "id": "e-l3-session",
+      "kind": "command",
+      "command": "dsh --profile l3 --patch /work/fixtures/replay/l3-overlay.yml --json reply with any text",
+      "exitCode": 0,
+      "durationMs": 1259,
+      "excerpt": "{\"type\":\"session\",\"sessionId\":\"session-755be1b0-6fce-4678-a0c7-9480117b594d\",\"cwd\":\"/work\"}\n{\"type\":\"status\",\"phase\":\"turn_start\",\"turn\":1}\n{\"type\":\"status\",\"phase\":\"step_start\",\"turn\":1,\"step\":1}\n{\"type\":\"text\",\"text\":\"Replay fixture: no provider was called.\"}\n{\"type\":\"status\",\"phase\":\"step_end\",\"turn\":1,\"step\":1}\n{\"type\":\"status\",\"phase\":\"turn_end\",\"turn\":1,\"reason\":{\"kind\":\"completed\"}}\n{\"type\":\"final\",\"text\":\"Replay fixture: no provider was called.\"}\n",
+      "excerptBytes": 459,
+      "truncated": false,
+      "sha256": "c49913b79958eb1049fdb5fcf764aa1fef426d77d5885746f2bd725f654cc137"
+    }
+  ],
+  "redactions": [],
+  "disclaimers": [
+    "Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence."
+  ],
+  "limits": [
+    "the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency",
+    "static analysis cannot see dynamically constructed code or prove intent",
+    "the subject is not an installable plugin bundle, so no execution dimension applies to it",
+    "L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model",
+    "the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase",
+    "no dependency build script was approved by this executor",
+    "overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta",
+    "sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test"
+  ]
+}

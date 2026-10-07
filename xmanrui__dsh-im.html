@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>npm:@xmanrui/dsh-im@4.34.2</title>
+<style>:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body { margin: 0 auto; max-width: 60rem; padding: 1.5rem 1rem 4rem;
+  font: 15px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+h1 { font-size: 1.6rem; margin: 0 0 .25rem; }
+h2 { font-size: 1.05rem; margin: 2rem 0 .5rem; text-transform: uppercase;
+  letter-spacing: .06em; opacity: .65; }
+a { color: inherit; }
+table { border-collapse: collapse; width: 100%; margin: .5rem 0; }
+th, td { text-align: left; padding: .35rem .5rem; border-bottom: 1px solid rgba(128,128,128,.25);
+  vertical-align: top; }
+code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .85em; }
+pre { background: rgba(128,128,128,.12); padding: .6rem .75rem; border-radius: 4px; overflow-x: auto; }
+.status { font-weight: 600; }
+.status-pass { color: #1f883d; } .status-fail { color: #cf222e; }
+.status-skip, .status-blocked { color: #6e7781; }
+.status-inconclusive, .status-timeout { color: #bf8700; }
+.muted { opacity: .65; }
+.note { font-size: .9em; opacity: .8; margin: .2rem 0 0; }
+.tag { display: inline-block; border: 1px solid rgba(128,128,128,.45); border-radius: 3px;
+  padding: 0 .35rem; font-size: .8em; margin-right: .25rem; }</style>
+<p><a href="./index.html">← all reports</a></p>
+<h1>npm:@xmanrui/dsh-im@4.34.2</h1>
+<p><a href="#top"><svg xmlns="http://www.w3.org/2000/svg" width="131" height="20" role="img" aria-label="dsh plugin: verified; historical method limitation">
+  <title>dsh-verified: verified — npm:@xmanrui/dsh-im@4.34.2. Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Historical method limitation: this execution had network access and published container paths and replay fixture text.</title>
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="r"><rect width="131" height="20" rx="3" fill="#fff"/></clipPath>
+  <g clip-path="url(#r)">
+    <rect width="71" height="20" fill="#555"/>
+    <rect x="71" width="60" height="20" fill="#1f883d"/>
+    <rect width="131" height="20" fill="url(#s)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="35.5" y="15" fill="#010101" fill-opacity=".3">dsh plugin</text>
+    <text x="35.5" y="14">dsh plugin</text>
+    <text x="101" y="15" fill="#010101" fill-opacity=".3">verified</text>
+    <text x="101" y="14">verified</text>
+  </g>
+</svg>
+</a></p>
+<p><strong>Stale.</strong> the latest tag points at 4.37.0, while this report covers 4.34.2</p>
+<p><strong>Method limitation.</strong> This historical execution used a container with network access and published container paths and replay fixture text. The no-egress and redaction conditions were not met. See <a href="https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/security.md#7-historical-network-incident">the security incident</a>.</p>
+<p class="muted">sha512-6t3Epsq8ZqCqAEhmJzvtBgwjUKC2bBxsfnJj26uqWOAGDt+6jpBlaDZFr/So1RTS0SJ3SbfW9KDJ5verP4iHCQ==</p>
+
+<h2>Subject</h2>
+<table>
+<tr><th>name</th><td><code>@xmanrui/dsh-im</code></td></tr>
+<tr><th>version</th><td><code>4.34.2</code></td></tr>
+<tr><th>integrity</th><td><code>sha512-6t3Epsq8ZqCqAEhmJzvtBgwjUKC2bBxsfnJj26uqWOAGDt+6jpBlaDZFr/So1RTS0SJ3SbfW9KDJ5verP4iHCQ==</code></td></tr>
+<tr><th>repository</th><td><a href="git+https://github.com/xmanrui/dsh-im.git">git+https://github.com/xmanrui/dsh-im.git</a></td></tr>
+<tr><th>declared bundle patch</th><td><code>&quot;./cordis.patch.yml&quot;</code></td></tr>
+<tr><th>declared engines.dsh</th><td><code>not declared</code> <span class="muted">— declarative and unenforced</span></td></tr>
+</table>
+
+<h2>Environment</h2>
+<table>
+<tr><th>DSH</th><td><code>0.2.0-rc.2</code></td></tr>
+<tr><th>Node</th><td><code>v24.21.0</code></td></tr>
+<tr><th>OS / arch</th><td><code>linux 6.17.0-1022-azure x64</code></td></tr>
+<tr><th>verifier</th><td><code>dsh-verified 0.1.0</code> <code>ec8d77c8d74d</code></td></tr>
+<tr><th>generated</th><td><code>2026-10-03T16:15:21.847Z</code></td></tr>
+</table>
+
+<h2>Dimensions</h2>
+<table>
+<thead><tr><th></th><th>status</th><th>summary</th><th>evidence</th></tr></thead>
+<tbody>
+<tr>
+  <td><code>L0</code></td>
+  <td class="status status-pass">pass</td>
+  <td>declares dsh.bundle.patch and every declared patch path exists (417 files, 21135309 bytes unpacked)
+    <p class="note">dsh.manifestVersion is not declared; the reader does not infer a default</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;fileCount&quot;: 417,
+  &quot;unpackedBytes&quot;: 21135309,
+  &quot;patchPaths&quot;: [
+    &quot;./cordis.patch.yml&quot;
+  ],
+  &quot;declaredEnginesDsh&quot;: null,
+  &quot;shipsSource&quot;: true
+}</pre></details>
+  </td>
+  <td><a href="#e-e-resolve"><code>e-resolve</code></a>, <a href="#e-e-tarball"><code>e-tarball</code></a>, <a href="#e-e-l0"><code>e-l0</code></a></td>
+</tr>
+<tr>
+  <td><code>L1</code></td>
+  <td class="status status-pass">pass</td>
+  <td>installed
+    <p class="note">the CLI completed the install with exit code 0</p><p class="note">no dependency build script was approved by the verifier; approval permits commands with the host user permissions</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;durationMs&quot;: 3068,
+  &quot;exitCode&quot;: 0,
+  &quot;declaredPeers&quot;: null,
+  &quot;bundlesAfterInstall&quot;: [
+    &quot;@deepseek-ai/dsh-base&quot;,
+    &quot;@xmanrui/dsh-im&quot;
+  ],
+  &quot;pendingBuildScripts&quot;: [],
+  &quot;buildScriptsApproved&quot;: 0,
+  &quot;diagnosticsLog&quot;: null
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l1-install"><code>e-l1-install</code></a></td>
+</tr>
+<tr>
+  <td><code>L2</code></td>
+  <td class="status status-pass">pass</td>
+  <td>booted, mounted and stayed alive
+    <p class="note">the process was still running when the wall-clock bound reached it and reported no failure diagnostics, so the bundle was neither skipped nor rejected</p><p class="note">the fiber phase is not read directly: an early exit with diagnostics is the load-failure signal, and a boot that settles and waits is the success signal</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;bootBoundMs&quot;: 25000,
+  &quot;durationMs&quot;: 25053,
+  &quot;signal&quot;: null
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l2-boot"><code>e-l2-boot</code></a></td>
+</tr>
+<tr>
+  <td><code>L3</code></td>
+  <td class="status status-pass">pass</td>
+  <td>a session completed with no credential
+    <p class="note">the model call was served by the official replay adapter from a fixture authored in this repository; no provider was contacted and no credential was present</p><p class="note">probe task, stated verbatim: &quot;reply with any text&quot;</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;replayAdapter&quot;: &quot;@deepseek-ai/dsh-llm-replay@0.2.0-rc.2&quot;,
+  &quot;probeTask&quot;: &quot;reply with any text&quot;,
+  &quot;events&quot;: {
+    &quot;session&quot;: &quot;session-ef11223d-acd0-43cf-b035-47666e8c1478&quot;,
+    &quot;turnEndReason&quot;: {
+      &quot;kind&quot;: &quot;completed&quot;
+    },
+    &quot;finalText&quot;: &quot;Replay fixture: no provider was called.&quot;,
+    &quot;textEventCount&quot;: 1,
+    &quot;error&quot;: null,
+    &quot;exitCode&quot;: 0,
+    &quot;durationMs&quot;: 1808,
+    &quot;eventCount&quot;: 7
+  }
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l3-session"><code>e-l3-session</code></a></td>
+</tr>
+<tr>
+  <td><code>L4</code></td>
+  <td class="status status-pass">pass</td>
+  <td>8 capability signal(s) present across 395 scanned file(s)
+    <p class="note">1 file(s) larger than 2097152 bytes were not scanned</p><p class="note">the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency</p><p class="note">static analysis cannot see dynamically constructed code or prove intent</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;scannedFiles&quot;: 395,
+  &quot;scannedBytes&quot;: 5440080,
+  &quot;skippedFiles&quot;: 1
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l4"><code>e-l4</code></a>, <a href="#e-e-patch"><code>e-patch</code></a></td>
+</tr>
+<tr>
+  <td><code>L5</code></td>
+  <td class="status status-pass">pass</td>
+  <td>no significant delta across 6 sampled run(s)
+    <p class="note">no metric moved beyond the significance thresholds; that is the finding</p><p class="note">differential attribution: baseline profile first, then the subject activated, same container and order</p><p class="note">thresholds are coarse on purpose — order-of-magnitude watcher changes, RSS growth beyond 100 MiB, steady state more than 2 s later</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;samples&quot;: 6,
+  &quot;baseline&quot;: {
+    &quot;atMs&quot;: 8040,
+    &quot;rss&quot;: 199176192,
+    &quot;heapUsed&quot;: 68620336,
+    &quot;external&quot;: 5186663,
+    &quot;activeTotal&quot;: 10,
+    &quot;watchers&quot;: 7,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 22,
+    &quot;libuvActiveHandles&quot;: 17,
+    &quot;fds&quot;: 20
+  },
+  &quot;activated&quot;: {
+    &quot;atMs&quot;: 8039,
+    &quot;rss&quot;: 288210944,
+    &quot;heapUsed&quot;: 118081184,
+    &quot;external&quot;: 23946431,
+    &quot;activeTotal&quot;: 11,
+    &quot;watchers&quot;: 8,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 23,
+    &quot;libuvActiveHandles&quot;: 18,
+    &quot;fds&quot;: 20
+  },
+  &quot;delta&quot;: {
+    &quot;atMs&quot;: -1,
+    &quot;rss&quot;: 89034752,
+    &quot;heapUsed&quot;: 49460848,
+    &quot;external&quot;: 18759768,
+    &quot;activeTotal&quot;: 1,
+    &quot;watchers&quot;: 1,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 1,
+    &quot;libuvActiveHandles&quot;: 1,
+    &quot;fds&quot;: 0
+  }
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l5-overhead"><code>e-l5-overhead</code></a></td>
+</tr>
+<tr>
+  <td><code>L6</code></td>
+  <td class="status status-pass">pass</td>
+  <td>removed without residue
+    <p class="note">the profile retains no bundle selection, dependency entry or files for the subject</p>
+    <details><summary class="muted">metrics</summary><pre>{
+  &quot;residue&quot;: [],
+  &quot;durationMs&quot;: 293
+}</pre></details>
+  </td>
+  <td><a href="#e-e-l6-remove"><code>e-l6-remove</code></a></td>
+</tr>
+</tbody>
+</table>
+
+<h2>Capability (L4, static)</h2>
+<table><thead><tr><th>capability</th><th>confidence</th><th>attribution</th><th>first evidence</th></tr></thead><tbody>
+<tr><td><code>hooks_system_prompt</code></td><td>medium</td><td>unknown</td><td><code>package/plugin-src/host/index.mjs:144</code></td></tr>
+<tr><td><code>listens_on_port</code></td><td>high</td><td>author-source</td><td><code>package/src/channels/wecom-app/callback-server.mjs:123</code></td></tr>
+<tr><td><code>network_egress</code></td><td>medium</td><td>author-source</td><td><code>package/src/channels/dingtalk/connection-error.mjs:54</code></td></tr>
+<tr><td><code>reads_secret_env</code></td><td>high</td><td>author-source</td><td><code>package/src/channels/feishu/config.mjs:12</code></td></tr>
+<tr><td><code>runtime_patch</code></td><td>medium</td><td>author-source</td><td><code>package/src/channels/feishu/bridge.mjs:3122</code></td></tr>
+<tr><td><code>spawns_process</code></td><td>high</td><td>author-source</td><td><code>package/src/channels/email/transports/agently-cli.mjs:19</code></td></tr>
+<tr><td><code>watches_filesystem</code></td><td>high</td><td>author-source</td><td><code>package/src/channels/feishu/bridge.mjs:138</code></td></tr>
+<tr><td><code>writes_outside_workspace</code></td><td>low</td><td>author-source</td><td><code>package/src/channels/feishu/config.mjs:18</code></td></tr>
+</tbody></table>
+<p class="note">Capability is not intent. A signature records what the code can reach for, not what it does.</p>
+
+<h2>Overhead (L5, dynamic)</h2>
+<pre>{
+  &quot;status&quot;: &quot;no-significant-delta&quot;,
+  &quot;samples&quot;: 6,
+  &quot;baseline&quot;: {
+    &quot;atMs&quot;: 8040,
+    &quot;rss&quot;: 199176192,
+    &quot;heapUsed&quot;: 68620336,
+    &quot;external&quot;: 5186663,
+    &quot;activeTotal&quot;: 10,
+    &quot;watchers&quot;: 7,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 22,
+    &quot;libuvActiveHandles&quot;: 17,
+    &quot;fds&quot;: 20
+  },
+  &quot;activated&quot;: {
+    &quot;atMs&quot;: 8039,
+    &quot;rss&quot;: 288210944,
+    &quot;heapUsed&quot;: 118081184,
+    &quot;external&quot;: 23946431,
+    &quot;activeTotal&quot;: 11,
+    &quot;watchers&quot;: 8,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 23,
+    &quot;libuvActiveHandles&quot;: 18,
+    &quot;fds&quot;: 20
+  },
+  &quot;delta&quot;: {
+    &quot;atMs&quot;: -1,
+    &quot;rss&quot;: 89034752,
+    &quot;heapUsed&quot;: 49460848,
+    &quot;external&quot;: 18759768,
+    &quot;activeTotal&quot;: 1,
+    &quot;watchers&quot;: 1,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 1,
+    &quot;libuvActiveHandles&quot;: 1,
+    &quot;fds&quot;: 0
+  },
+  &quot;significant&quot;: []
+}</pre>
+
+<h2>Evidence</h2>
+<table>
+<thead><tr><th>id</th><th>kind</th><th>artifact</th></tr></thead>
+<tbody>
+<tr id="e-e-resolve">
+  <td><code>e-resolve</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">437 ms</span></td>
+  <td><code>resolve @xmanrui/dsh-im@4.34.2 -&gt; @xmanrui/dsh-im@4.34.2</code>
+    <pre>{
+  &quot;name&quot;: &quot;@xmanrui/dsh-im&quot;,
+  &quot;version&quot;: &quot;4.34.2&quot;,
+  &quot;registry&quot;: &quot;https://registry.npmjs.org&quot;,
+  &quot;tarball&quot;: &quot;https://registry.npmjs.org/@xmanrui/dsh-im/-/dsh-im-4.34.2.tgz&quot;,
+  &quot;advertisedIntegrity&quot;: &quot;sha512-6t3Epsq8ZqCqAEhmJzvtBgwjUKC2bBxsfnJj26uqWOAGDt+6jpBlaDZFr/So1RTS0SJ3SbfW9KDJ5verP4iHCQ==&quot;,
+  &quot;publishedAt&quot;: &quot;2026-10-02T19:07:18.009Z&quot;
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-tarball">
+  <td><code>e-tarball</code></td>
+  <td>artifact <span class="muted">exit 0</span> <span class="muted">236 ms</span></td>
+  <td><code>fetch https://registry.npmjs.org/@xmanrui/dsh-im/-/dsh-im-4.34.2.tgz</code>
+    <pre>{
+  &quot;bytes&quot;: 9488652,
+  &quot;resolvedIntegrity&quot;: &quot;sha512-6t3Epsq8ZqCqAEhmJzvtBgwjUKC2bBxsfnJj26uqWOAGDt+6jpBlaDZFr/So1RTS0SJ3SbfW9KDJ5verP4iHCQ==&quot;,
+  &quot;advertisedIntegrity&quot;: &quot;sha512-6t3Epsq8ZqCqAEhmJzvtBgwjUKC2bBxsfnJj26uqWOAGDt+6jpBlaDZFr/So1RTS0SJ3SbfW9KDJ5verP4iHCQ==&quot;,
+  &quot;integrityMatchesRegistry&quot;: true,
+  &quot;sha256&quot;: &quot;e3cfc7261bdb373377894a8a5cb134913b6e414903f32438ea67453303d56521&quot;
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l0">
+  <td><code>e-l0</code></td>
+  <td>static</td>
+  <td><code>read published package.json and verify declared dsh.bundle.patch paths exist</code>
+    <pre>{
+  &quot;status&quot;: &quot;pass&quot;,
+  &quot;reasons&quot;: [],
+  &quot;declared&quot;: {
+    &quot;manifestVersion&quot;: null,
+    &quot;bundlePatch&quot;: [
+      &quot;./cordis.patch.yml&quot;
+    ],
+    &quot;clientPlatform&quot;: &quot;web&quot;,
+    &quot;enginesDsh&quot;: null,
+    &quot;enginesNode&quot;: &quot;&gt;=22.19&quot;
+  },
+  &quot;missingPatchPaths&quot;: [],
+  &quot;fileCount&quot;: 417,
+  &quot;unpackedBytes&quot;: 21135309,
+  &quot;shipsSource&quot;: true
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-patch">
+  <td><code>e-patch</code></td>
+  <td>static</td>
+  <td><code>read cordis.patch.yml</code>
+    <pre>- insert:
+    - id: xmanrui-dsh-im
+      name: &apos;@xmanrui/dsh-im&apos;
+</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l4">
+  <td><code>e-l4</code></td>
+  <td>static</td>
+  <td><code>scan 395 shipped source file(s) for capability signatures</code>
+    <pre>{
+  &quot;present&quot;: [
+    {
+      &quot;id&quot;: &quot;hooks_system_prompt&quot;,
+      &quot;confidence&quot;: &quot;medium&quot;,
+      &quot;attribution&quot;: &quot;unknown&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/plugin-src/host/index.mjs&quot;,
+        &quot;line&quot;: 144,
+        &quot;snippet&quot;: &quot;ctx.inject([&apos;tools&apos;, &apos;systemPrompt&apos;], (artifactCtx) =&gt; {&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;listens_on_port&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;attribution&quot;: &quot;author-source&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/src/channels/wecom-app/callback-server.mjs&quot;,
+        &quot;line&quot;: 123,
+        &quot;snippet&quot;: &quot;const server = createServer((request, response) =&gt; {&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;network_egress&quot;,
+      &quot;confidence&quot;: &quot;medium&quot;,
+      &quot;attribution&quot;: &quot;author-source&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/src/channels/dingtalk/connection-error.mjs&quot;,
+        &quot;line&quot;: 54,
+        &quot;snippet&quot;: &quot;const axios = dingtalkStream ? resolvedPackage(&apos;axios&apos;, dingtalkStream.require) : null;&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;reads_secret_env&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;attribution&quot;: &quot;author-source&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/src/channels/feishu/config.mjs&quot;,
+        &quot;line&quot;: 12,
+        &quot;snippet&quot;: &quot;if (process.env.FEISHU_APP_SECRET?.trim()) return process.env.FEISHU_APP_SECRET.trim();&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;runtime_patch&quot;,
+      &quot;confidence&quot;: &quot;medium&quot;,
+      &quot;attribution&quot;: &quot;author-source&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/src/channels/feishu/bridge.mjs&quot;,
+        &quot;line&quot;: 3122,
+        &quot;snippet&quot;: &quot;const response = await this.#client.im.v1.message.patch({&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;spawns_process&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;attribution&quot;: &quot;author-source&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;package/src/channels/email/transports/agently-cli.mjs&quot;,
+        &quot;line&quot;: 19,
+        &quot;snippet&quot;: &quot;import { spawn } from &apos;node:child_process&apos;;&quot;
+      }
+    },
+    {
+      &quot;id&quot;: &quot;watches_filesystem&quot;,
+      &quot;confidence&quot;: &quot;high&quot;,
+      &quot;attribution&quot;: &quot;author-source&quot;,
+      &quot;firstEvidence&quot;: {
+        &quot;file&quot;: &quot;pack</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l1-install">
+  <td><code>e-l1-install</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">3068 ms</span></td>
+  <td><code>dsh plugin --profile verify add @xmanrui/dsh-im@4.34.2</code>
+    <pre>Downloading @xmanrui/dsh-im@4.34.2: 0.00 B/9.48 MB
+Downloading @img/sharp-libvips-linux-x64@1.3.3: 0.00 B/8.17 MB
+Added 1 entry to minimumReleaseAgeExclude in pnpm-workspace.yaml (set minimumReleaseAgeStrict to true to gate these updates with a prompt):
+  @xmanrui/dsh-im@4.34.2
+Packages are hard linked from the content-addressable store to the virtual store.
+  Content-addressable store is at: /home/verifier/.local/share/pnpm/store/v11
+  Virtual store is at:             node_modules/.pnpm
+Packages: +120
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 120, reused 0, downloaded 123, added 120, done
+
+dependencies:
++ @xmanrui/dsh-im 4.34.2
+
+Done in 1.1s using pnpm v12.8.1
+dsh: initialized profile verify at /work/dsh-home/profiles/verify
+</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l2-boot">
+  <td><code>e-l2-boot</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">25053 ms</span></td>
+  <td><code>dsh --profile verify</code>
+    <pre>dsh: warning: 1 entry did not activate
+xmanrui-dsh-im (@xmanrui/dsh-im): pending (waiting for service: connection)
+</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l6-remove">
+  <td><code>e-l6-remove</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">293 ms</span></td>
+  <td><code>dsh plugin --profile verify remove @xmanrui/dsh-im</code>
+    <pre>Packages: -151
+--------------------------------------------------------------------------------
+
+dependencies:
+- @xmanrui/dsh-im 4.34.2
+
+Done in 46ms using pnpm v12.8.1
+</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l5-overhead">
+  <td><code>e-l5-overhead</code></td>
+  <td>sample</td>
+  <td><code>dsh --profile &lt;baseline|activated&gt; with the host sampler injected via NODE_OPTIONS=--import</code>
+    <pre>{
+  &quot;method&quot;: &quot;differential&quot;,
+  &quot;status&quot;: &quot;no-significant-delta&quot;,
+  &quot;samples&quot;: 6,
+  &quot;baselineMedian&quot;: {
+    &quot;atMs&quot;: 8040,
+    &quot;rss&quot;: 199176192,
+    &quot;heapUsed&quot;: 68620336,
+    &quot;external&quot;: 5186663,
+    &quot;activeTotal&quot;: 10,
+    &quot;watchers&quot;: 7,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 22,
+    &quot;libuvActiveHandles&quot;: 17,
+    &quot;fds&quot;: 20
+  },
+  &quot;activatedMedian&quot;: {
+    &quot;atMs&quot;: 8039,
+    &quot;rss&quot;: 288210944,
+    &quot;heapUsed&quot;: 118081184,
+    &quot;external&quot;: 23946431,
+    &quot;activeTotal&quot;: 11,
+    &quot;watchers&quot;: 8,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 23,
+    &quot;libuvActiveHandles&quot;: 18,
+    &quot;fds&quot;: 20
+  },
+  &quot;delta&quot;: {
+    &quot;atMs&quot;: -1,
+    &quot;rss&quot;: 89034752,
+    &quot;heapUsed&quot;: 49460848,
+    &quot;external&quot;: 18759768,
+    &quot;activeTotal&quot;: 1,
+    &quot;watchers&quot;: 1,
+    &quot;timers&quot;: 0,
+    &quot;libuvHandles&quot;: 1,
+    &quot;libuvActiveHandles&quot;: 1,
+    &quot;fds&quot;: 0
+  },
+  &quot;significant&quot;: []
+}</pre>
+    
+  </td>
+</tr>
+<tr id="e-e-l3-session">
+  <td><code>e-l3-session</code></td>
+  <td>command <span class="muted">exit 0</span> <span class="muted">1808 ms</span></td>
+  <td><code>dsh --profile l3 --patch /work/fixtures/replay/l3-overlay.yml --json reply with any text</code>
+    <pre>{&quot;type&quot;:&quot;session&quot;,&quot;sessionId&quot;:&quot;session-ef11223d-acd0-43cf-b035-47666e8c1478&quot;,&quot;cwd&quot;:&quot;/work&quot;}
+{&quot;type&quot;:&quot;status&quot;,&quot;phase&quot;:&quot;turn_start&quot;,&quot;turn&quot;:1}
+{&quot;type&quot;:&quot;status&quot;,&quot;phase&quot;:&quot;step_start&quot;,&quot;turn&quot;:1,&quot;step&quot;:1}
+{&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:&quot;Replay fixture: no provider was called.&quot;}
+{&quot;type&quot;:&quot;status&quot;,&quot;phase&quot;:&quot;step_end&quot;,&quot;turn&quot;:1,&quot;step&quot;:1}
+{&quot;type&quot;:&quot;status&quot;,&quot;phase&quot;:&quot;turn_end&quot;,&quot;turn&quot;:1,&quot;reason&quot;:{&quot;kind&quot;:&quot;completed&quot;}}
+{&quot;type&quot;:&quot;final&quot;,&quot;text&quot;:&quot;Replay fixture: no provider was called.&quot;}
+dsh: warning: 1 entry did not activate
+xmanrui-dsh-im (@xmanrui/dsh-im): pending (waiting for service: connection)
+</pre>
+    
+  </td>
+</tr>
+</tbody>
+</table>
+
+<h2>Limits</h2>
+<ul><li>1 file(s) larger than 2097152 bytes were not scanned</li><li>the package ships build output; code inside a bundle cannot be reliably attributed to the author or to an inlined dependency</li><li>static analysis cannot see dynamically constructed code or prove intent</li><li>L3 ran against a replayed transcript from a fixture authored by the verifier, not against a provider: it establishes that a session completes without a credential, not that the plugin behaves correctly against a live model</li><li>the load result is inferred from exit behaviour and diagnostics rather than a directly read fiber phase</li><li>no dependency build script was approved by this executor</li><li>overhead is reported only where a delta cleared the significance thresholds; otherwise the result is no-significant-delta</li><li>sampling happens inside the host process via NODE_OPTIONS=--import, so process.getActiveResourcesInfo() and process.report.getReport() describe the process under test</li></ul>
+
+<h2>Disclaimers</h2>
+<ul><li>Verification is not a security audit and not an endorsement. It records what was executed and observed on one machine at one time. Absence of a finding is not a finding of absence.</li></ul>
+
+<p class="note"><a href="./xmanrui__dsh-im.json">raw report JSON</a> · <a href="./badge/xmanrui__dsh-im.svg">badge</a> · <a href="https://github.com/citrusli2026/dsh-verified-plugins/blob/main/docs/appeals.md">dispute this report</a></p>
+</html>
