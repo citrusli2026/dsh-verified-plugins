@@ -9,6 +9,8 @@ Evidence-linked, reproducible, not another star list.
 > All seven dimensions are represented, batches are supported, reports are published and freshness is tracked —
 > **[browse the site](https://citrusli2026.github.io/dsh-verified-plugins/)**.
 > This branch has 25 reports: 19 `verified`, 5 `partial`, 1 `not-installable`; 12 are now **stale**.
+> The site was republished from merged `main` and end-to-end checked: report,
+> JSON, badge and catalog endpoints all expose the browser-verified result.
 > Sessions run against a replayed transcript, never a credential. Dispute a
 > report via [docs/appeals.md](docs/appeals.md). Read
 > [docs/security.md](docs/security.md) first.
